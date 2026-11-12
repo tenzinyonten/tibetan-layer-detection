@@ -13,12 +13,12 @@ A small reusable module that finds the **title** and the **author** of a Tibetan
 | `efficiency.py` | Wrappers: `cached`, `retrying`, `metered`, `extract_many` (parallel). Selftest: `python3 efficiency.py selftest`. |
 | `server.py` | Local HTTP API: `POST /extract`, `GET /tool`, `/stats`, `/health`. Rules mode is free. |
 | `bench.py` | Benchmark with the same scorer as every other result: `python3 bench.py validation 300 rules` (free). Paid modes need a key and are cached. |
-| `skill_score.py` | One score for a candidate skill: accuracy minus a penalty for prompt tokens and tool calls. Free, reads saved answers. This is the score GEPA would optimize. |
+| `skill_score.py` | One score for a candidate skill: accuracy (using the skill's own `postprocess`) minus a penalty for prompt tokens and tool calls. Free, reads saved answers. The token penalty may only choose between COMPLETE prompts. |
 | `run_tests.py` | Runs every offline selftest (no key, no network). |
 | `SKILL.md` | The same skill in Anthropic Agent Skills format (name, description, when to use, inputs, how to run, limits). Not tested inside Claude's skill loader. |
 | `README.md` | This file. |
 
-The prompt and the rule-based extractor live elsewhere in the repo and are used from here: `title_author/data/gemini_prompts/gepa_eff_full.md` (default; fallback `gepa_final_full.md`; env `TA_PROMPT` overrides) and `title_author/src/ta_rule_extract.py`.
+The prompt and the rule-based extractor live elsewhere in the repo and are used from here: `title_author/data/gemini_prompts/gepa_final_full.md` (default; env `TA_PROMPT` overrides; the skill refuses a prompt that lacks its Title/Author sections or the examples) and `title_author/src/ta_rule_extract.py`.
 
 ## How it works
 
@@ -96,7 +96,7 @@ Rule-based extractor alone (full cleaned test): title 0.688, author 0.375.
 - Author is the weak part. Labels are inconsistent (a stanza writer or a compiler versus the book's author), and about 11.5% of authors are a different person than the labelled one.
 - A BDRC catalog lookup was tested on 40 works and is not reliable: the catalog author matched the label in about 25% of cases (it describes the whole book, not each text).
 - The 12 examples matter for the large model: removing them cost about 6.7 points on author.
-- The default prompt `gepa_eff_full.md` costs about 5,500 input tokens per call (found by GEPA with a token penalty on `gemini-3.5-flash-lite`; the previous default `gepa_final_full.md` is about 8,000). Accuracy tie within noise on flash-lite validation; the 3.8-flash benchmark table above was measured with the previous prompt.
+- The default prompt `gepa_final_full.md` costs about 8,000 input tokens per call. A shorter GEPA prompt (`TRUNCATED_gepa_eff_full.md` in the archive) was cut off and its result is withdrawn; a complete shorter prompt has not been found.
 - Not yet tried with a Claude or OpenAI model; not yet pip-installable (it reads `../src` and `../data`); the mmBERT model is not part of the skill yet.
 
 ## Details

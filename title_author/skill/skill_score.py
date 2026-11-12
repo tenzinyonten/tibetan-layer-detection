@@ -33,10 +33,8 @@ def evaluate(prompt_path, run_glob, split="validation", tool_calls=0.0):
     if not ids: sys.exit("no answered works in that run")
     ok = {"title": 0, "author": 0}
     for w in ids:
-        r = rows[w]; whole = bool(r.whole_work); head, tail = r.text_head, ("" if whole else (r.text_tail or ""))
-        ans = S.parse_answer(raw[w]) or {k: None for k in S.FIELDS}
-        if ans.get("title") and not S.usable(ans, "title", head, tail): ans["title"] = ans["title_region"] = None
-        ans, _ = S.apply_rules(ans, head, tail)
+        r = rows[w]; head, tail, _w = S.normalize_input(r.text_head, "" if r.whole_work else (r.text_tail or ""), bool(r.whole_work))
+        ans, _ = S.postprocess(S.parse_answer(raw[w]), head, tail)                     # exactly what extract() does after the model answers
         for f in ok: ok[f] += g["score"](r, ans, f)[0] == "ok"
     t, a = ok["title"] / len(ids), ok["author"] / len(ids)
     out = skill_score(t, a, len(Path(prompt_path).read_text(encoding="utf-8")), tool_calls)

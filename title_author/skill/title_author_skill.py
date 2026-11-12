@@ -18,7 +18,7 @@ Command line:
     python title_author_skill.py rule-only FILE.txt      # rule-based answer for one text file
     python title_author_skill.py extract FILE.txt [MODEL]   # needs GEMINI_API_KEY in the environment (costs a little)
 """
-import os, re, sys, json, urllib.request
+import os, re, sys, json, threading, urllib.request
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -26,8 +26,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "src"))
 import ta_rule_extract as T                       # the rule-based extractor (plain Python, no LLM)
 
-FALLBACK_PROMPT = HERE.parent / "data/gemini_prompts/gepa_final_full.md"       # previous default: about 8,000 tokens, ties the hand-made final.md
-DEFAULT_PROMPT = Path(os.environ["TA_PROMPT"]) if os.environ.get("TA_PROMPT") else HERE.parent / "data/gemini_prompts/gepa_eff_full.md"   # GEPA with a token penalty: about 31% shorter, same accuracy within noise on flash-lite (validation, 300 fresh works)
+DEFAULT_PROMPT = Path(os.environ["TA_PROMPT"]) if os.environ.get("TA_PROMPT") else HERE.parent / "data/gemini_prompts/gepa_final_full.md"   # complete rules (Title + Author sections) + 12 examples, about 8,000 tokens; ties the hand-made final.md
+REQUIRED_SECTIONS = ("## Title Extraction Rules", "## Author Extraction Rules", "### Twelve examples")     # a prompt without these is cut off
 ROLES = sorted(T.ROLES, key=len, reverse=True)
 FIELDS = ("title", "title_region", "author", "author_region")
 
@@ -38,7 +38,12 @@ _PROMPTS = {}
 
 def _prompt_text(path):
     p = str(path)
-    if p not in _PROMPTS: _PROMPTS[p] = Path(path).read_text(encoding="utf-8")     # read once per process
+    if p not in _PROMPTS:
+        t = Path(path).read_text(encoding="utf-8")                                  # read once per process
+        missing = [x for x in REQUIRED_SECTIONS if x not in t]
+        if missing and not os.environ.get("TA_ALLOW_INCOMPLETE_PROMPT"):
+            raise ValueError(f"prompt {path} is cut off: missing {missing}")          # a truncated prompt once became the default; refuse it
+        _PROMPTS[p] = t
     return _PROMPTS[p]
 
 
@@ -57,12 +62,17 @@ def build_input(head, tail="", whole_work=False):
 
 
 def parse_answer(raw):
-    m = re.search(r"\{.*\}", raw or "", re.S)
-    try:
-        d = json.loads(m.group(0)) if m else None
-    except Exception:
-        return None
-    return {k: d.get(k) for k in FIELDS} if isinstance(d, dict) else None
+    """First JSON object in the reply (extra braces or text around it are ignored); None when there is none."""
+    raw, dec, i = raw or "", json.JSONDecoder(), 0
+    while True:
+        i = raw.find("{", i)
+        if i < 0: return None
+        try:
+            d, _ = dec.raw_decode(raw[i:])
+            if isinstance(d, dict): return {k: d.get(k) for k in FIELDS}
+        except Exception:
+            pass
+        i += 1
 
 
 def region_text(region, head, tail):
@@ -103,23 +113,41 @@ def rule_only(head, tail="", whole_work=False):
     return {k: p.get(k) for k in FIELDS}
 
 
-def extract(head, tail="", whole_work=False, call_llm=None, prompt=DEFAULT_PROMPT, hybrid=True):
-    """Title and author of one work. `call_llm(system, user) -> str` is any function that calls your LLM.
-    Returns {"title", "title_region", "author", "author_region", "notes"}."""
-    if call_llm is None:
-        r = rule_only(head, tail, whole_work); r["notes"] = ["rule-based only (no LLM given)"]; r["needs_review"] = True; r["review_reasons"] = ["no LLM used"]; return r
-    head, tail = head[:MAX_BLOCK], (tail or "")[-MAX_BLOCK:]                      # bounded input: at most 3,000 characters per block
-    system = _prompt_text(prompt)
-    ans = parse_answer(call_llm(system, build_input(head, tail, whole_work))) or {k: None for k in FIELDS}
-    notes = []
+def normalize_input(head, tail="", whole_work=False):
+    """Bound the input without losing the ending. A whole work (<= 6,000 characters) is sent in full as [HEAD]; a longer work is cut to its first
+    and last 3,000 characters. A text flagged whole_work (or with no tail) that is longer than 6,000 characters is split into its start and its end."""
+    tail = tail or ""
+    if whole_work or not tail:
+        if len(head) > 2 * MAX_BLOCK: return head[:MAX_BLOCK], head[-MAX_BLOCK:], False
+        return head, "", True
+    return head[:MAX_BLOCK], tail[-MAX_BLOCK:], False
+
+
+def postprocess(ans, head, tail, hybrid=True):
+    """Everything that happens to the model's answer after it is parsed (also used by skill_score.py, so the score is the skill's own score).
+    Returns (answer, notes)."""
+    ans = dict(ans or {k: None for k in FIELDS}); notes = []
     if not usable(ans, "title", head, tail):
         fixed = T.repair_span(ans.get("title"), head, tail, ans.get("title_region"), last=False) if ans.get("title") else None
         if fixed:
             ans["title"], ans["title_region"] = fixed; notes.append("title found again after ignoring spaces and newlines")
         else:
-            notes.append("title was not an exact substring"); ans["title"] = ans["title_region"] = None
+            if ans.get("title"): notes.append("title was not an exact substring")
+            ans["title"] = ans["title_region"] = None
     if hybrid:
         ans, n2 = apply_rules(ans, head, tail); notes += n2
+    return ans, notes
+
+
+def extract(head, tail="", whole_work=False, call_llm=None, prompt=None, hybrid=True):
+    """Title and author of one work. `call_llm(system, user) -> str` is any function that calls your LLM.
+    Returns {"title", "title_region", "author", "author_region", "notes", "needs_review", "review_reasons"}."""
+    head, tail, whole_work = normalize_input(head, tail, whole_work)
+    if call_llm is None:
+        r = rule_only(head, tail, whole_work); r["notes"] = ["rule-based only (no LLM given)"]; r["needs_review"] = True; r["review_reasons"] = ["no LLM used"]; return r
+    system = _prompt_text(prompt or DEFAULT_PROMPT)
+    ans = parse_answer(call_llm(system, build_input(head, tail, whole_work))) or {k: None for k in FIELDS}
+    ans, notes = postprocess(ans, head, tail, hybrid)
     ans["notes"] = notes
     why = _review_flags(ans, notes, head, tail)
     ans["needs_review"] = bool(why); ans["review_reasons"] = why            # flagged works were right 56-60% of the time, the others 78-79% (validation)
@@ -127,8 +155,10 @@ def extract(head, tail="", whole_work=False, call_llm=None, prompt=DEFAULT_PROMP
 
 
 def gemini_call(model="gemini-3.8-flash", thinking="low"):
-    """A ready-made call_llm for Gemini over plain REST. The key is read from GEMINI_API_KEY and never stored."""
-    key = os.environ.get("GEMINI_API_KEY") or sys.exit("set GEMINI_API_KEY in your own terminal")
+    """A ready-made call_llm for Gemini over plain REST. The key is read from GEMINI_API_KEY and never stored.
+    Token usage of the LAST call made by the calling thread is in call.local.usage (in, out); call.tag names model + thinking (cache key)."""
+    key = os.environ.get("GEMINI_API_KEY")
+    if not key: raise RuntimeError("set GEMINI_API_KEY in the environment")
     def call(system, user):
         gc = {"temperature": 0, "responseMimeType": "application/json"}
         if thinking and model.startswith("gemini-3.8"): gc["thinkingConfig"] = {"thinkingLevel": thinking}
@@ -138,9 +168,9 @@ def gemini_call(model="gemini-3.8-flash", thinking="low"):
                                      headers={"Content-Type": "application/json", "x-goog-api-key": key})
         out = json.load(urllib.request.urlopen(req, timeout=180))
         u = out.get("usageMetadata") or {}
-        call.usage.append((u.get("promptTokenCount", 0), (u.get("candidatesTokenCount", 0) + u.get("thoughtsTokenCount", 0))))   # read by efficiency.metered
+        call.local.usage = (u.get("promptTokenCount", 0), (u.get("candidatesTokenCount", 0) + u.get("thoughtsTokenCount", 0)))   # per thread: no race
         return "".join(p.get("text", "") for p in out["candidates"][0]["content"]["parts"] if not p.get("thought"))
-    call.usage = []
+    call.local = threading.local(); call.tag = f"{model}|thinking={thinking}"
     return call
 
 
@@ -153,6 +183,24 @@ def selftest():
     none = lambda s, u: "{}"
     r2 = extract(head, "", True, call_llm=none)
     assert r2["author"], r2                                          # rule-based fallback supplied an author
+    # a 4,000-character whole work keeps its ending (the author is at the very end): the old 3,000-character crop dropped it
+    long_head = "ཀ" * 3500 + head
+    seen = {}
+    spy = lambda s, u: (seen.__setitem__("u", u), json.dumps({"title": None, "author": None}))[1]
+    extract(long_head, "", True, call_llm=spy)
+    assert "སྦྱར་བའོ" in seen["u"] and "[TAIL]" not in seen["u"], "whole work lost its ending"
+    # a text over 6,000 characters flagged as whole is split into start + end
+    huge = "ཀ" * 7000 + head; extract(huge, "", True, call_llm=spy)
+    assert "[TAIL]" in seen["u"] and "སྦྱར་བའོ" in seen["u"]
+    # the default prompt is complete (Title + Author sections + examples)
+    assert all(x in _prompt_text(DEFAULT_PROMPT) for x in REQUIRED_SECTIONS)
+    assert parse_answer('noise {"title": "a"} } extra')["title"] == "a"         # a stray brace does not drop the answer
+    import tempfile                                                                # a cut-off prompt (no Title/Author sections) must be refused
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as tf: tf.write("## What Gemini receives\nIf the input contains no `[TAIL]` block, regions are `")
+    try: _prompt_text(tf.name); ok = True
+    except ValueError: ok = False
+    finally: os.unlink(tf.name)
+    assert not ok, "an incomplete prompt must be refused"
     print("selftest OK:", r["notes"], "|", r2["notes"])
 
 

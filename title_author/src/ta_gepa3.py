@@ -275,13 +275,16 @@ if __name__ == "__main__":
         out = ROOT / "title_author/data/gemini_prompts" / os.environ.get("OUT_NAME", "gepa.md")
         if os.environ.get("EFFICIENCY") == "1" and getattr(best, "detailed_results", None):
             dr, W = best.detailed_results, float(os.environ.get("TOKEN_W", "0.004")); cpt = 11529 / 8000      # characters per token, calibrated on the default prompt
-            rows = []
+            rows = []; need = re.findall(r"^#{2,3} .*$", Path(start).read_text(encoding="utf-8"), re.M)       # every heading of the starting prompt must survive
             for i, (c, v) in enumerate(zip(dr.candidates, dr.val_aggregate_scores)):
                 ins = c.signature.instructions; tok = (len(ins) + len(LOCK)) / cpt
-                rows.append({"idx": i, "val": v, "prompt_tokens_est": round(tok), "skill_score": v - W * tok / 1000, "instructions": ins})
+                missing = [h for h in need if h not in ins]; cut = ins.count("`") % 2 == 1          # an odd number of backticks = cut off inside a code span
+                rows.append({"idx": i, "val": v, "prompt_tokens_est": round(tok), "skill_score": v - W * tok / 1000, "complete": not missing and not cut,
+                             "missing_sections": missing, "instructions": ins})
             out.with_suffix(".candidates.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8")
-            for r in rows: print("CANDIDATE %d: val %.3f  ~%d tokens  skill score %.4f%s" % (r["idx"], r["val"], r["prompt_tokens_est"], r["skill_score"], "  <- plain best" if r["idx"] == dr.best_idx else ""), flush=True)
-            pick = max(rows, key=lambda r: r["skill_score"]); print("PICKED candidate", pick["idx"], "by skill score", flush=True)
+            for r in rows: print("CANDIDATE %d: val %.3f  ~%d tokens  skill score %.4f%s" % (r["idx"], r["val"], r["prompt_tokens_est"], r["skill_score"], "  <- plain best" if r["idx"] == dr.best_idx else "") + ("" if r["complete"] else "  REJECTED: cut off, missing %s" % r["missing_sections"]), flush=True)
+            # the token penalty is only a tie-break between COMPLETE prompts; a cut-off prompt can never win
+            pick = max((r for r in rows if r["complete"]), key=lambda r: r["skill_score"]); print("PICKED candidate", pick["idx"], "by skill score among complete prompts", flush=True)
             out.write_text(pick["instructions"], encoding="utf-8")
         else:
             out.write_text(best.signature.instructions, encoding="utf-8")
