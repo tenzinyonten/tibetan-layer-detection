@@ -1,0 +1,104 @@
+# Tsawa layer: full re-annotation flag for this book.
+# Book list source: HF dataset Yontenn/formatting-tsawa-v6 (train split).
+# Annotation content: raw data/raw_opf/P000127.opf/.../layers/v001/Tsawa.yml.
+# This is a tracking/communication file, not a benchmark input.
+# It does not change tsawa_spans_merged.csv, the HF dataset, or any model inputs.
+
+pecha_id: P000127
+split: train
+status: needs_reannotation
+generated: '2026-10-14'
+known_issues:
+- id: offset_drift
+  scope: P000027, P000083, P000144, P000242, P000269 (test split)
+  detail: Tsawa span start/end offsets drift 30-113 chars (median) from the nearest line-break / shad
+    boundary. The recent annotator review pass did not fix this; verified byte-for-byte against the raw
+    Tsawa.yml.
+- id: tsawa_vs_quotation
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: No documented convention for telling genuine root-text (tsawa) from a quoted/cited verse attributed
+    to a named source or chapter (e.g. verses closed with zhes/ces-type markers that are preceded by a
+    named-source or chapter citation, like "in the fourth chapter [it says]"). Some currently-annotated
+    tsawa spans look like quotations under this test and vice versa.
+- id: multi_span_paragraphs
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: Some paragraphs contain 2+ separate tsawa quotes with non-tsawa text between them inside what
+    is annotated as a single span (or a span that should be split). The current schema (one span = one
+    card) and review tooling can't represent this without annotator judgment on where to split.
+annotation:
+  id: 0e87724d829248f6b50151da647150b0
+  annotation_type: Tsawa
+  revision: '00001'
+  annotations:
+    5b0d34e798184e1e900ff2a2f16bb8d7:
+      span:
+        start: 20853
+        end: 20909
+    87ae3e904f13470cb9e3ad8dc40d2021:
+      span:
+        start: 21623
+        end: 21711
+    157aee7968114ce4a54dba526115ddd4:
+      span:
+        start: 23892
+        end: 23984
+    e29343245aaf4deb91a59ceb3d5de62a:
+      span:
+        start: 67817
+        end: 68151
+    a702535bdc124143b4e40ecce4624ea9:
+      span:
+        start: 153568
+        end: 153659
+    b45a3daab6f14eba948c6190e97102e4:
+      span:
+        start: 155585
+        end: 155649
+    2dc856ef79c14ecc96d1525c8b545728:
+      span:
+        start: 156570
+        end: 156886
+    4707b02adfb1454696a2e9cb8b74d6e0:
+      span:
+        start: 157326
+        end: 157521
+    6a0dafe305a54124ae12c75a2a13624e:
+      span:
+        start: 160202
+        end: 160286
+    6a9a785b5a0a4a9487dc85c96af25e92:
+      span:
+        start: 165460
+        end: 165620
+    49a36f9b684e42ed870564331f6dd898:
+      span:
+        start: 171132
+        end: 171443
+    2bfc59ebf59b4d8096024dfd6ada738c:
+      span:
+        start: 177146
+        end: 177365
+    b9f9a4ce876e4567ae4dc834da8c2a21:
+      span:
+        start: 179046
+        end: 180368
+    f64b32600b2343ea8d7297e2d1928602:
+      span:
+        start: 189638
+        end: 189858
+    7ed0a782f8574780ac688f16c2a40620:
+      span:
+        start: 193096
+        end: 193250
+    1b1732cb51e9476bba19c9cb0c724419:
+      span:
+        start: 204016
+        end: 204473
+    91d7fee8039540b590dde8fb20686cee:
+      span:
+        start: 210138
+        end: 210194
+    734217855e26411eabdb420f6a5fcdd8:
+      span:
+        start: 210401
+        end: 210455
