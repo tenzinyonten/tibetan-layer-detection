@@ -1,5 +1,5 @@
 """For the books flagged 'commentary exists, 0% tsawa overlap': does the tsawa text look like verse or prose?
-Read-only. Verse features follow tsawa/scripts/checks/audit_before_v6.py (shad clauses, ISO = {7,9,11,13} syllables)."""
+Read-only. Verse features follow tsawa/src/checks/audit_before_v6.py (shad clauses, ISO = {7,9,11,13} syllables)."""
 import glob, re, statistics as st
 import pandas as pd, yaml
 

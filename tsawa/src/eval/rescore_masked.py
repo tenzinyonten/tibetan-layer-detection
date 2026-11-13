@@ -18,7 +18,7 @@ it against every window's char_start / char_end before using it.
 
 Usage
 -----
-    python tsawa/scripts/eval/rescore_masked.py --dump scratch/tsawa/analysis/v6_nofeat_test_spans.jsonl
+    python tsawa/src/eval/rescore_masked.py --dump scratch/tsawa/analysis/v6_nofeat_test_spans.jsonl
 """
 
 from __future__ import annotations
