@@ -31,11 +31,13 @@ python3 scripts/ta.py verify work.txt --title "ཚེས་བཅུའི་ད
 
 ## Quick Reference
 
+The skill is model-neutral: any agent can follow the steps itself, and the scripts call any model through one function (`call_llm(system, user) -> str`). Accuracy was measured with Gemini only; the Claude adapter is untested.
+
 | Task | Command |
 |---|---|
 | Free first guess (weak: author right about 36%) | `python3 scripts/ta.py rules work.txt` |
 | Check and repair my answer | `python3 scripts/ta.py verify work.txt --title "..." --author "..."` |
-| Whole pipeline with Gemini, many works (costs money) | `GEMINI_API_KEY=... python3 scripts/ta.py llm work.txt` |
+| Whole pipeline with an API model, many works (costs money) | `python3 scripts/ta.py llm work.txt gemini-3.8-flash` (needs `GEMINI_API_KEY`) or `... claude-sonnet-5-5` (needs `ANTHROPIC_API_KEY`) |
 | Local HTTP service | `python3 scripts/server.py 8765` |
 | Cache, retry, metering, parallel runs in Python | `scripts/efficiency.py` (read its docstring) |
 | Tool definition for an LLM host (Claude, OpenAI, Gemini) | `scripts/tool_handler.py`, `references/tool_schema.json` |

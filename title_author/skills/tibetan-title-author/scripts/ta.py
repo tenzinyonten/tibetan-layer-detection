@@ -4,7 +4,7 @@
     python3 scripts/ta.py rules  WORK.txt                                  # free rule-based candidate (title ~0.64, author ~0.36: a starting point, not an answer)
     python3 scripts/ta.py verify WORK.txt --title "..." --author "..."     # check/repair YOUR answer against the text, add needs_review
     python3 scripts/ta.py verify WORK.txt --json '{"title": "...", "title_region": "head", "author": "...", "author_region": "tail"}'
-    GEMINI_API_KEY=... python3 scripts/ta.py llm WORK.txt [MODEL]          # whole pipeline with Gemini (batch use; costs money)
+    python3 scripts/ta.py llm WORK.txt MODEL                               # whole pipeline with an API model: gemini-* (GEMINI_API_KEY) or claude-* (ANTHROPIC_API_KEY); costs money
     python3 scripts/ta.py selftest
 
 WORK.txt is the work's text. A work of 6,000 characters or fewer is used whole; a longer one is cut to its first and last 3,000 characters.
@@ -71,5 +71,5 @@ if __name__ == "__main__":
     elif a.cmd == "verify":
         if not (a.title or a.author or a.json): sys.exit("give --title/--author or --json")
         out = verify(head, tail, whole, a.title, a.author, json.loads(a.json) if a.json else None)
-    else: out = S.extract(head, tail, whole, call_llm=S.gemini_call(a.model))
+    else: out = S.extract(head, tail, whole, call_llm=S.llm_for(a.model))
     print(json.dumps(out, ensure_ascii=False, indent=1))

@@ -1,6 +1,6 @@
 You find the title and the author of one Tibetan work. Follow the sections below exactly.
 
-## What Gemini receives
+## What you receive
 
 One work. If `whole_work` is true or `text_tail` is empty, the input is the head. Otherwise the input is the head and the tail, about the first 3,000 and the last 3,000 characters of the work.
 
@@ -15,7 +15,7 @@ Pass them as two labeled blocks so the region is unambiguous:
 
 Omit `[TAIL]` when there is no tail.
 
-## What Gemini must return
+## What you must return
 
 JSON only, no markdown around it:
 

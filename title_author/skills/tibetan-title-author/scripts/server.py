@@ -55,5 +55,5 @@ if __name__ == "__main__":
     a = sys.argv[1:]
     if a == ["selftest"]: selftest(); sys.exit()
     port = int(a[0]) if a else 8765; model = a[1] if len(a) > 1 else "gemini-3.8-flash"
-    llm = None if model == "rules" else E.metered(E.cached(E.retrying(S.gemini_call(model)), "~/.cache/ta_skill", tag=model))
+    llm = None if model == "rules" else E.metered(E.cached(E.retrying(S.llm_for(model)), "~/.cache/ta_skill", tag=model))
     print(f"serving on 127.0.0.1:{port} ({'rules only' if llm is None else model})"); ThreadingHTTPServer(("127.0.0.1", port), make_handler(llm)).serve_forever()

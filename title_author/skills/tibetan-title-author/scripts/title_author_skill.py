@@ -175,6 +175,29 @@ def gemini_call(model="gemini-3.8-flash", thinking="low"):
     return call
 
 
+def anthropic_call(model, max_tokens=4096):
+    """call_llm for a Claude model through the official `anthropic` SDK (pip install anthropic; credentials from ANTHROPIC_API_KEY or `ant auth login`).
+    No temperature or thinking settings are sent: current Claude models reject non-default sampling values and manage thinking themselves.
+    NOT benchmarked: every accuracy number in this skill was measured with Gemini."""
+    try: import anthropic
+    except ImportError: raise RuntimeError("pip install anthropic to use a Claude model")
+    client = anthropic.Anthropic()
+    def call(system, user):
+        msg = client.messages.create(model=model, max_tokens=max_tokens, system=system, messages=[{"role": "user", "content": user}])
+        call.local.usage = (getattr(msg.usage, "input_tokens", 0), getattr(msg.usage, "output_tokens", 0))
+        return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+    call.local = threading.local(); call.tag = f"anthropic:{model}"
+    return call
+
+
+def llm_for(model):
+    """call_llm for a model name: claude-* -> Claude API, gemini-* -> Gemini API. For any other provider write your own call_llm(system, user) -> str."""
+    m = (model or "").lower()
+    if m.startswith("claude"): return anthropic_call(model)
+    if m.startswith("gemini"): return gemini_call(model)
+    raise ValueError(f"unknown provider for model {model!r}: pass your own call_llm(system, user) -> str")
+
+
 def selftest():
     """Offline: a fake LLM drops the role word and, for a second text, returns nothing. No key, no network."""
     head = "༄༅། །ཚེས་བཅུའི་དུས་ཀྱི་མཆོད་པ་བཞུགས།། ཚེས་བཅུའི་མཆོད་པའི་ཡི་གེ་དགེ་སློང་གྲགས་པ་རྒྱལ་མཚན་གྱིས་སྦྱར་བའོ།།"
@@ -202,6 +225,22 @@ def selftest():
     except ValueError: ok = False
     finally: os.unlink(tf.name)
     assert not ok, "an incomplete prompt must be refused"
+    # provider routing + the Claude adapter, with a fake SDK (no key, no network)
+    import types
+    sent = {}
+    class _Msgs:
+        def create(self, **kw):
+            sent.update(kw); return types.SimpleNamespace(content=[types.SimpleNamespace(type="text", text='{"title": null}')], usage=types.SimpleNamespace(input_tokens=7, output_tokens=3))
+    fake_sdk = types.ModuleType("anthropic"); fake_sdk.Anthropic = lambda: types.SimpleNamespace(messages=_Msgs())
+    sys.modules["anthropic"] = fake_sdk
+    try:
+        c = llm_for("claude-sonnet-5-5"); assert c("SYS", "USER") == '{"title": null}' and c.local.usage == (7, 3)
+        assert sent["system"] == "SYS" and sent["messages"][0]["content"] == "USER" and "temperature" not in sent and "thinking" not in sent
+        assert extract(head, "", True, call_llm=c)["author"], "extract works with a Claude adapter"
+    finally: del sys.modules["anthropic"]
+    try: llm_for("some-other-model"); ok = True
+    except ValueError: ok = False
+    assert not ok
     print("selftest OK:", r["notes"], "|", r2["notes"])
 
 
