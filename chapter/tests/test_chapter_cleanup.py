@@ -28,7 +28,7 @@ from tibetan_layer_detection.layer_config import LAYERS  # noqa: E402
 
 DUMP = ROOT / "scratch/chapter/chapter_test_spans.jsonl"
 CLEAN = ROOT / "chapter/data/processed/chapter_spans_clean.csv"
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 PRED_KEY = "viterbi_bp4.0"
 EXPECTED_F1 = 0.8448
 F1_TOL = 0.0005

@@ -1,0 +1,141 @@
+# Tsawa layer: full re-annotation flag for this book.
+# Book list source: HF dataset Yontenn/formatting-tsawa-v6 (train split).
+# Annotation content: raw data/raw_opf/I9779A606.opf/.../layers/v001/Tsawa.yml.
+# This is a tracking/communication file, not a benchmark input.
+# It does not change tsawa_spans_merged.csv, the HF dataset, or any model inputs.
+
+pecha_id: I9779A606
+split: train
+status: needs_reannotation
+generated: '2026-10-14'
+known_issues:
+- id: offset_drift
+  scope: P000027, P000083, P000144, P000242, P000269 (test split)
+  detail: Tsawa span start/end offsets drift 30-113 chars (median) from the nearest line-break / shad
+    boundary. The recent annotator review pass did not fix this; verified byte-for-byte against the raw
+    Tsawa.yml.
+- id: tsawa_vs_quotation
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: No documented convention for telling genuine root-text (tsawa) from a quoted/cited verse attributed
+    to a named source or chapter (e.g. verses closed with zhes/ces-type markers that are preceded by a
+    named-source or chapter citation, like "in the fourth chapter [it says]"). Some currently-annotated
+    tsawa spans look like quotations under this test and vice versa.
+- id: multi_span_paragraphs
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: Some paragraphs contain 2+ separate tsawa quotes with non-tsawa text between them inside what
+    is annotated as a single span (or a span that should be split). The current schema (one span = one
+    card) and review tooling can't represent this without annotator judgment on where to split.
+annotation:
+  id: 05abdf418d0641189a944c4b4def5f1f
+  annotation_type: Tsawa
+  revision: '00001'
+  annotations:
+    70bdbd0e694d4c43889df8184b5e2e2d:
+      span:
+        start: 425
+        end: 481
+      isverse: true
+    bf3f9513977a4126aeb31127e5c13c6c:
+      span:
+        start: 1356
+        end: 1476
+      isverse: true
+    66c8c39c54204ae587d44e9072e594d4:
+      span:
+        start: 8864
+        end: 9123
+      isverse: true
+    792d5a23d03d4964836ab7e61564de96:
+      span:
+        start: 9125
+        end: 9282
+      isverse: true
+    0dbf835e2e874bda98a1fee39b51ef80:
+      span:
+        start: 9284
+        end: 9436
+      isverse: true
+    879a5226b107431e99cf762fc7459d99:
+      span:
+        start: 10405
+        end: 10446
+      isverse: false
+    0a0653e0d83c492796f22cdc677098a7:
+      span:
+        start: 10448
+        end: 10491
+      isverse: false
+    dd49d1655b6e48f8a0003a42d5ccfc72:
+      span:
+        start: 15839
+        end: 15876
+      isverse: false
+    83e25cb629da4345a3a209d9b102cacc:
+      span:
+        start: 15878
+        end: 15916
+      isverse: false
+    a22bbf7df5904b18bec23b19441ffe9e:
+      span:
+        start: 21881
+        end: 21907
+      isverse: false
+    5b06d15fb13c4fe39e6931d421f8c093:
+      span:
+        start: 21909
+        end: 21937
+      isverse: false
+    5184e9f769b944e4816d9b1123a172d9:
+      span:
+        start: 23132
+        end: 23277
+      isverse: true
+    b49335ad37224698b48c0b4ebb2c0bf0:
+      span:
+        start: 26356
+        end: 26385
+      isverse: false
+    d20508de26184e198300edf93f61c1a1:
+      span:
+        start: 26323
+        end: 26354
+      isverse: true
+    d7cf67807fbe45d1b7a5ab0d1f312bcd:
+      span:
+        start: 232344
+        end: 232502
+      isverse: true
+    1701e4ee4fb345edab2e4ed6cf786def:
+      span:
+        start: 257760
+        end: 257921
+      isverse: true
+    488de20c60bc45679336ce2d57e50924:
+      span:
+        start: 318655
+        end: 319681
+      isverse: true
+    c811526542444137af6d276be39167f6:
+      span:
+        start: 319869
+        end: 320177
+      isverse: true
+  local_ids:
+    70bdbd0e694d4c43889df8184b5e2e2d: 200000
+    bf3f9513977a4126aeb31127e5c13c6c: 200001
+    66c8c39c54204ae587d44e9072e594d4: 200002
+    792d5a23d03d4964836ab7e61564de96: 200003
+    0dbf835e2e874bda98a1fee39b51ef80: 200004
+    879a5226b107431e99cf762fc7459d99: 200005
+    0a0653e0d83c492796f22cdc677098a7: 200006
+    dd49d1655b6e48f8a0003a42d5ccfc72: 200007
+    83e25cb629da4345a3a209d9b102cacc: 200008
+    a22bbf7df5904b18bec23b19441ffe9e: 200009
+    5b06d15fb13c4fe39e6931d421f8c093: 200010
+    5184e9f769b944e4816d9b1123a172d9: 200011
+    b49335ad37224698b48c0b4ebb2c0bf0: 200012
+    d20508de26184e198300edf93f61c1a1: 200013
+    d7cf67807fbe45d1b7a5ab0d1f312bcd: 200014
+    1701e4ee4fb345edab2e4ed6cf786def: 200015
+    488de20c60bc45679336ce2d57e50924: 200016
+    c811526542444137af6d276be39167f6: 200017

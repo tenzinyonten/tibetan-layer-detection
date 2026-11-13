@@ -88,6 +88,8 @@ def detect(path, layers="all", *, out_dir=None, device=None, review_threshold: f
         _preprocess.main(["--input", str(path), "--out", str(pre_dir)])
         infer_argv = ["--input", str(pre_dir), "--out", str(pred_dir),
                      "--layers", *layer_names, "--device", device]
+        # detect() already lists layers; infer still auto-adds quotation when
+        # tsawa is requested so unannotated books get a model quote mask.
         if stride is not None:
             infer_argv += ["--stride", str(stride)]
         if dual_window:

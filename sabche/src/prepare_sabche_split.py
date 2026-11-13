@@ -33,10 +33,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common"))
 from build_tsawa_dataset import sliding_windows  # noqa: E402
 
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 CLEAN = ROOT / "sabche/data/processed/sabche_spans_clean.csv"
 VERDICTS = ROOT / "sabche/data/processed/sabche_book_verdicts.csv"
-SPLIT_V3 = ROOT / "tsawa/data/processed/split_v3_frozen.csv"
+SPLIT_V3 = ROOT / "data/shared/split_v3_frozen.csv"
 OUT_EXCL = ROOT / "sabche/data/processed/sabche_excluded_books.csv"
 TOKENIZER = "jhu-clsp/mmBERT-base"
 CONTENT_LEN = 8190  # 8192 - CLS - SEP

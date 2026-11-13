@@ -34,7 +34,7 @@ def overlaps(a, b):
 merged = pd.read_csv("tsawa/data/processed/tsawa_spans_merged.csv")
 merged = merged[~merged.dropped.astype(bool)]
 mcount = merged.groupby("pecha_id").size().to_dict()
-split = pd.read_csv("tsawa/data/processed/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
+split = pd.read_csv("data/shared/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
 tsawa_books = [p for p in data if data[p]["tsawa"] is not None]
 rows = []
 for p in tsawa_books:

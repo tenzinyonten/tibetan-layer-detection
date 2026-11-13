@@ -1,0 +1,156 @@
+# Tsawa layer: full re-annotation flag for this book.
+# Book list source: HF dataset Yontenn/formatting-tsawa-v6 (train split).
+# Annotation content: raw data/raw_opf/P000225.opf/.../layers/v001/Tsawa.yml.
+# This is a tracking/communication file, not a benchmark input.
+# It does not change tsawa_spans_merged.csv, the HF dataset, or any model inputs.
+
+pecha_id: P000225
+split: train
+status: needs_reannotation
+generated: '2026-10-14'
+known_issues:
+- id: offset_drift
+  scope: P000027, P000083, P000144, P000242, P000269 (test split)
+  detail: Tsawa span start/end offsets drift 30-113 chars (median) from the nearest line-break / shad
+    boundary. The recent annotator review pass did not fix this; verified byte-for-byte against the raw
+    Tsawa.yml.
+- id: tsawa_vs_quotation
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: No documented convention for telling genuine root-text (tsawa) from a quoted/cited verse attributed
+    to a named source or chapter (e.g. verses closed with zhes/ces-type markers that are preceded by a
+    named-source or chapter citation, like "in the fourth chapter [it says]"). Some currently-annotated
+    tsawa spans look like quotations under this test and vice versa.
+- id: multi_span_paragraphs
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: Some paragraphs contain 2+ separate tsawa quotes with non-tsawa text between them inside what
+    is annotated as a single span (or a span that should be split). The current schema (one span = one
+    card) and review tooling can't represent this without annotator judgment on where to split.
+annotation:
+  id: 12757baa6bc04911aa3acb1142f95522
+  annotation_type: Tsawa
+  revision: '00001'
+  annotations:
+    124c1efcda714affbbf117372719291f:
+      span:
+        start: 7400
+        end: 7461
+    1b74f31dbf7b43098217c240a81a27ae:
+      span:
+        start: 8342
+        end: 8373
+    5f3a14181f72452c8343e79684e2992b:
+      span:
+        start: 8962
+        end: 9013
+    8e50804935a0478eb31a69bf5398a5b6:
+      span:
+        start: 91085
+        end: 91160
+    aaab5f5e176649b49e5e08d50e02f317:
+      span:
+        start: 91505
+        end: 91579
+    a979ae2583d64bb98f400d94a42fdc6c:
+      span:
+        start: 97448
+        end: 97587
+    8ddf01dfda0d4f7c912bca90251fa728:
+      span:
+        start: 113640
+        end: 113796
+    b8814f795f5d4e93a7c9c7bb36e8a9ce:
+      span:
+        start: 132569
+        end: 132632
+    2e3c980e89d74366832b8d1d49df3a05:
+      span:
+        start: 141126
+        end: 141309
+    8811b1b9138d4bee96a4a9d3d11ad6e3:
+      span:
+        start: 150980
+        end: 151208
+    4a5622bc80e144ff9d1f8fdcae3a1863:
+      span:
+        start: 191922
+        end: 192003
+    475883bdab6347748563b525c5a0f479:
+      span:
+        start: 192858
+        end: 193169
+    d4d97002607345deb6d292fdbdb7faa2:
+      span:
+        start: 257981
+        end: 258145
+    ff9c6b323d1141f1afde873b19bab7b9:
+      span:
+        start: 258184
+        end: 258866
+    b3f8ecec0d804520a0ee850add4159ab:
+      span:
+        start: 412116
+        end: 412168
+    578decde928743148cde02b522865fdf:
+      span:
+        start: 412270
+        end: 412328
+    21123c904b414cde8052ed42d21cf510:
+      span:
+        start: 418755
+        end: 418946
+    8308bced6b2c4b24bb0f0b72bb2dcf40:
+      span:
+        start: 435327
+        end: 435407
+    4b4b4f441b754f359ecb42c7b27c876c:
+      span:
+        start: 438065
+        end: 438251
+    5c0556f0c20e4390bf47d0731c69c658:
+      span:
+        start: 441990
+        end: 442064
+    e9cb873604d14f78916efdde915a5948:
+      span:
+        start: 463345
+        end: 463406
+    1d2ee15d8f1043109cb5983278efc403:
+      span:
+        start: 464679
+        end: 464851
+    d381f83ee4a64e91ab9f9a14a0ea8117:
+      span:
+        start: 488855
+        end: 488918
+    9955934aa8a24bde8150189d4e1d105f:
+      span:
+        start: 499304
+        end: 499362
+    edb4ef172fd84eedbf76bdf01026608a:
+      span:
+        start: 545498
+        end: 545657
+    6386425809d947b58a633ad498d9e452:
+      span:
+        start: 559791
+        end: 560129
+    2bc667ecf48e4c63af1af426b5473955:
+      span:
+        start: 562338
+        end: 562448
+    dc4be850c2094700aa7f8c252afa0024:
+      span:
+        start: 576248
+        end: 576329
+    210556b6e6f04a8b974a4baa9950a23e:
+      span:
+        start: 595054
+        end: 595269
+    6eaeabe0097e45d189e54376a7761e60:
+      span:
+        start: 612115
+        end: 612226
+    26d8bae18c5d4886b1b58201b64058aa:
+      span:
+        start: 618840
+        end: 618909

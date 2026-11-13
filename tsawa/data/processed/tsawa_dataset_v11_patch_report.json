@@ -1,0 +1,110 @@
+{
+ "patched_books": [
+  "I19A08A51",
+  "I895C519A",
+  "P000028",
+  "P000161",
+  "P000175",
+  "P000215"
+ ],
+ "unchanged_books": [
+  "I2EAAF38A",
+  "I454D2699",
+  "I4B1806B4",
+  "I4FD99A33",
+  "I4FDF07E7",
+  "I8698A1DF",
+  "I8B49E87B",
+  "I9811592F",
+  "IA473D353",
+  "P000071",
+  "P000084",
+  "P000237"
+ ],
+ "label_positions_changed": {
+  "I19A08A51": 156,
+  "I2EAAF38A": 0,
+  "I454D2699": 0,
+  "I4B1806B4": 0,
+  "I4FD99A33": 0,
+  "I4FDF07E7": 0,
+  "I8698A1DF": 0,
+  "I895C519A": 1902,
+  "I8B49E87B": 0,
+  "I9811592F": 0,
+  "IA473D353": 0,
+  "P000028": 48,
+  "P000071": 0,
+  "P000084": 0,
+  "P000161": 13397,
+  "P000175": 47064,
+  "P000215": 1893,
+  "P000237": 0
+ },
+ "span_changes": {
+  "I19A08A51": {
+   "old": 18,
+   "new": 15,
+   "identical": 14,
+   "removed": 4,
+   "added": 1
+  },
+  "I895C519A": {
+   "old": 122,
+   "new": 25,
+   "identical": 25,
+   "removed": 97,
+   "added": 0
+  },
+  "P000028": {
+   "old": 103,
+   "new": 103,
+   "identical": 101,
+   "removed": 2,
+   "added": 2
+  },
+  "P000161": {
+   "old": 335,
+   "new": 329,
+   "identical": 174,
+   "removed": 161,
+   "added": 155
+  },
+  "P000175": {
+   "old": 280,
+   "new": 278,
+   "identical": 19,
+   "removed": 261,
+   "added": 259
+  },
+  "P000215": {
+   "old": 16,
+   "new": 6,
+   "identical": 6,
+   "removed": 10,
+   "added": 0
+  }
+ },
+ "span_totals": {
+  "old": 874,
+  "new": 756,
+  "identical": 339,
+  "removed": 535,
+  "added": 417
+ },
+ "val_spans_before": 1700,
+ "val_spans_after": 1582,
+ "v11_windows": {
+  "train": 4850,
+  "validation": 456,
+  "classical_validation": 642,
+  "classical_test": 634,
+  "test": 639
+ },
+ "v11_noclassical_windows": {
+  "train": 3193,
+  "validation": 456,
+  "test": 639
+ },
+ "v11_noclassical_train_docs": 79
+}

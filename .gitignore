@@ -39,3 +39,6 @@ sabche/data/processed/sabche_dataset*/
 !sabche/data/processed/sabche_dataset*/dataset_card.md
 chapter/data/processed/chapter_dataset*/
 build/
+
+# Spell checker lives in its own repo: https://github.com/tenzinyonten/TiSpell
+TiSpell/

@@ -42,7 +42,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--audit-csv",
         type=Path,
-        default=Path("tsawa/data/processed/tsawa_audit.csv"),
+        default=Path("data/shared/tsawa_audit.csv"),
     )
     p.add_argument(
         "--out",

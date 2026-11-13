@@ -1,0 +1,26 @@
+pecha_id,root_text_repo,split,rank_by_spans,n_spans,chars,commentary
+WB952E49A0,Commentary_on_Valid_Cognition-rails,train,1,1323,1352148,ཚད་མ་རྣམ་འགྲེལ་གྱི་གཞུང་གསལ་པོར་བཤད་པ་ལེགས་བཤད་སྣང་བའི་གཏེར།
+WB538B6B7E,Commentary_on_Valid_Cognition-rails,test,2,1157,1226163,ཚད་མ་རྣམ་འགྲེལ་གྱི་དཀའ་འགྲེལ།
+WB221367FC,Commentary_on_Valid_Cognition-rails,validation,3,995,1194089,ཚད་མ་རྣམ་འགྲེལ་གྱི་ཚིག་ལེའུར་བྱས་པའི་རྣམ་བཤད་ཐར་ལམ་ཕྱིན་ཅི་མ་ལོག་པར་གསལ་བར་བྱེད་པ།
+WBD11654CE,Commentary_on_Valid_Cognition-rails,train,4,779,980090,རྒྱས་པའི་བསྟན་བཅོས་ཚད་མ་རྣམ་འགྲེལ་གྱི་དཀའ་འགྲེལ་དགོངས་པ་རབ་གསལ།
+WB293AAB0E,Introduction_to_the_Middle_Way-rails,train,1,332,2414892,དབུ་མ་ལ་འཇུག་པའི་ཊཱི་ཀ་ཟབ་རྒྱས་ལམ་མཆོག་རབ་གསལ་སྣང་བའི་རྒྱན།
+WB6605DC96,Introduction_to_the_Middle_Way-rails,test,2,331,463498,དབུ་མ་ལ་འཇུག་པའི་བཤད་པ།
+WBFD9A3D42,Introduction_to_the_Middle_Way-rails,validation,3,325,696489,དབུ་མ་ལ་འཇུག་པའི་རྒྱ་ཆེར་བཤད་པ་དགོངས་པ་རབ་གསལ།
+WB95443AC2,Introduction_to_the_Middle_Way-rails,train,4,322,377302,དབུ་མ་ལ་འཇུག་པའི་འགྲེལ་བ་ཟླ་བའི་ཞལ་ལུང་དྲི་མེད་ཤེལ་ཕྲེང་།
+WB08FDF935,Treasury_of_Abhidharma-rails,train,1,713,1613471,ཆོས་མངོན་པ་མཛོད་ཀྱི་ཚིག་ལེའུར་བྱས་པའི་འགྲེལ་པ་མངོན་པའི་རྒྱན།
+WBB84F7E33,Treasury_of_Abhidharma-rails,test,2,672,758817,ཆོས་མངོན་པའི་མཛོད་ཀྱི་རྣམ་པར་བཤད་པ་ཆོས་མངོན་རྒྱ་མཚོའི་སྙིང་པོ་མཁྱེན་བརྩེའི་ཞལ་ལུང་གཞོན་ནུ་རྣམ་རོལ་ལེགས་བཤད་ཆོས་མིག་རྣམ་འབྱེད་གྲུབ་བདེའི་ཤིང་རྟ།
+WB3AF96C03,Treasury_of_Abhidharma-rails,validation,3,390,444201,ཆོས་མངོན་པ་མཛོད་ཀྱི་དཀའ་གནས་ལེགས་པར་བཤད་པ་ནོར་བུའི་བང་མཛོད།
+WB6EECC200,Treasury_of_Abhidharma-rails,train,4,113,93240,ཆོས་མངོན་པ་མཛོད་ཀྱི་འགྲེལ་བཤད་མཚན་ཉིད་ཀྱི་རྗེས་སུ་འབྲང་བ།
+WB6C2D1D2B,Vinaya_sutra-rails,train,1,830,1593746,འདུལ་བའི་མདོའི་རྒྱ་ཆེར་འགྲེལ་པ།
+WB8B136A96,Vinaya_sutra-rails,test,2,737,976257,ལེགས་པར་གསུངས་པའི་དམ་པའི་ཆོས་འདུལ་བ་མཐའ་དག་གི་སྙིང་པོའི་དོན་ལེགས་པར་བཤད་པ་རིན་པོ་ཆེའི་འཕྲེང་བ་ཞེས་བྱ་བ་ལས་གཞི་སྟོད།
+WBD9437B61,Vinaya_sutra-rails,validation,3,638,833488,ལེགས་པར་གསུངས་པའི་དམ་པའི་ཆོས་འདུལ་བ་མཐའ་དག་གི་སྙིང་པོའི་དོན་ལེགས་པར་བཤད་པ་རིན་པོ་ཆེའི་ཕྲེང་བ་ཞེས་བྱ་བའི་སྨད་ཆ།
+WBEEAE0D5D,Vinaya_sutra-rails,train,4,422,1217228,བསྟན་བཅོས་འདུལ་བ་མདོ་རྩ་བའི་སྤྱི་དོན་ཊཱིཀ་ཆེན་རིན་ཆེན་ཕྲེང་བའི་དགོངས་རྒྱན།
+WBEC89D928,bodhisattvacharyavatara-rails,train,1,919,760560,ཀུན་དཔལ་སྤྱོད་འཇུག་ཚིག་འགྲེལ་འཇམ་དབྱངས་བླ་མའི་ཞལ་ལུང་།
+WB933FBB1E,bodhisattvacharyavatara-rails,test,2,909,824597,བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པ་ཞེས་བྱ་བའི་འགྲེལ་པ།
+WB335D682D,bodhisattvacharyavatara-rails,validation,3,820,884763,བྱང་ཆུབ་ཀྱི་སྤྱོད་པ་ལ་འཇུག་པའི་དཀའ་འགྲེལ།
+WB4FCCAAFE,bodhisattvacharyavatara-rails,train,4,565,391628,བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་འགྲེལ་བ
+WB1F92DD15,mdo-sde-rgyan-rails,train,1,714,966442,ཐེག་པ་ཆེན་པོ་མདོ་སྡེའི་རྒྱན་གྱི་དགོངས་དོན་རྣམ་པར་བཤད་པ་ཐེག་མཆོག་བདུད་རྩིའི་དགའ་སྟོན།
+WB2415B174,mdo-sde-rgyan-rails,test,2,591,715540,ཐེག་པ་ཆེན་པོ་མདོ་སྡེའི་རྒྱན་གྱི་འགྲེལ་པ་རིན་པོ་ཆེའི་ཕྲེང་བ།
+WB37FA7231,mdo-sde-rgyan-rails,validation,3,484,982142,མདོ་སྡེ་རྒྱན་གྱི་འགྲེལ་བཤད། སྟོད་ཆ།
+WB72607BDE,mdo-sde-rgyan-rails,train,4,407,892201,མདོ་སྡེ་རྒྱན་གྱི་འགྲེལ་བཤད། སྨད་ཆ།
+WB1A8896DB,mdo-sde-rgyan-rails,train,5,388,369518,ཐེག་པ་ཆེན་པོ་མདོ་སྡེའི་རྒྱན་ཞེས་བྱ་བའི་མཆན་འགྲེལ།

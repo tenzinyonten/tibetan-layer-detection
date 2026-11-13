@@ -11,7 +11,7 @@ the same rebuild is used for original and corrected gold so the two are comparab
 import glob, json, re, collections
 import numpy as np, pandas as pd
 
-OUT = "common/annotation_audit"; K = 200
+OUT = "tsawa/audit"; K = 200
 SH = "།༎༏༐༑༔"; ISO = {7, 9, 11, 13}
 SUSPECT = ["P000027", "P000083", "P000144", "P000242", "P000269"]
 def base(p): return open([x for x in glob.glob(f"data/raw_opf/{p}.opf/*") if x.endswith(".opf")][0] + "/base/v001.txt", encoding="utf-8").read()
@@ -36,7 +36,7 @@ def best_shift(b, s, e):
     return best[1]
 
 T = pd.read_csv("tsawa/data/processed/tsawa_spans_merged.csv"); T = T[~T.dropped.astype(bool)]
-split = pd.read_csv("tsawa/data/processed/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
+split = pd.read_csv("data/shared/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
 test_books = sorted(p for p, s in split.items() if s == "test")
 CONTROL = [p for p in test_books if p not in SUSPECT and p != "IF3ACC3E1"]  # IF3ACC3E1: 747 short word-fragment spans, not verse
 # --- diagnostics: how often does the search move spans in clean books (false-move rate) vs suspect books

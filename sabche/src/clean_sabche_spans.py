@@ -36,7 +36,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common"))
 from check_boundary_snapping import BOUNDARY_CHARS  # noqa: E402
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 OUT = ROOT / "sabche/data/processed/sabche_spans_clean.csv"
 OUT_BOOKS = ROOT / "sabche/data/processed/sabche_book_verdicts.csv"
 

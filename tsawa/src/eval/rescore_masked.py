@@ -18,7 +18,7 @@ it against every window's char_start / char_end before using it.
 
 Usage
 -----
-    python tsawa/scripts/eval/rescore_masked.py --dump scratch/tsawa/analysis/v6_nofeat_test_spans.jsonl
+    python tsawa/src/eval/rescore_masked.py --dump scratch/tsawa/analysis/v6_nofeat_test_spans.jsonl
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ from eval_viterbi_iou import score  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 PAIRS = ROOT / "tsawa/data/processed/named_source_pairs.csv"
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 
 
 def suspect_sets(path: Path) -> dict[str, dict[str, list[tuple[int, int]]]]:

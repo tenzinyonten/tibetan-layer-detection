@@ -4,7 +4,7 @@ Clean books: start ok 97-100%. Flag < 60%.  Writes tsawa_drift_train_val.csv nex
 import glob, re
 import numpy as np, pandas as pd
 
-OUT = "common/annotation_audit"; SH = "།༎༏༐༑༔"; ISO = {7, 9, 11, 13}
+OUT = "tsawa/audit"; SH = "།༎༏༐༑༔"; ISO = {7, 9, 11, 13}
 def base(p): return open([x for x in glob.glob(f"data/raw_opf/{p}.opf/*") if x.endswith(".opf")][0] + "/base/v001.txt", encoding="utf-8").read()
 def syl(s): return len([x for x in s.split("་") if x.strip()])
 def metre(t):
@@ -16,7 +16,7 @@ def metre(t):
     if n: c.append(n)
     return sum(x in ISO for x in c) / len(c) if c else 0.0
 T = pd.read_csv("tsawa/data/processed/tsawa_spans_merged.csv"); T = T[~T.dropped.astype(bool)]
-split = pd.read_csv("tsawa/data/processed/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
+split = pd.read_csv("data/shared/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
 SV = pd.read_csv("sabche/data/processed/sabche_book_verdicts.csv").set_index("pecha_id")
 rows = []
 for pid, g in T.groupby("pecha_id"):

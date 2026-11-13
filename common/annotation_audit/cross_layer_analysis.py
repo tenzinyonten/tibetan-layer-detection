@@ -69,7 +69,7 @@ mt["unexplained_per_100k"] = mt.strict_runs_unexplained / mt.text_chars * 1e5
 # ================= ANALYSIS 2 =================
 def split_of(path):
     d = pd.read_csv(path, comment="#"); d["split"] = d.split.replace({"validation": "val"}); return d.set_index("pecha_id").split.to_dict()
-SP = {"tsawa": split_of("tsawa/data/processed/split_v3_frozen.csv"),
+SP = {"tsawa": split_of("data/shared/split_v3_frozen.csv"),
       "sabche": split_of("sabche/data/processed/sabche_split_frozen.csv"),
       "chapter": split_of("chapter/data/processed/chapter_split_frozen.csv")}
 test = {k: {p for p, s in v.items() if s == "test"} for k, v in SP.items()}

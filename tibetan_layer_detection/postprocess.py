@@ -60,6 +60,41 @@ def drop_short_spans(layers: dict[str, list[dict]]) -> tuple[dict[str, list[dict
     return kept, {n: len(layers[n]) - len(kept[n]) for n in layers}
 
 
+# Drop a predicted tsawa span when this much of it sits inside a *predicted*
+# quotation span (Bo-Quotation-Detection). Never reads gold Quotation.yml /
+# Citation.yml — incoming books are unannotated. If the quotation model
+# produced no spans, this is a no-op. Gold-quote overlap was only a measurement
+# upper bound (0.748 → 0.854); live gain is whatever the quotation model allows.
+QUOTE_COVERAGE_DROP = 0.5
+
+
+def _coverage(span: dict, others: list[dict]) -> float:
+    s, e = span["start"], span["end"]
+    if e <= s:
+        return 0.0
+    return sum(max(0, min(e, o["end"]) - max(s, o["start"])) for o in others) / (e - s)
+
+
+def drop_quoted_tsawa(
+    layers: dict[str, list[dict]], min_coverage: float = QUOTE_COVERAGE_DROP,
+) -> tuple[dict[str, list[dict]], int]:
+    """Drop tsawa spans whose overlap with the quotation *model* is at least
+    `min_coverage` of the tsawa span's length. Uses `layers["quotation"]`
+    from Stage 2 only — never gold annotations. No-op if either layer is
+    missing or empty (unannotated book, or quotation model found nothing).
+    Returns (layers, n_dropped)."""
+    tsawa = layers.get("tsawa") or []
+    quotes = layers.get("quotation") or []
+    if not tsawa or not quotes:
+        return layers, 0
+    kept = [s for s in tsawa if _coverage(s, quotes) < min_coverage]
+    if len(kept) == len(tsawa):
+        return layers, 0
+    out = dict(layers)
+    out["tsawa"] = kept
+    return out, len(tsawa) - len(kept)
+
+
 # ---------------------------------------------------------------------------
 # joining Stage 1 + Stage 2
 # ---------------------------------------------------------------------------
@@ -314,6 +349,10 @@ def parse_args(argv=None) -> argparse.Namespace:
                          "whose Stage 1 source_path matches <id>.opf/<id>.opf/base/v001.txt; "
                          "for a plain .txt input, builds <out>/<id>.opf/<id>.opf/ with "
                          "base/v001.txt (a copy of the input) and layers/v001/")
+    ap.add_argument("--keep-quoted-tsawa", action="store_true",
+                    help="do not drop tsawa spans that mostly overlap a predicted "
+                         "quotation span. Default: drop when coverage >= 0.5 and "
+                         "the quotation *model* produced spans. Does not use gold.")
     ap.add_argument("--review-threshold", type=float, default=None,
                     help="a span with confidence below this is flagged review_needed, "
                          "for every layer. Default: each layer's own threshold from "
@@ -343,6 +382,13 @@ def main(argv=None) -> int:
         if any(dropped_short.values()):
             print(f"  [note] {book_id}: dropped spans under {MIN_SPAN_CHARS} chars: "
                   f"{ {n: c for n, c in dropped_short.items() if c} }", file=sys.stderr)
+        dropped_quoted = 0
+        if not args.keep_quoted_tsawa:
+            layers, dropped_quoted = drop_quoted_tsawa(layers)
+            if dropped_quoted:
+                print(f"  [note] {book_id}: dropped {dropped_quoted} tsawa span(s) "
+                      f"with >= {QUOTE_COVERAGE_DROP:.0%} predicted-quotation coverage",
+                      file=sys.stderr)
         text, text_length = preprocessed["text"], preprocessed["char_count"]
 
         if args.json:
@@ -383,6 +429,7 @@ def main(argv=None) -> int:
             "review_needed": review_needed,
             "short_spans_removed": predictions.get("short_spans_removed", {}),
             "short_spans_dropped_at_render": dropped_short,
+            "quoted_tsawa_dropped": dropped_quoted,
             "errors": combined_errors,
         })
 

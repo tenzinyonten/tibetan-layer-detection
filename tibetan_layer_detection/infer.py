@@ -305,6 +305,10 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap.add_argument("--out", type=Path, required=True, help="folder to write predictions JSONs into")
     ap.add_argument("--layers", nargs="+", choices=list(LAYERS), default=None)
     ap.add_argument("--all", action="store_true", help="run every layer with a model configured")
+    ap.add_argument("--skip-quotation", action="store_true",
+                    help="do not auto-run the quotation model when tsawa is selected. "
+                         "Default: tsawa also runs Bo-Quotation-Detection so Stage 3 can "
+                         "drop quoted tsawa on unannotated books (no gold layers).")
     ap.add_argument("--device", default="cuda" if _has_cuda() else "cpu")
     ap.add_argument("--stride", type=int, default=None,
                     help="override every selected layer's window stride (smaller = more "
@@ -319,6 +323,15 @@ def parse_args(argv=None) -> argparse.Namespace:
     return ap.parse_args(argv)
 
 
+def layers_for_run(requested: list[str], *, skip_quotation: bool = False) -> list[str]:
+    """Ensure the quotation *model* runs whenever tsawa does, so postprocess
+    can mask quoted tsawa on books with no gold Quotation.yml."""
+    names = list(requested)
+    if "tsawa" in names and "quotation" not in names and not skip_quotation:
+        names.append("quotation")
+    return names
+
+
 def _has_cuda() -> bool:
     try:
         import torch
@@ -331,7 +344,10 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     if not args.layers and not args.all:
         raise SystemExit("pass --layers <name...> or --all")
-    layer_names = list(LAYERS) if args.all else args.layers
+    layer_names = layers_for_run(
+        list(LAYERS) if args.all else list(args.layers),
+        skip_quotation=args.skip_quotation,
+    )
 
     files = sorted(args.input.glob("*.json"))
     if not files:

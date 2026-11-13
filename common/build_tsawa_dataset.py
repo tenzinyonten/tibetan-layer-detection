@@ -14,7 +14,7 @@ Use ``--from-yaml`` to label raw YAML instead. Cloned ``Tsawa.yml`` is never
 rewritten.
 
 This script does **not** decide which repos have Tsawa. That list comes
-from ``tsawa/data/processed/tsawa_audit.csv`` (Phase 2). If the audit totals do
+from ``data/shared/tsawa_audit.csv`` (Phase 2). If the audit totals do
 not match the frozen Phase 2 counts, we abort instead of guessing.
 
 BIO convention
@@ -86,7 +86,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--audit-csv",
         type=Path,
-        default=Path("tsawa/data/processed/tsawa_audit.csv"),
+        default=Path("data/shared/tsawa_audit.csv"),
         help="Phase 2 audit CSV — source of truth for which repos to include.",
     )
     p.add_argument(

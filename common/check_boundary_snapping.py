@@ -16,7 +16,7 @@ Diagnostic only — does not rewrite any spans. Helpers match
 
 Usage:
     python common/check_boundary_snapping.py \\
-        --audit-csv tsawa/data/processed/tsawa_audit.csv \\
+        --audit-csv data/shared/tsawa_audit.csv \\
         --raw-opf-dir data/raw_opf \\
         --out tsawa/data/processed/boundary_check.csv
 """

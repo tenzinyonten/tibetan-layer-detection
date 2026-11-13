@@ -16,7 +16,7 @@ Uses the same audit / nested-``.opf`` helpers and ``BOUNDARY_CHARS`` /
 
 Usage:
     python tsawa/src/snap_tsawa_boundaries.py \\
-        --audit-csv tsawa/data/processed/tsawa_audit.csv \\
+        --audit-csv data/shared/tsawa_audit.csv \\
         --raw-opf-dir data/raw_opf \\
         --out tsawa/data/processed/tsawa_spans_snapped.csv
 """

@@ -1,24 +1,21 @@
 # layer_detection
 
-Standalone project for **Tibetan text layer detection**: identifying structural
-and semantic annotation layers inside digitized Tibetan Buddhist texts
-(OpenPecha `.opf` / Pecha Format, from [OpenPecha-Data](https://github.com/OpenPecha-Data)
-and possibly [Webuddhist-tech](https://github.com/Webuddhist-tech)).
+One token-classification model per layer of a Tibetan pecha (OpenPecha `.opf`).
+Shared training and fetching live in `common/`. Inference over a finished book,
+loading the published per-layer models, is the `tibetan_layer_detection` package
+(`tibetan-detect`). The spell checker is a separate repo:
+[tenzinyonten/TiSpell](https://github.com/tenzinyonten/TiSpell).
 
-This repo trains **one binary token-classification model per layer**, starting
-with **Tsawa** (རྩ་བ, root text), fine-tuned from
-[`jhu-clsp/mmBERT-base`](https://huggingface.co/jhu-clsp/mmBERT-base).
+| Layer | What it marks | Code and data | Results |
+|---|---|---|---|
+| Tsawa | root text (རྩ་བ) | `tsawa/` | `tsawa/audit/` |
+| Sabche | outline headings | `sabche/` | `sabche/results/zeroshot/` |
+| Chapter | chapter breaks | `chapter/` | `chapter/results/zeroshot/<model>/` |
+| Title and author | title and author spans | `title_author/` (its own layout, not reorganized here) | — |
 
-A previous joint multi-label BIO model
-([`karma689/mmbert-base-layer-detection-v1.2`](https://huggingface.co/karma689/mmbert-base-layer-detection-v1.2))
-learned author/chapter reasonably well but essentially failed on tsawa,
-yigchung, and quote (validation F1 ≈ 0.02–0.04), likely because a shared
-loss drowned rare/hard labels.
+Book text paths and the frozen document split are shared, because more than one layer reads them: `data/shared/tsawa_audit.csv`, `data/shared/split_v3_frozen.csv`. Cloned `.opf` repos are in `data/raw_opf/` (gitignored). A loose OCR sample is in `data/ocr/`.
 
-**Current stage:** Phases 1–3 are implemented (fetch, audit, BIO dataset).
-Data-rights: **combined old+new batches may be used for training.** Datasets and
-models are on Hugging Face (see below).
-**No training loop** yet.
+Datasets and models on Hugging Face:
 
 ## Hugging Face
 
@@ -68,7 +65,7 @@ python common/train_layer.py --label-name CHAPTER --weight-scheme sqrt_inv \
 
 Numbers and cleaning details are in `chapter/docs/dataset_card.md`. Scripts here
 import shared code from `common/` and read book text paths from
-`tsawa/data/processed/tsawa_audit.csv`; nothing reads from `scratch/` (the split script only writes a report there).
+`data/shared/tsawa_audit.csv`; nothing reads from `scratch/` (the split script only writes a report there).
 
 ## OpenPecha `.opf` layout (what we fetch)
 
@@ -139,7 +136,7 @@ Skip/continue on missing or private remotes; the process does not abort.
 
 Scans every checkout in `data/raw_opf/`, resolves the nested
 `<ID>.opf/<ID>.opf/` layout, parses `layers/v001/Tsawa.yml` against
-`base/v001.txt`, and writes `tsawa/data/processed/tsawa_audit.csv` plus an
+`base/v001.txt`, and writes `data/shared/tsawa_audit.csv` plus an
 old-vs-new summary (span counts, union coverage %, `isverse`, quality flags).
 
 Spans are treated as **start inclusive, end exclusive**.
@@ -214,7 +211,6 @@ ds = load_dataset("Yontenn/formatting-tsawa-v1")
 3. Coverage is thin (~4.5% of base text in Tsawa repos). That matches the old
    joint model’s tsawa F1 of 0.038; a dedicated binary model is still the plan.
 
-## What this repo will not do yet
+## Training
 
-No training loop and no model publish-to-Hub step until you choose
-hyperparameters.
+`common/train_layer.py` is the training loop (one label name per run). On a fresh Vast.ai box, `bash setup_vast.sh`, then for example `python common/train_layer.py --smoke-test --output-dir /workspace/runs/smoke`.

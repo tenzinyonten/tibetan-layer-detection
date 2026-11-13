@@ -34,9 +34,9 @@ from gemini_locate import (  # noqa: E402
     parse_quote_dump,
 )
 
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 SPANS = ROOT / "tsawa/data/processed/tsawa_spans_merged.csv"
-SPLIT = ROOT / "tsawa/data/processed/split_v3_frozen.csv"
+SPLIT = ROOT / "data/shared/split_v3_frozen.csv"
 IGNORE = ROOT / "tsawa/data/processed/v6_ignore_spans.csv"
 QUOTE_SPANS = ROOT / "tsawa/data/processed/quotation_spans_snapped.csv"
 SABCHE_SPANS = ROOT / "sabche/data/processed/sabche_spans_clean.csv"

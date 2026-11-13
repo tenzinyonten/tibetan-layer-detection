@@ -18,7 +18,7 @@ pip install -q \
     "datasets>=2.20" \
     "accelerate>=0.34" \
     "torch" \
-    "numpy<2.0" \
+    "numpy>=2.0" \
     huggingface_hub \
     scikit-learn
 

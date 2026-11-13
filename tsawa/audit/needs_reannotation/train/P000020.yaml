@@ -1,0 +1,76 @@
+# Tsawa layer: full re-annotation flag for this book.
+# Book list source: HF dataset Yontenn/formatting-tsawa-v6 (train split).
+# Annotation content: raw data/raw_opf/P000020.opf/.../layers/v001/Tsawa.yml.
+# This is a tracking/communication file, not a benchmark input.
+# It does not change tsawa_spans_merged.csv, the HF dataset, or any model inputs.
+
+pecha_id: P000020
+split: train
+status: needs_reannotation
+generated: '2026-10-14'
+known_issues:
+- id: offset_drift
+  scope: P000027, P000083, P000144, P000242, P000269 (test split)
+  detail: Tsawa span start/end offsets drift 30-113 chars (median) from the nearest line-break / shad
+    boundary. The recent annotator review pass did not fix this; verified byte-for-byte against the raw
+    Tsawa.yml.
+- id: tsawa_vs_quotation
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: No documented convention for telling genuine root-text (tsawa) from a quoted/cited verse attributed
+    to a named source or chapter (e.g. verses closed with zhes/ces-type markers that are preceded by a
+    named-source or chapter citation, like "in the fourth chapter [it says]"). Some currently-annotated
+    tsawa spans look like quotations under this test and vice versa.
+- id: multi_span_paragraphs
+  scope: all splits, frequency unknown, not yet systematically counted
+  detail: Some paragraphs contain 2+ separate tsawa quotes with non-tsawa text between them inside what
+    is annotated as a single span (or a span that should be split). The current schema (one span = one
+    card) and review tooling can't represent this without annotator judgment on where to split.
+annotation:
+  id: 6af060237c0f4ff2b1263aec30d2f057
+  annotation_type: Tsawa
+  revision: '00001'
+  annotations:
+    bc79a79f16e847a8bb2aad501ec0df74:
+      span:
+        start: 4140
+        end: 4268
+    cefaa0f163cf4908b3a38aadf38d7e42:
+      span:
+        start: 11515
+        end: 12033
+    bb5484216a664740b14528f08c779b9c:
+      span:
+        start: 12057
+        end: 12212
+    71b2d2b80a3d4b30bad53b95636945ed:
+      span:
+        start: 12571
+        end: 12887
+    bb3eaa08d7604c62a532a6357c228468:
+      span:
+        start: 13015
+        end: 13206
+    589d7ea6c8d2413db27bfd9406616d2a:
+      span:
+        start: 204668
+        end: 204786
+    fce9f4342384430cab020069d936715c:
+      span:
+        start: 269965
+        end: 270197
+    16fbea25df154c00b7916961fbdaa54d:
+      span:
+        start: 270815
+        end: 271048
+    03ed8684592843c8b0b2422d670237c9:
+      span:
+        start: 274745
+        end: 274986
+    5cd2b198c9514a3e866d894286585067:
+      span:
+        start: 275625
+        end: 275855
+    655715801008429e8569d7d0d1e677ec:
+      span:
+        start: 278910
+        end: 279037
