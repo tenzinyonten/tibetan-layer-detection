@@ -5,14 +5,14 @@ description: Finds the title and the author of a Tibetan work (book, article, ma
 
 # Tibetan title and author
 
-Returns the **title** and the **author** of ONE work, each an exact substring of the text, with the block (`head` = start, `tail` = end) it came from. A work of 6,000 characters or fewer is used whole; a longer one is cut to its first and last 3,000 characters (the scripts do this).
+Input: the text of a book or any whole text, as a file. You do NOT need a title or an author.
+Output: the **title** and the **author**, each an exact substring of the text, with the block (`head` = start, `tail` = end) it came from.
+The skill reads only the first 3,000 and the last 3,000 characters (a text of 6,000 characters or fewer is used whole), because the title is at the start and the author's colophon is usually at the end.
 
 ## Quick Start
 
-Put the text in a file, decide the title and author yourself (rules in `references/rules.md`), then check them:
-
 ```bash
-python3 scripts/ta.py verify work.txt --title "ཚེས་བཅུའི་དུས་ཀྱི་མཆོད་པ་" --author "གྲགས་པ་རྒྱལ་མཚན"
+python3 scripts/ta.py llm book.txt gemini-3.8-flash     # or claude-sonnet-5-5; needs GEMINI_API_KEY / ANTHROPIC_API_KEY; costs money
 ```
 
 ```json
@@ -20,31 +20,41 @@ python3 scripts/ta.py verify work.txt --title "ཚེས་བཅུའི་ད
  "title": "ཚེས་བཅུའི་དུས་ཀྱི་མཆོད་པ་",
  "title_region": "head",
  "author": "དགེ་སློང་གྲགས་པ་རྒྱལ་མཚན",
- "author_region": "head",
+ "author_region": "tail",
  "notes": ["added role word 'དགེ་སློང'"],
  "needs_review": false,
  "review_reasons": []
 }
 ```
 
-`verify` made both strings exact substrings, put back the role word that touches the name, and checked for reasons to doubt the author. Answer with this JSON.
+The command cuts the text, lets the model read the excerpt with the rules, then the scripts make both strings exact substrings, put back a role word that touches the name, and flag doubt.
+
+## If you are an agent (no API key needed)
+
+1. `python3 scripts/ta.py excerpt book.txt` prints only the `[HEAD]` and `[TAIL]`. Read that, never the whole book.
+2. Read `references/rules.md`. Decide the title and the author yourself, copied exactly from the excerpt.
+3. `python3 scripts/ta.py verify book.txt --title "<title>" --author "<author>"` repairs spacing, restores the role word, falls back to the rule script if your author cannot be found, and sets `needs_review`. Answer with its JSON.
+4. If `needs_review` is true, re-read the colophon or tell the user the author is uncertain.
 
 ## Quick Reference
 
-The skill is model-neutral: any agent can follow the steps itself, and the scripts call any model through one function (`call_llm(system, user) -> str`). Accuracy was measured with Gemini only; the Claude adapter is untested.
-
 | Task | Command |
 |---|---|
-| Free first guess (weak: author right about 36%) | `python3 scripts/ta.py rules work.txt` |
-| Check and repair my answer | `python3 scripts/ta.py verify work.txt --title "..." --author "..."` |
-| Whole pipeline with an API model, many works (costs money) | `python3 scripts/ta.py llm work.txt gemini-3.8-flash` (needs `GEMINI_API_KEY`) or `... claude-sonnet-5-5` (needs `ANTHROPIC_API_KEY`) |
+| Book in, answer out (API model, costs money) | `python3 scripts/ta.py llm book.txt MODEL` |
+| Free first guess, no model (author right about 36%) | `python3 scripts/ta.py rules book.txt` |
+| Only the text the model would read | `python3 scripts/ta.py excerpt book.txt` |
+| Check and repair a draft that already exists | `python3 scripts/ta.py verify book.txt --title "..." --author "..."` |
+| Block size other than 3,000 (2,000 is untested) | add `--chars 2000` |
 | Local HTTP service | `python3 scripts/server.py 8765` |
 | Cache, retry, metering, parallel runs in Python | `scripts/efficiency.py` (read its docstring) |
 | Tool definition for an LLM host (Claude, OpenAI, Gemini) | `scripts/tool_handler.py`, `references/tool_schema.json` |
 | Offline self-tests | `python3 scripts/run_tests.py` |
 
+The skill is model-neutral: any agent can follow the steps itself, and the scripts call any model through one function (`call_llm(system, user) -> str`). Accuracy was measured with Gemini only; the Claude adapter is untested.
+
 ## IMPORTANT
 
+- **Never read or send the whole book.** Use `excerpt` or let `llm` cut it.
 - **Never reword.** Title and author must be copied exactly from the text. Do not translate, normalize spacing or fix spelling; `verify` repairs only newline and space differences.
 - **The author is the composer of THIS work.** Not the translator, a stanza or verse writer, the compiler, the copyist, the proofreader, or the person who asked for the text (བསྐུལ, ངོར, ཞུས, གསོལ་བ).
 - **Keep the role word** (for example `དགེ་སློང`) when it touches the name; the labels include it about three times in four.
@@ -55,3 +65,4 @@ The skill is model-neutral: any agent can follow the steps itself, and the scrip
 
 - Rules for the title and the author: `references/rules.md` (read it before deciding).
 - Twelve worked examples: `references/examples.md` (long; read only when a case is unclear).
+- How the pieces fit (the pipeline, who produces the draft, which file does what): `references/pipeline.md` (read it to debug, extend, or explain the skill).

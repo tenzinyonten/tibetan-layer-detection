@@ -1,26 +1,25 @@
 #!/usr/bin/env python3
-"""ta.py: the one command an agent (or a person) runs for the Tibetan title/author skill. Prints JSON. No key and no network unless you use `llm`.
+"""ta.py: the one command for the Tibetan title/author skill. You only need the BOOK or WHOLE TEXT as a file; you do NOT need a title or an author.
+The skill takes the first 3,000 and the last 3,000 characters of the text (a text of 6,000 characters or fewer is used whole), finds the title and
+the author there, repairs the answer and flags doubt. Prints JSON.
 
-    python3 scripts/ta.py rules  WORK.txt                                  # free rule-based candidate (title ~0.64, author ~0.36: a starting point, not an answer)
-    python3 scripts/ta.py verify WORK.txt --title "..." --author "..."     # check/repair YOUR answer against the text, add needs_review
-    python3 scripts/ta.py verify WORK.txt --json '{"title": "...", "title_region": "head", "author": "...", "author_region": "tail"}'
-    python3 scripts/ta.py llm WORK.txt MODEL                               # whole pipeline with an API model: gemini-* (GEMINI_API_KEY) or claude-* (ANTHROPIC_API_KEY); costs money
+    python3 scripts/ta.py llm     BOOK.txt MODEL        # text in, answer out: the model reads the excerpt, the scripts check it. MODEL = gemini-* (GEMINI_API_KEY) or claude-* (ANTHROPIC_API_KEY). Costs money.
+    python3 scripts/ta.py rules   BOOK.txt              # free, no model: rule-based guess (title ~0.64, author ~0.36; a hint, not an answer)
+    python3 scripts/ta.py excerpt BOOK.txt              # prints only the [HEAD] and [TAIL] the model would read (for an agent: read this, not the whole book)
+    python3 scripts/ta.py verify  BOOK.txt --title "..." --author "..."    # only if a draft already exists (an agent's own answer): check and repair it
     python3 scripts/ta.py selftest
-
-WORK.txt is the work's text. A work of 6,000 characters or fewer is used whole; a longer one is cut to its first and last 3,000 characters.
+Options: --chars N sets the block size (default 3,000, the size everything was measured with; 2,000 is untested).
 Output keys: title, title_region, author, author_region, notes, needs_review, review_reasons.
 `verify` makes both strings exact substrings (finds them again if a space or newline differs), puts back a role word that touches the author's name,
-and falls back to the rule script's author when yours cannot be found."""
+and falls back to the rule script's author when the draft's cannot be found. It never compares against labels."""
 import sys, json, argparse
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import title_author_skill as S
 
-MAX = S.MAX_BLOCK
-
-
 def split_work(text):
-    return (text, "", True) if len(text) <= 2 * MAX else (text[:MAX], text[-MAX:], False)
+    m = S.MAX_BLOCK                                                     # block size (set by --chars)
+    return (text, "", True) if len(text) <= 2 * m else (text[:m], text[-m:], False)
 
 
 def tibetan_share(text):
@@ -53,20 +52,26 @@ def selftest():
     r2 = verify(head, "", True, title="ཚེས་བཅུའི་དུས་ཀྱི་མཆོད་པ་", author="not in the text")
     assert r2["author"] and r2["author"] != "not in the text" and r2["needs_review"], r2                                       # rule fallback, flagged
     assert tibetan_share(head) > 0.8 and tibetan_share("hello world") == 0 and tibetan_share("") == 0
+    book = "ཀ" * 20000 + head                                  # a "book": the colophon is at the very end
+    h, t, w = split_work(book); assert w is False and len(h) == 3000 and len(t) == 3000 and "སྦྱར་བའོ" in t
+    S.MAX_BLOCK = 2000; h, t, w = split_work(book); assert len(h) == 2000 and len(t) == 2000; S.MAX_BLOCK = 3000
     assert split_work("ཀ" * 7000)[2] is False and split_work("ཀ" * 100)[2] is True
     print("ta.py selftest OK")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["rules", "verify", "llm", "selftest"]); ap.add_argument("file", nargs="?"); ap.add_argument("model", nargs="?", default="gemini-3.8-flash")
-    ap.add_argument("--title"); ap.add_argument("--author"); ap.add_argument("--json")
+    ap.add_argument("cmd", choices=["llm", "rules", "excerpt", "verify", "selftest"]); ap.add_argument("file", nargs="?"); ap.add_argument("model", nargs="?", default="gemini-3.8-flash")
+    ap.add_argument("--title"); ap.add_argument("--author"); ap.add_argument("--json"); ap.add_argument("--chars", type=int)
     a = ap.parse_args()
     if a.cmd == "selftest": selftest(); sys.exit()
+    if a.chars: S.MAX_BLOCK = a.chars
     if not a.file: sys.exit("give the work's text file")
     text = Path(a.file).read_text(encoding="utf-8")
     if tibetan_share(text) < 0.2: sys.exit("this does not look like Tibetan text (under 20% Tibetan characters); the skill is for Tibetan works only")
     head, tail, whole = split_work(text)
+    if a.cmd == "excerpt":
+        print(S.build_input(head, tail, whole)); sys.exit()
     if a.cmd == "rules": out = S.extract(head, tail, whole, call_llm=None)
     elif a.cmd == "verify":
         if not (a.title or a.author or a.json): sys.exit("give --title/--author or --json")
