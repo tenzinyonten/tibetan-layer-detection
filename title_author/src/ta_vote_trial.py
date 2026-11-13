@@ -10,7 +10,7 @@ import os, sys, json, re, time, random, urllib.request, urllib.error
 from pathlib import Path
 from collections import Counter
 HERE = Path(__file__).resolve().parent; ROOT = HERE.parents[1]
-sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "title_author/skill"))
+sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "title_author/skills/tibetan-title-author/scripts"))
 import title_author_skill as S
 _src = (HERE / "ta_compare_runs.py").read_text(encoding="utf-8").split("def main")[0]
 _g = {"__name__": "cmp", "__file__": str(HERE / "ta_compare_runs.py")}; exec(_src, _g)

@@ -8,7 +8,7 @@
 
 `call_llm(system_prompt, user_text) -> str` is the function that calls the LLM that does the extraction (it can be a different model
 from the one that decides to call the tool). With call_llm=None the rule-based answer is returned (no network).
-Self-test, no key and no network:  python3 title_author/skill/tool_handler.py selftest"""
+Self-test, no key and no network:  python3 title_author/skills/tibetan-title-author/scripts/tool_handler.py selftest"""
 import json, sys
 from pathlib import Path
 HERE = Path(__file__).resolve().parent

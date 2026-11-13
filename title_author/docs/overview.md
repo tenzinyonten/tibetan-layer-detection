@@ -9,7 +9,7 @@ Given the first and last ~3,000 characters of a Tibetan work, return the **title
 | Trained model | mmBERT-base token classifier (run 2) | title F1 0.828, author 0.744 (older 2,389-work test) |
 | Rule-based script | Plain Python extractor (`src/ta_rule_extract.py`), no LLM | title 0.688, author 0.375 on the cleaned test set |
 | LLM prompt | Gemini with a hand-made prompt (`final.md`, 12 examples), then GEPA rewrites | see below |
-| Skill module | `skill/title_author_skill.py`: LLM call + exact-substring check + rule layer | works offline (selftest passes); benchmarked with Gemini only |
+| Skill module | `skills/tibetan-title-author/scripts/title_author_skill.py`: LLM call + exact-substring check + rule layer | works offline (selftest passes); benchmarked with Gemini only |
 
 ## Benchmark
 Cleaned test set: 2,384 works. CSV and HF dataset are published. Gold labels are noisy (about 11.5% of the LLM's authors are a different person than the label).
@@ -49,7 +49,7 @@ GEPA (DSPy `dspy.GEPA`) rewrites the prompt by reading the model's mistakes. We 
 The public BDRC API resolves our work IDs, but the record describes the whole book. 26 of 40 IDs gave a creator; the catalog author matched the label in 4 of 18 wrong-author works and 2 of 8 right-author works (about 25%). Labels are sometimes in Chinese or a different name form. Not a reliable signal for the author of a single text.
 
 ## Fix pass (offline only)
-`skill/title_author_fix.py`: for flagged answers (author repaired/fallback/missing, requester cue, 2+ signature verbs; about 32% of works) the LLM picks among the rule script's top 5 candidates with context. Perfect-picker ceiling: +4.6 to +5.2 author points; rule top-1 alone is worse than the LLM answer. Trial with gemini-3.5-flash-lite as the picker on all 627 flagged validation works (free tier, `src/ta_fix_trial.py`): author on the flagged works 0.563 -> 0.584, 24 fixed and 11 broken (net +13), overall author 0.708 -> 0.715 (+0.7 points). The first 300 works looked better (+3.7 on flagged) but the remaining 327 added net 0, so the true effect is small. Not tried with 3.8 or on the final prompt's answers.
+`skills/tibetan-title-author/scripts/title_author_fix.py`: for flagged answers (author repaired/fallback/missing, requester cue, 2+ signature verbs; about 32% of works) the LLM picks among the rule script's top 5 candidates with context. Perfect-picker ceiling: +4.6 to +5.2 author points; rule top-1 alone is worse than the LLM answer. Trial with gemini-3.5-flash-lite as the picker on all 627 flagged validation works (free tier, `src/ta_fix_trial.py`): author on the flagged works 0.563 -> 0.584, 24 fixed and 11 broken (net +13), overall author 0.708 -> 0.715 (+0.7 points). The first 300 works looked better (+3.7 on flagged) but the remaining 327 added net 0, so the true effect is small. Not tried with 3.8 or on the final prompt's answers.
 
 
 ## Update 2026-11-12

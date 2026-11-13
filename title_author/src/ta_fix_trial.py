@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Trial of the fix pass (skill/title_author_fix.py) on saved validation answers. The LLM calls are live (works on a free-tier key,
+"""Trial of the fix pass (skills/tibetan-title-author/scripts/title_author_fix.py) on saved validation answers. The LLM calls are live (works on a free-tier key,
 slowly), cached per work so a rerun resumes. Key from the environment only (GEMINI_API_KEY).
 
     GEMINI_API_KEY=... TA_PQ=<parquet folder> python3 title_author/src/ta_fix_trial.py [N] [MODEL] [BASE_RUN]
@@ -9,7 +9,7 @@ Never opens the test split."""
 import os, sys, json, time, random, urllib.error
 from pathlib import Path
 HERE = Path(__file__).resolve().parent; ROOT = HERE.parents[1]
-sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "title_author/skill"))
+sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "title_author/skills/tibetan-title-author/scripts"))
 import ta_rule_extract as T, title_author_skill as S, title_author_fix as F
 _src = (HERE / "ta_compare_runs.py").read_text(encoding="utf-8").split("def main")[0]
 _g = {"__name__": "cmp", "__file__": str(HERE / "ta_compare_runs.py")}; exec(_src, _g)

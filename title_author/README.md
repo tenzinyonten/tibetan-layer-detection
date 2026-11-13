@@ -7,7 +7,6 @@ title_author/
 ├── src/                         builders, the rule extractor, Gemini and mmBERT scoring
 ├── skills/tibetan-title-author/ the skill (SKILL.md, scripts, references)
 ├── skill_dev/                   scoring and bench tools for the skill
-├── skill/                       the earlier skill layout
 ├── docs/
 └── data/gemini_prompts/         the prompts
 ```

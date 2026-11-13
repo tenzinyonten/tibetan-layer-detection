@@ -9,7 +9,7 @@ Replies are cached in data/gemini_runs/retrieval_trial_<model>/results.json (res
 import os, sys, json, re, time, random, urllib.request, urllib.error
 from pathlib import Path
 HERE = Path(__file__).resolve().parent; ROOT = HERE.parents[1]
-sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "title_author/skill"))
+sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "title_author/skills/tibetan-title-author/scripts"))
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import ta_rule_extract as T, title_author_skill as S, title_author_fix as F

@@ -25,7 +25,7 @@ The manager's asks:
 | Gemini Batch API (submit/status/collect/combine) | `src/ta_gemini_batch.py` |
 | Chunked sequential batch driver | `src/ta_batch_driver.sh` |
 | Paired comparison of two runs (bootstrap 95% range) | `src/ta_compare_runs.py` |
-| Skill module | `skill/title_author_skill.py`, `skill/tool_schema.json`, `skill/README.md` |
+| Skill module | `skills/tibetan-title-author/scripts/title_author_skill.py`, `skills/tibetan-title-author/references/tool_schema.json`, the skill docs |
 | Prompts | `data/gemini_prompts/` |
 | Run outputs | `data/gemini_runs/` (each folder has `partial_raw.json` and `results.json`), `data/gemini_batches/`, `data/rule_runs/` |
 | Data (parquet, gold) | `data/processed/parquet_export_strat_both_notrans_nous` (the one to use; train/validation/test) |
@@ -42,7 +42,7 @@ The manager's asks:
 
 ## 3. What was built
 
-**Rule-based layer (used around any LLM answer, in `skill/title_author_skill.py` -> `apply_rules` and in `ta_gepa3.py` -> `postprocess`):**
+**Rule-based layer (used around any LLM answer, in `skills/tibetan-title-author/scripts/title_author_skill.py` -> `apply_rules` and in `ta_gepa3.py` -> `postprocess`):**
 1. Repair: an answer that is not an exact substring is found again ignoring spaces/newlines.
 2. Role word: a role word touching the name (e.g. `དགེ་སློང`) is added to the author (in 76% of train works the gold includes it).
 3. Fallback: with no usable author, use the rule script's author.
@@ -73,7 +73,7 @@ First 300 test works (rows 0:300 of the cleaned test set, 2,384 works), rule lay
 
 ```
 # offline checks (no key, no cost)
-python3 skill/title_author_skill.py selftest
+python3 title_author/skills/tibetan-title-author/scripts/run_tests.py
 python3 src/ta_rule_extract.py score validation
 ~/dspy-env/bin/python src/ta_gepa3.py demo gepa_v2_validation_heldout 3
 
@@ -101,14 +101,14 @@ ROWS=0:300 THINK_LEVEL=low GEMINI_API_KEY=... TA_PQ=<parquet folder> ALLOW_TEST=
 - Never open the test split for tuning. GEPA uses train and validation only; the test split is for final scores (`ALLOW_TEST=1`).
 
 ## 8. Open items
-1. Merge and score the full 2,384-work run of `gepa_final_full`; write the numbers into `docs/gemini_results.md`, `docs/overview.md` and `skill/README.md`.
-2. Skill: set `DEFAULT_PROMPT` to `data/gemini_prompts/gepa_final_full.md`; update `skill/README.md` (repair step, GEPA results, archived prompt paths); optionally package it (pyproject, bundle the rule script, weights and prompt) and add an Anthropic-style `SKILL.md`.
+1. Merge and score the full 2,384-work run of `gepa_final_full`; write the numbers into `docs/gemini_results.md`, `docs/overview.md` and the skill docs.
+2. Skill: set `DEFAULT_PROMPT` to `data/gemini_prompts/gepa_final_full.md`; update the skill docs (repair step, GEPA results, archived prompt paths); optionally package it (pyproject, bundle the rule script, weights and prompt) and add an Anthropic-style `SKILL.md`.
 3. Fix doc paths that still point to prompts moved into `data/gemini_prompts/archive/`.
 4. Score the trained mmBERT on the cleaned test (needs the user's Hugging Face login; run `src/ta_predict.py` on a GPU box or the Mac) for a three-way comparison with Gemini.
 5. Optional: GEPA ablation without rule feedback (`RULE_FEEDBACK=0`, about Rs 370) to measure the rule feedback's own effect; test a Claude or OpenAI `call_llm` on 20-30 works.
 
 ### Status 2026-11-12 (supersedes items above where it differs)
-- Item 2 done: skill default is `gepa_final_full.md` (env `TA_PROMPT` overrides). The token-penalty GEPA prompt `gepa_eff_full.md` was cut off mid-sentence and is archived as `TRUNCATED_*`; the skill now refuses prompts without the Title/Author sections.
+- Item 2 done: skill default is `gepa_final_full.md` (env `TA_PROMPT` overrides). The token-penalty GEPA prompt `gepa_eff_full.md` was cut off mid-sentence and is kept only locally as `TRUNCATED_*` files (not in this repo); the skill now refuses prompts without the Title/Author sections.
 - Item 4 done: mmBERT scored on validation and test (`data/mmbert_preds/`); on 2,100 test works it beats Gemini on title and loses on author.
 - Item 1 partly done: Gemini ran 2,100 of 2,384 test works; the last 284 are not run.
 - New: `skill/efficiency.py`, `server.py`, `bench.py`, `skill_score.py`, `run_tests.py`; `src/ta_gepa3.py` has `EFFICIENCY=1` and `EXCLUDE_N`; `src/ta_check_keys.py`. Fixed after Cursor's review: whole-work crop, thread-safe meter, cache key with model + thinking level, `parse_answer`, no `sys.exit` in `gemini_call`, `postprocess` shared with `skill_score`. Next: mmBERT combiner on validation (free); return `author_start` and fix-pass candidates; restructure to SKILL.md + scripts/ + references/; a complete shorter prompt (Batch API, cost stated first).
