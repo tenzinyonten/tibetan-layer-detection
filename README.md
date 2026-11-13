@@ -11,7 +11,7 @@ loading the published per-layer models, is the `detect` package
 | Tsawa | root text (རྩ་བ) | `tsawa/` | `tsawa/audit/` |
 | Sabche | outline headings | `sabche/` | `sabche/results/zeroshot/` |
 | Chapter | chapter breaks | `chapter/` | `chapter/results/zeroshot/<model>/` |
-| Title and author | title and author spans | `title_author/` (its own layout, not reorganized here) | — |
+| Title and author | title and author spans | `title_author/` (`src/`, `skills/tibetan-title-author/`, `docs/`) | prompts in `title_author/data/gemini_prompts/` |
 
 Book text paths and the frozen document split are shared, because more than one layer reads them: `data/shared/tsawa_audit.csv`, `data/shared/split_v3_frozen.csv`. Cloned `.opf` repos are in `data/raw_opf/` (gitignored). A loose OCR sample is in `data/ocr/`.
 
