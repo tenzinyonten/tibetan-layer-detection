@@ -149,6 +149,7 @@ class TestChapterConfig(unittest.TestCase):
             "repair": False,
             "extend_fragments": False,
             "extend_brackets": True,
+            "shad_rule": False,
         })
 
 

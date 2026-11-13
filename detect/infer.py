@@ -170,7 +170,8 @@ def rule_flags(cfg: LayerConfig) -> dict:
     return {"extend_to_tsheg": cfg.extend_to_tsheg, "merge_gaps": cfg.merge_small_gaps,
             "repair": cfg.repair_fragments,
             "extend_fragments": cfg.extend_lone_fragments,
-            "extend_brackets": cfg.extend_to_closing_bracket}
+            "extend_brackets": cfg.extend_to_closing_bracket,
+            "shad_rule": cfg.shad_rule}
 
 
 def run_layer_dual(text: str, tok, model, cfg: LayerConfig, device: str,
