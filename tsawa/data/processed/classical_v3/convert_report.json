@@ -1,0 +1,292 @@
+{
+ "before": {
+  "shad": 15876
+ },
+ "after": {
+  "shad": 15876
+ },
+ "per_doc": {
+  "WB08FDF935": {
+   "root_text": "Treasury_of_Abhidharma-rails",
+   "chars": 1613471,
+   "spans": 713,
+   "ignore_spans": 33,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 126,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 6.6
+  },
+  "WB1A8896DB": {
+   "root_text": "mdo-sde-rgyan-rails",
+   "chars": 369518,
+   "spans": 388,
+   "ignore_spans": 188,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 247.5,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 28.9
+  },
+  "WB1F92DD15": {
+   "root_text": "mdo-sde-rgyan-rails",
+   "chars": 966442,
+   "spans": 714,
+   "ignore_spans": 68,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 123.5,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 11.0
+  },
+  "WB221367FC": {
+   "root_text": "Commentary_on_Valid_Cognition-rails",
+   "chars": 1194089,
+   "spans": 995,
+   "ignore_spans": 76,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 199,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 16.4
+  },
+  "WB2415B174": {
+   "root_text": "mdo-sde-rgyan-rails",
+   "chars": 715540,
+   "spans": 591,
+   "ignore_spans": 35,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 145,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 14.9
+  },
+  "WB293AAB0E": {
+   "root_text": "Introduction_to_the_Middle_Way-rails",
+   "chars": 2414892,
+   "spans": 332,
+   "ignore_spans": 23,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 156.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 3.7
+  },
+  "WB335D682D": {
+   "root_text": "bodhisattvacharyavatara-rails",
+   "chars": 884763,
+   "spans": 820,
+   "ignore_spans": 6,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 118.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 11.6
+  },
+  "WB37FA7231": {
+   "root_text": "mdo-sde-rgyan-rails",
+   "chars": 982142,
+   "spans": 484,
+   "ignore_spans": 51,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 123.0,
+   "pct_under_10": 0.2,
+   "tsawa_pct_of_text": 7.4
+  },
+  "WB3AF96C03": {
+   "root_text": "Treasury_of_Abhidharma-rails",
+   "chars": 444201,
+   "spans": 390,
+   "ignore_spans": 53,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 129.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 17.2
+  },
+  "WB4FCCAAFE": {
+   "root_text": "bodhisattvacharyavatara-rails",
+   "chars": 391628,
+   "spans": 565,
+   "ignore_spans": 18,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 122,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 28.2
+  },
+  "WB538B6B7E": {
+   "root_text": "Commentary_on_Valid_Cognition-rails",
+   "chars": 1226163,
+   "spans": 1157,
+   "ignore_spans": 157,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 121,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 13.8
+  },
+  "WB6605DC96": {
+   "root_text": "Introduction_to_the_Middle_Way-rails",
+   "chars": 463498,
+   "spans": 331,
+   "ignore_spans": 386,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 153,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 11.6
+  },
+  "WB6C2D1D2B": {
+   "root_text": "Vinaya_sutra-rails",
+   "chars": 1593746,
+   "spans": 830,
+   "ignore_spans": 1143,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 327.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 19.9
+  },
+  "WB6EECC200": {
+   "root_text": "Treasury_of_Abhidharma-rails",
+   "chars": 93240,
+   "spans": 113,
+   "ignore_spans": 0,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 126,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 18.2
+  },
+  "WB72607BDE": {
+   "root_text": "mdo-sde-rgyan-rails",
+   "chars": 892201,
+   "spans": 407,
+   "ignore_spans": 14,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 121,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 6.6
+  },
+  "WB8B136A96": {
+   "root_text": "Vinaya_sutra-rails",
+   "chars": 976257,
+   "spans": 737,
+   "ignore_spans": 432,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 328,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 28.2
+  },
+  "WB933FBB1E": {
+   "root_text": "bodhisattvacharyavatara-rails",
+   "chars": 824597,
+   "spans": 909,
+   "ignore_spans": 955,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 118,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 13.3
+  },
+  "WB952E49A0": {
+   "root_text": "Commentary_on_Valid_Cognition-rails",
+   "chars": 1352148,
+   "spans": 1323,
+   "ignore_spans": 127,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 120,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 13.8
+  },
+  "WB95443AC2": {
+   "root_text": "Introduction_to_the_Middle_Way-rails",
+   "chars": 377302,
+   "spans": 322,
+   "ignore_spans": 3,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 155.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 15.0
+  },
+  "WBB84F7E33": {
+   "root_text": "Treasury_of_Abhidharma-rails",
+   "chars": 758817,
+   "spans": 672,
+   "ignore_spans": 250,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 126.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 13.4
+  },
+  "WBD11654CE": {
+   "root_text": "Commentary_on_Valid_Cognition-rails",
+   "chars": 980090,
+   "spans": 779,
+   "ignore_spans": 722,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 118,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 10.5
+  },
+  "WBD9437B61": {
+   "root_text": "Vinaya_sutra-rails",
+   "chars": 833488,
+   "spans": 638,
+   "ignore_spans": 428,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 384.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 32.4
+  },
+  "WBEC89D928": {
+   "root_text": "bodhisattvacharyavatara-rails",
+   "chars": 760560,
+   "spans": 919,
+   "ignore_spans": 0,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 118,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 14.6
+  },
+  "WBEEAE0D5D": {
+   "root_text": "Vinaya_sutra-rails",
+   "chars": 1217228,
+   "spans": 422,
+   "ignore_spans": 193,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 297.0,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 11.4
+  },
+  "WBFD9A3D42": {
+   "root_text": "Introduction_to_the_Middle_Way-rails",
+   "chars": 696489,
+   "spans": 325,
+   "ignore_spans": 23,
+   "start_at_line_start_pct": 100.0,
+   "end_valid_pct": 100.0,
+   "median_span_chars": 155,
+   "pct_under_10": 0.0,
+   "tsawa_pct_of_text": 8.5
+  }
+ },
+ "n_docs": 25,
+ "n_spans": 15876,
+ "n_ignore": 5384,
+ "n_normalized": 1502,
+ "n_blocked": 0,
+ "overlaps_after": 0,
+ "spans_overlapping_ignore": 0
+}

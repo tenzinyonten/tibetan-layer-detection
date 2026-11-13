@@ -1,0 +1,11 @@
+{
+ "docs": 25,
+ "runs_collapsed": 43660,
+ "chars_removed": 43660,
+ "chars_before": 23022510,
+ "chars_after": 22978850,
+ "spans_with_blank_inside": 207,
+ "n_spans": 15876,
+ "n_ignore": 5384,
+ "problems": {}
+}
