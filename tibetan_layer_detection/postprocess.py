@@ -60,11 +60,11 @@ def drop_short_spans(layers: dict[str, list[dict]]) -> tuple[dict[str, list[dict
     return kept, {n: len(layers[n]) - len(kept[n]) for n in layers}
 
 
-# Drop a predicted tsawa span when this much of it sits inside predicted
-# quotation. Measured on gold Quotation+Citation (upper bound): coverage >= 0.5
-# removed 1,042 FP / 49 TP and moved F1 0.748 → 0.854. At inference we only
-# have the quotation *model*, so this is that same rule on predicted spans,
-# and only runs when the quotation layer was actually inferred.
+# Drop a predicted tsawa span when this much of it sits inside a *predicted*
+# quotation span (Bo-Quotation-Detection). Never reads gold Quotation.yml /
+# Citation.yml — incoming books are unannotated. If the quotation model
+# produced no spans, this is a no-op. Gold-quote overlap was only a measurement
+# upper bound (0.748 → 0.854); live gain is whatever the quotation model allows.
 QUOTE_COVERAGE_DROP = 0.5
 
 
@@ -78,9 +78,11 @@ def _coverage(span: dict, others: list[dict]) -> float:
 def drop_quoted_tsawa(
     layers: dict[str, list[dict]], min_coverage: float = QUOTE_COVERAGE_DROP,
 ) -> tuple[dict[str, list[dict]], int]:
-    """Drop tsawa spans whose overlap with predicted quotation is at least
-    `min_coverage` of the tsawa span's length. No-op if either layer is
-    missing or empty. Returns (layers, n_dropped)."""
+    """Drop tsawa spans whose overlap with the quotation *model* is at least
+    `min_coverage` of the tsawa span's length. Uses `layers["quotation"]`
+    from Stage 2 only — never gold annotations. No-op if either layer is
+    missing or empty (unannotated book, or quotation model found nothing).
+    Returns (layers, n_dropped)."""
     tsawa = layers.get("tsawa") or []
     quotes = layers.get("quotation") or []
     if not tsawa or not quotes:
@@ -350,9 +352,7 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap.add_argument("--keep-quoted-tsawa", action="store_true",
                     help="do not drop tsawa spans that mostly overlap a predicted "
                          "quotation span. Default: drop when coverage >= 0.5 and "
-                         "the quotation layer was run (gold-quote upper bound was "
-                         "+0.106 F1 on the patched tsawa test set; this uses the "
-                         "quotation model, not gold).")
+                         "the quotation *model* produced spans. Does not use gold.")
     ap.add_argument("--review-threshold", type=float, default=None,
                     help="a span with confidence below this is flagged review_needed, "
                          "for every layer. Default: each layer's own threshold from "
