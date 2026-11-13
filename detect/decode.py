@@ -325,6 +325,20 @@ def remove_short_spans(
     return kept, len(spans) - len(kept)
 
 
+def has_tibetan(s: str) -> bool:
+    """True if s contains any character in the Tibetan block (U+0F00-U+0FFF)."""
+    return any("\u0f00" <= ch <= "\u0fff" for ch in s)
+
+
+def drop_non_tibetan(
+    spans: list[tuple[int, int, float, int]], text: str
+) -> tuple[list[tuple[int, int, float, int]], int]:
+    """Drops spans whose text has no Tibetan character -- scraping artifacts
+    such as English navigation text. Returns (kept_spans, n_removed)."""
+    kept = [sp for sp in spans if has_tibetan(text[sp[0]:sp[1]])]
+    return kept, len(spans) - len(kept)
+
+
 FRAGMENT_LOOKAHEAD = 250  # how far repair_fragments looks for the end of the heading line
 
 
@@ -373,11 +387,13 @@ def apply_linguistic_rules(
     (extend_to_tsheg), merge spans separated only by a short run of
     punctuation/whitespace (merge_gaps), repair fragments (repair: see
     repair_fragments), then drop any span still under MIN_SPAN_CHARS
-    characters as noise. The switches come from the layer's LayerConfig
+    characters as noise, then any span with no Tibetan character (all
+    layers). The switches come from the layer's LayerConfig
     (extend_to_tsheg / merge_small_gaps / repair_fragments /
     extend_to_closing_bracket); the defaults here are the original behavior
     (bracket-extend off). Returns (cleaned_spans, n_removed), counting both
-    fragments dropped as duplicates and short spans dropped as noise."""
+    fragments dropped as duplicates, short spans dropped as noise, and spans
+    with no Tibetan text."""
     n_dup = 0
     if extend_brackets:
         spans = extend_to_closing_bracket(spans, text)
@@ -388,7 +404,8 @@ def apply_linguistic_rules(
     if repair:
         spans, n_dup = repair_fragments(spans, text, extend=extend_fragments)
     spans, n_removed = remove_short_spans(spans)
-    return spans, n_removed + n_dup
+    spans, n_non_tibetan = drop_non_tibetan(spans, text)
+    return spans, n_removed + n_dup + n_non_tibetan
 
 
 # ---------------------------------------------------------------------------
