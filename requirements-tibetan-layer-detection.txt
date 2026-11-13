@@ -1,4 +1,4 @@
-# Pinned versions for the tibetan_layer_detection package specifically
+# Pinned versions for the detect package specifically
 # (pyproject.toml's own dependency list is unpinned, letting pip resolve
 # compatible versions normally; use this file to reproduce the exact
 # environment it was verified against). Not the repo's general

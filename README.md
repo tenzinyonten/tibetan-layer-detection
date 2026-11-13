@@ -2,7 +2,7 @@
 
 One token-classification model per layer of a Tibetan pecha (OpenPecha `.opf`).
 Shared training and fetching live in `common/`. Inference over a finished book,
-loading the published per-layer models, is the `tibetan_layer_detection` package
+loading the published per-layer models, is the `detect` package
 (`tibetan-detect`). The spell checker is a separate repo:
 [tenzinyonten/TiSpell](https://github.com/tenzinyonten/TiSpell).
 

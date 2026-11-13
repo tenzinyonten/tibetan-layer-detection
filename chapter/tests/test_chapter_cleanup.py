@@ -19,12 +19,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from tibetan_layer_detection.decode import (  # noqa: E402
+from detect.decode import (  # noqa: E402
     apply_linguistic_rules,
     extend_to_closing_bracket,
 )
-from tibetan_layer_detection.infer import rule_flags  # noqa: E402
-from tibetan_layer_detection.layer_config import LAYERS  # noqa: E402
+from detect.infer import rule_flags  # noqa: E402
+from detect.layer_config import LAYERS  # noqa: E402
 
 DUMP = ROOT / "scratch/chapter/chapter_test_spans.jsonl"
 CLEAN = ROOT / "chapter/data/processed/chapter_spans_clean.csv"

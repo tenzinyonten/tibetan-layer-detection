@@ -9,8 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from tibetan_layer_detection.infer import layers_for_run  # noqa: E402
-from tibetan_layer_detection.postprocess import drop_quoted_tsawa  # noqa: E402
+from detect.infer import layers_for_run  # noqa: E402
+from detect.postprocess import drop_quoted_tsawa  # noqa: E402
 
 
 def span(start, end, confidence=1.0):

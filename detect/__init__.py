@@ -1,9 +1,9 @@
-"""tibetan_layer_detection -- detect Tsawa, Sabche, Chapter, Quotation and
+"""detect -- detect Tsawa, Sabche, Chapter, Quotation and
 Yigchung layers in Tibetan text with per-layer mmBERT models.
 
 Simple API:
 
-    from tibetan_layer_detection import detect
+    from detect import detect
     result = detect("book.txt", layers=["all"])
     result["layers"]["sabche"]   # [{"start": ..., "end": ..., "confidence": ..., "review_needed": ...}, ...]
 
@@ -40,7 +40,7 @@ def detect(path, layers="all", *, out_dir=None, device=None, review_threshold: f
     path: a single text file, or a folder (a mix of .txt files and/or raw
         OpenPecha book folders -- same discovery rule as the CLI's --dir:
         flat *.txt plus any base/v001.txt found at any depth).
-    layers: a list of layer names from tibetan_layer_detection.LAYERS
+    layers: a list of layer names from detect.LAYERS
         (e.g. ["tsawa", "sabche"]), or "all" / ["all"] (the default) for
         every configured layer.
     out_dir: where the pipeline's intermediate and final files are written.
@@ -79,7 +79,7 @@ def detect(path, layers="all", *, out_dir=None, device=None, review_threshold: f
     tmp = None
     try:
         if use_temp_dir:
-            tmp = tempfile.TemporaryDirectory(prefix="tibetan_layer_detection_")
+            tmp = tempfile.TemporaryDirectory(prefix="detect_")
             base = Path(tmp.name)
         else:
             base = Path(out_dir) if out_dir is not None else Path("results")

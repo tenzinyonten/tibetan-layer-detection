@@ -43,16 +43,16 @@ import torch
 from datasets import load_dataset, load_from_disk
 from transformers import AutoModelForTokenClassification
 
-# These three are identical to tibetan_layer_detection.decode. Import them so
+# These three are identical to detect.decode. Import them so
 # there is one copy. Repo root is on the path because this file is run as a script.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from tibetan_layer_detection.decode import spans_from_bio, transition_matrix, viterbi  # noqa: E402
+from detect.decode import spans_from_bio, transition_matrix, viterbi  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
 # metric — mirrors v2_metrics.inclusive_iou / match_iou
 # decoding (transition_matrix, viterbi, spans_from_bio) comes from
-# tibetan_layer_detection.decode; the copies here were identical.
+# detect.decode; the copies here were identical.
 # ---------------------------------------------------------------------------
 
 def inclusive_iou(a: tuple[int, int], b: tuple[int, int]) -> float:
