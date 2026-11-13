@@ -68,7 +68,7 @@ python common/train_layer.py --label-name CHAPTER --weight-scheme sqrt_inv \
 
 Numbers and cleaning details are in `chapter/docs/dataset_card.md`. Scripts here
 import shared code from `common/` and read book text paths from
-`tsawa/data/processed/tsawa_audit.csv`; nothing reads from `scratch/` (the split script only writes a report there).
+`data/shared/tsawa_audit.csv`; nothing reads from `scratch/` (the split script only writes a report there).
 
 ## OpenPecha `.opf` layout (what we fetch)
 
@@ -139,7 +139,7 @@ Skip/continue on missing or private remotes; the process does not abort.
 
 Scans every checkout in `data/raw_opf/`, resolves the nested
 `<ID>.opf/<ID>.opf/` layout, parses `layers/v001/Tsawa.yml` against
-`base/v001.txt`, and writes `tsawa/data/processed/tsawa_audit.csv` plus an
+`base/v001.txt`, and writes `data/shared/tsawa_audit.csv` plus an
 old-vs-new summary (span counts, union coverage %, `isverse`, quality flags).
 
 Spans are treated as **start inclusive, end exclusive**.

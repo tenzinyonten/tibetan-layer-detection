@@ -37,7 +37,7 @@ does not prove it's correct — both are just triage signals.
 
 Usage:
     python spot_check_tsawa.py \
-        --audit-csv tsawa/data/processed/tsawa_audit.csv \
+        --audit-csv data/shared/tsawa_audit.csv \
         --raw-opf-dir data/raw_opf \
         --n 20 \
         --seed 42 \

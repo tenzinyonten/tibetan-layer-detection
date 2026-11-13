@@ -523,8 +523,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--out-csv",
         type=Path,
-        default=Path("tsawa/data/processed/tsawa_audit.csv"),
-        help="Per-repo audit CSV (default: tsawa/data/processed/tsawa_audit.csv).",
+        default=Path("data/shared/tsawa_audit.csv"),
+        help="Per-repo audit CSV (default: data/shared/tsawa_audit.csv).",
     )
     p.add_argument(
         "--limit",

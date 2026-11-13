@@ -25,7 +25,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 CLEAN = ROOT / "chapter/data/processed/chapter_spans_clean.csv"
 TOKENIZER = "jhu-clsp/mmBERT-base"
 PRE = re.compile(r"(^|\n)[༈༄༅།\s\d༠-༩\(\)\{\}\[\]༼༽\.]*$")

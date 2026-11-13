@@ -15,8 +15,8 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.filters import AutoFilter
 
 ROOT = Path("/Users/tenzinyonten/layer_detection")
-SPLIT = ROOT / "tsawa/data/processed/split_v3_frozen.csv"
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+SPLIT = ROOT / "data/shared/split_v3_frozen.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 MERGED = ROOT / "tsawa/data/processed/tsawa_spans_merged.csv"
 OUT = ROOT / "tsawa/data/processed/tsawa_book_catalog.xlsx"
 
@@ -173,7 +173,7 @@ def main():
     ws["A1"].font = title_font
     ws["A2"] = "Frozen split v3 train + val only (test omitted). Titles and authors from each book's OpenPecha meta.yml."
     ws["A2"].font = Font(name="Arial", size=11, italic=True, color="666666")
-    ws["A3"] = "Source: tsawa/data/processed/split_v3_frozen.csv + tsawa_spans_merged.csv + tsawa_audit.csv + data/raw_opf/*/meta.yml"
+    ws["A3"] = "Source: data/shared/split_v3_frozen.csv + tsawa_spans_merged.csv + tsawa_audit.csv + data/raw_opf/*/meta.yml"
     ws["A3"].font = Font(name="Arial", size=10, color="666666")
 
     ws["A5"] = "Split"

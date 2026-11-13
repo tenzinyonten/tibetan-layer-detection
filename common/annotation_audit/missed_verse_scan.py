@@ -46,8 +46,8 @@ def runs(b, mask, strict):
     flush()
     return out
 
-audit = pd.read_csv("tsawa/data/processed/tsawa_audit.csv")
-split = pd.read_csv("tsawa/data/processed/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
+audit = pd.read_csv("data/shared/tsawa_audit.csv")
+split = pd.read_csv("data/shared/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
 rows = []
 for pid in audit[audit.has_tsawa_layer == True].pecha_id:
     d = [x for x in glob.glob(f"{R}/{pid}.opf/*") if x.endswith(".opf")][0]

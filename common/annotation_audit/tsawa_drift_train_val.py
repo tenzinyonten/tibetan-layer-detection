@@ -16,7 +16,7 @@ def metre(t):
     if n: c.append(n)
     return sum(x in ISO for x in c) / len(c) if c else 0.0
 T = pd.read_csv("tsawa/data/processed/tsawa_spans_merged.csv"); T = T[~T.dropped.astype(bool)]
-split = pd.read_csv("tsawa/data/processed/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
+split = pd.read_csv("data/shared/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
 SV = pd.read_csv("sabche/data/processed/sabche_book_verdicts.csv").set_index("pecha_id")
 rows = []
 for pid, g in T.groupby("pecha_id"):

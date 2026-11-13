@@ -7,7 +7,7 @@ import numpy as np, pandas as pd
 MIN_PLAIN_DROPPED_RUNS = 50     # a dropped book with fewer verse runs than this (and no other flag) is not listed; set 0 to list all 88
 AUD = "common/annotation_audit"; OUTDIR = f"{AUD}/emma"
 T = pd.read_csv("tsawa/data/processed/tsawa_spans_merged.csv"); T = T[~T.dropped.astype(bool)]; T["len"] = T.end - T.start
-SPLIT = pd.read_csv("tsawa/data/processed/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
+SPLIT = pd.read_csv("data/shared/split_v3_frozen.csv", comment="#").set_index("pecha_id").split.to_dict()
 ALL = sorted(T.pecha_id.unique())
 split_of = lambda p: {"val": "eval"}.get(SPLIT.get(p, "dropped"), SPLIT.get(p, "dropped"))   # train / eval / test / dropped
 nspans = T.groupby("pecha_id").size().to_dict()

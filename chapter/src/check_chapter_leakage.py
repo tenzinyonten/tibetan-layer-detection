@@ -12,7 +12,7 @@ import csv,re
 from pathlib import Path
 from collections import defaultdict,Counter
 R=Path(__file__).resolve().parents[2]
-aud={r['pecha_id']:r for r in csv.DictReader(open(R/'tsawa/data/processed/tsawa_audit.csv',encoding='utf-8'))}
+aud={r['pecha_id']:r for r in csv.DictReader(open(R/'data/shared/tsawa_audit.csv',encoding='utf-8'))}
 split={r['pecha_id']:r['split'] for r in csv.DictReader(l for l in open(R/'chapter/data/processed/chapter_split_frozen.csv',encoding='utf-8') if not l.startswith('#'))}
 spans=defaultdict(list)
 for r in csv.DictReader(open(R/'chapter/data/processed/chapter_spans_clean.csv',encoding='utf-8')):

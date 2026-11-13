@@ -24,10 +24,10 @@ sys.path.insert(0, str(ROOT / "common"))
 from build_stratified_split import greedy_assign, n_windows_from_tokens  # noqa: E402
 
 MERGED = ROOT / "tsawa/data/processed/tsawa_spans_merged.csv"
-AUDIT = ROOT / "tsawa/data/processed/tsawa_audit.csv"
+AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 SPLIT_V2 = ROOT / "tsawa/data/processed/split_v2_frozen.csv"
 QUOTE_SC = ROOT / "tsawa/data/processed/quotation_spans_snapped.csv"
-OUT_SPLIT = ROOT / "tsawa/data/processed/split_v3_frozen.csv"
+OUT_SPLIT = ROOT / "data/shared/split_v3_frozen.csv"
 OUT_IGNORE = ROOT / "tsawa/data/processed/v6_ignore_spans.csv"
 OUT_GROUPS = ROOT / "scratch/tsawa/analysis/v6_root_groups.json"
 OUT_REPORT = ROOT / "scratch/tsawa/analysis/v6_prep_report.json"

@@ -112,7 +112,7 @@ def main() -> int:
             if any(S[j][1] > a and S[j][0] < e for j in range(max(0, k - 3), k)):
                 n_ov_ign += 1
 
-    audit_cols = next(csv.reader((ROOT / "tsawa/data/processed/tsawa_audit.csv").open(encoding="utf-8")))
+    audit_cols = next(csv.reader((ROOT / "data/shared/tsawa_audit.csv").open(encoding="utf-8")))
     audit_rows = []
     for doc in sorted(manifest):
         t = texts[doc]

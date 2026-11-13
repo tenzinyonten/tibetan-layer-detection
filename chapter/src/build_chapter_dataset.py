@@ -35,7 +35,7 @@ SPLIT_NAMES = {"train": "train", "val": "validation", "test": "test"}
 
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--audit-csv", type=Path, default=ROOT / "tsawa/data/processed/tsawa_audit.csv")
+    p.add_argument("--audit-csv", type=Path, default=ROOT / "data/shared/tsawa_audit.csv")
     p.add_argument("--sidecar", type=Path, default=ROOT / "chapter/data/processed/chapter_spans_clean.csv")
     p.add_argument("--split-file", type=Path, default=ROOT / "chapter/data/processed/chapter_split_frozen.csv")
     p.add_argument("--tokenizer", default="jhu-clsp/mmBERT-base")

@@ -20,7 +20,7 @@ time in ``build_tsawa_dataset.py``, which counts the suppressed tokens.
 
 Usage:
     python tsawa/src/snap_quotation_boundaries.py \\
-        --audit-csv tsawa/data/processed/tsawa_audit.csv \\
+        --audit-csv data/shared/tsawa_audit.csv \\
         --raw-opf-dir data/raw_opf \\
         --out tsawa/data/processed/quotation_spans_snapped.csv
 """
@@ -75,7 +75,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="Propose snapped quotation offsets (does not edit cloned YAML)."
     )
-    p.add_argument("--audit-csv", type=Path, default=Path("tsawa/data/processed/tsawa_audit.csv"))
+    p.add_argument("--audit-csv", type=Path, default=Path("data/shared/tsawa_audit.csv"))
     p.add_argument("--raw-opf-dir", type=Path, default=Path("data/raw_opf"))
     p.add_argument(
         "--out",

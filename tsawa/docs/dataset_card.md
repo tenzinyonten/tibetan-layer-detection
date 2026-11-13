@@ -2,7 +2,7 @@
 
 - **Built:** 2026-09-21
 - **Spans:** `tsawa/data/processed/tsawa_spans_merged.csv`
-- **Split:** `tsawa/data/processed/split_v3_frozen.csv` (seed 123, targets 76/12/12 by windows; test frozen)
+- **Split:** `data/shared/split_v3_frozen.csv` (seed 123, targets 76/12/12 by windows; test frozen)
 - **Dropped:** pechas with < 10 merged tsawa spans
 - **Must-link:** v6 root-text groups unchanged
 - **Ignore (−100):** `tsawa/data/processed/v6_ignore_spans.csv`
