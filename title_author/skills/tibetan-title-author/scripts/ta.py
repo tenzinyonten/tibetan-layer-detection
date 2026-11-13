@@ -71,6 +71,7 @@ if __name__ == "__main__":
     text = Path(a.file).read_text(encoding="utf-8")
     if tibetan_share(text) < 0.2: sys.exit("this does not look like Tibetan text (under 20% Tibetan characters); the skill is for Tibetan works only")
     head, tail, whole = split_work(text)
+    print(f"[ta] {len(text):,} characters in the text: " + (f"short, using the whole text" if whole else f"long, using the first {len(head):,} and the last {len(tail):,} characters (the middle is skipped)"), file=sys.stderr)
     if a.cmd == "excerpt":
         print(S.build_input(head, tail, whole)); sys.exit()
     if a.cmd == "rules": out = S.extract(head, tail, whole, call_llm=None)
