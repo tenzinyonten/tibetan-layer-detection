@@ -71,7 +71,9 @@ NEG = -1.0e9
 
 DEFAULT_DATASETS = {"TSAWA": "Yontenn/formatting-tsawa-v6",
                     "SABCHE": "Yontenn/formatting-sabche-v1",
-                    "CHAPTER": "Yontenn/formatting-chapter-v1"}
+                    "CHAPTER": "Yontenn/formatting-chapter-v1",
+                    "TITLE_AUTHOR": "title_author/data/processed/gold_dataset"}
+TWO_ENTITY = {"TITLE_AUTHOR": ("TITLE", "AUTHOR")}   # layers with two entity types; train with --scheme multi
 PRIMARY = "TSAWA"     # the layer being trained; set by configure_label()
 SCHEMES: dict = {}
 ENTITIES: dict = {}    # which label ids open / continue each entity type, per scheme
@@ -97,6 +99,10 @@ def configure_label(name: str) -> None:
         "bioe":  {name: (1, 2, 3)},
         "multi": {name: (1, 2, None), "QUOTE": (3, 4, None)},
     })
+    if name in TWO_ENTITY:   # O, B-TITLE, I-TITLE, B-AUTHOR, I-AUTHOR share the "multi" layout
+        a, b = TWO_ENTITY[name]
+        SCHEMES["multi"] = ["O", f"B-{a}", f"I-{a}", f"B-{b}", f"I-{b}"]
+        ENTITIES["multi"] = {a: (1, 2, None), b: (3, 4, None)}
 
 
 configure_label("TSAWA")
@@ -276,6 +282,8 @@ def build_metrics(scheme: str, break_penalty: float):
             res[f"{key}_overproposal"] = (tp + fp) / (tp + fn) if tp + fn else 0.0
             a_tp, a_fp, a_fn = acc_argmax[t]
             res[f"{key}_argmax_f1"] = prf(a_tp, a_fp, a_fn)[2]
+        if PRIMARY in TWO_ENTITY:   # checkpoint selection: mean F1 over the two entity types
+            res["iou50_f1"] = float(np.mean([res[f"{t.lower()}_iou50_f1"] for t in tags]))
         return res
     return compute_metrics
 
@@ -327,6 +335,19 @@ def stitched_evaluate(trainer, split_ds, meta, metrics_fn, prefix):
 
 
 # ---------------------------------------------------------------------------
+
+def trim_collate(features):
+    """Stored windows are padded to 8192 tokens but average ~2000 real ones. Trim each batch to its longest real window
+    (padding is masked, so results are unchanged; compute drops ~4x)."""
+    from transformers import default_data_collator
+    batch = default_data_collator(features)
+    full = batch["input_ids"].shape[1]
+    n = int(batch["attention_mask"].sum(1).max())
+    for k, v in batch.items():
+        if torch.is_tensor(v) and v.ndim >= 2 and v.shape[1] == full:
+            batch[k] = v[:, :n]
+    return batch
+
 
 class WeightedTrainer(Trainer):
     def __init__(self, class_weights, **kw):
@@ -409,6 +430,9 @@ def main():
     args.dataset = args.dataset or DEFAULT_DATASETS.get(PRIMARY, f"{layer}/data/processed/{layer}_dataset")
     args.output_dir = args.output_dir or f"runs/{layer}"
     scheme = args.scheme
+    if PRIMARY in TWO_ENTITY and scheme != "multi":
+        print(f"{PRIMARY} has two entity types: using --scheme multi")
+        scheme = args.scheme = "multi"
     names = SCHEMES[scheme]
     n_labels = len(names)
     set_seed(args.seed)
@@ -433,12 +457,12 @@ def main():
 
     # detect whether the stored labels already carry quotation
     probe = np.array(ds["train"][0]["labels"])
-    src_multi = bool((probe > 2).any())
+    src_multi = bool((probe > 2).any()) or PRIMARY in TWO_ENTITY
     for i in range(1, min(50, len(ds["train"]))):
         if (np.array(ds["train"][i]["labels"]) > 2).any():
             src_multi = True
             break
-    print(f"source dataset: {f'5-label ({layer} + quotation)' if src_multi else f'3-label ({layer} only)'}")
+    print(f"source dataset: {f'5-label ({layer})' if PRIMARY in TWO_ENTITY else f'5-label ({layer} + quotation)' if src_multi else f'3-label ({layer} only)'}")
 
     if scheme != "bio" or src_multi:
         ds = ds.map(lambda b: {"labels": [convert_row(r, scheme, src_multi)
@@ -517,7 +541,7 @@ def main():
         warmup_ratio=args.warmup_ratio,
         bf16=not args.no_bf16 and torch.cuda.is_available(),
         gradient_checkpointing=not args.no_grad_checkpointing,
-        logging_steps=25, save_total_limit=2,
+        logging_steps=25, save_total_limit=2, save_only_model=True,   # weights only: no optimizer state, ~1/3 the disk
         load_best_model_at_end=True,
         metric_for_best_model="iou50_f1",   # primary layer only; quotation is auxiliary
         greater_is_better=True,
@@ -561,7 +585,7 @@ def main():
     trainer_kw = dict(
         model=model,
         args=TrainingArguments(**ta),
-        train_dataset=train_ds, eval_dataset=eval_ds,
+        train_dataset=train_ds, eval_dataset=eval_ds, data_collator=trim_collate,
         compute_metrics=build_metrics(scheme, args.break_penalty),
         callbacks=[EarlyStoppingCallback(early_stopping_patience=early_patience)],
     )
@@ -589,7 +613,7 @@ def main():
 
     print("\nreference (validation, Viterbi): BIO inv 0.323 | BIOE 0.320 | "
           "IO 0.309 | joint 0.395 | quotation model 0.853")
-    if scheme == "multi":
+    if scheme == "multi" and PRIMARY not in TWO_ENTITY:
         print("Quotation metrics are diagnostic only. Test quotation density is")
         print("3.2% against train's 7.0%, so quote F1 on test is not comparable.")
 
