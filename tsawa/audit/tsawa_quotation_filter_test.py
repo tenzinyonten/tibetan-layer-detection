@@ -8,7 +8,7 @@ import numpy as np, pandas as pd, yaml
 from datasets import load_from_disk
 from transformers import AutoTokenizer
 
-OUT = "common/annotation_audit"; R = "data/raw_opf"
+OUT = "tsawa/audit"; R = "data/raw_opf"
 W = {(w["pecha_id"], int(w["window_index"])): w for w in map(json.loads, open("scratch/tsawa/analysis/v6_nofeat_test_spans_bp4.jsonl", encoding="utf-8"))}
 ds = load_from_disk("scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final")
 tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base", use_fast=True)

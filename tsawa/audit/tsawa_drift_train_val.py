@@ -4,7 +4,7 @@ Clean books: start ok 97-100%. Flag < 60%.  Writes tsawa_drift_train_val.csv nex
 import glob, re
 import numpy as np, pandas as pd
 
-OUT = "common/annotation_audit"; SH = "།༎༏༐༑༔"; ISO = {7, 9, 11, 13}
+OUT = "tsawa/audit"; SH = "།༎༏༐༑༔"; ISO = {7, 9, 11, 13}
 def base(p): return open([x for x in glob.glob(f"data/raw_opf/{p}.opf/*") if x.endswith(".opf")][0] + "/base/v001.txt", encoding="utf-8").read()
 def syl(s): return len([x for x in s.split("་") if x.strip()])
 def metre(t):

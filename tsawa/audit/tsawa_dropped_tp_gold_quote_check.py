@@ -9,7 +9,7 @@ sys.path.insert(0, "scratch/postprocess_round2"); sys.path.insert(0, ".")
 import score_pred_quotes as S
 from transformers import AutoTokenizer
 
-THR = 0.5; OUT = "common/annotation_audit"
+THR = 0.5; OUT = "tsawa/audit"
 books = sorted({json.loads(l)["pecha_id"] for l in S.DUMP.open(encoding="utf-8")})
 quotes = S.load_quotes(books)                                        # predicted quotation spans (chars)
 rows, recs = S.window_level(quotes)

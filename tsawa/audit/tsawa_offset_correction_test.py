@@ -11,7 +11,7 @@ the same rebuild is used for original and corrected gold so the two are comparab
 import glob, json, re, collections
 import numpy as np, pandas as pd
 
-OUT = "common/annotation_audit"; K = 200
+OUT = "tsawa/audit"; K = 200
 SH = "།༎༏༐༑༔"; ISO = {7, 9, 11, 13}
 SUSPECT = ["P000027", "P000083", "P000144", "P000242", "P000269"]
 def base(p): return open([x for x in glob.glob(f"data/raw_opf/{p}.opf/*") if x.endswith(".opf")][0] + "/base/v001.txt", encoding="utf-8").read()

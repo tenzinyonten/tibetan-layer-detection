@@ -4,7 +4,7 @@ Writes tsawa_quote_dropped_review.csv and .html here. Run from the repo root."""
 import csv, glob, html
 from collections import defaultdict
 
-AUD = "common/annotation_audit"
+AUD = "tsawa/audit"
 SRC = f"{AUD}/tsawa_dropped_tp_gold_quote_check.csv"
 URL = "https://github.com/OpenPecha-Data/{}"
 CTX = 350  # chars of context each side
