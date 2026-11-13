@@ -34,7 +34,7 @@ The command cuts the text, lets the model read the excerpt with the rules, then 
 1. `python3 scripts/ta.py excerpt book.txt` prints only the `[HEAD]` and `[TAIL]`. Read that, never the whole book.
 2. Read `references/rules.md`. Decide the title and the author yourself, copied exactly from the excerpt.
 3. `python3 scripts/ta.py verify book.txt --title "<title>" --author "<author>"` repairs spacing, restores the role word, falls back to the rule script if your author cannot be found, and sets `needs_review`. Answer with its JSON.
-4. If `needs_review` is true, re-read the colophon or tell the user the author is uncertain.
+4. If `needs_review` is true, take a second look: read `references/second_look.md`, re-read the colophon, and keep your first author unless you find a clear reason to change it. Run `verify` again on the new answer, or tell the user the author is uncertain.
 
 ## Quick Reference
 
@@ -44,6 +44,7 @@ The command cuts the text, lets the model read the excerpt with the rules, then 
 | Free first guess, no model (author right about 36%) | `python3 scripts/ta.py rules book.txt` |
 | Only the text the model would read | `python3 scripts/ta.py excerpt book.txt` |
 | Check and repair a draft that already exists | `python3 scripts/ta.py verify book.txt --title "..." --author "..."` |
+| Second call on works that need review (about a third of the works) | add `--second-look` to `ta.py llm` |
 | Block size other than 3,000 (2,000 is untested) | add `--chars 2000` |
 | Local HTTP service | `python3 scripts/server.py 8765` |
 | Cache, retry, metering, parallel runs in Python | `scripts/efficiency.py` (read its docstring) |
@@ -58,7 +59,7 @@ The skill is model-neutral: any agent can follow the steps itself, and the scrip
 - **Never reword.** Title and author must be copied exactly from the text. Do not translate, normalize spacing or fix spelling; `verify` repairs only newline and space differences.
 - **The author is the composer of THIS work.** Not the translator, a stanza or verse writer, the compiler, the copyist, the proofreader, or the person who asked for the text (བསྐུལ, ངོར, ཞུས, གསོལ་བ).
 - **Keep the role word** (for example `དགེ་སློང`) when it touches the name; the labels include it about three times in four.
-- **`needs_review: true` means doubt.** Re-read the colophon or tell the user the author is uncertain. Flagged works were right 56-60% of the time, the others 78-79%.
+- **`needs_review: true` means doubt.** Take the second look (`references/second_look.md`) or tell the user the author is uncertain. Flagged works were right 56-60% of the time, the others 78-79%.
 - **Only Tibetan text.** `ta.py` refuses input with under 20% Tibetan characters.
 
 ## Next Steps
@@ -66,3 +67,4 @@ The skill is model-neutral: any agent can follow the steps itself, and the scrip
 - Rules for the title and the author: `references/rules.md` (read it before deciding).
 - Twelve worked examples: `references/examples.md` (long; read only when a case is unclear).
 - How the pieces fit (the pipeline, who produces the draft, which file does what): `references/pipeline.md` (read it to debug, extend, or explain the skill).
+- The second look at a doubted author (the checking prompt): `references/second_look.md`.

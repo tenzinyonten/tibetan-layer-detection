@@ -8,7 +8,8 @@ the author there, repairs the answer and flags doubt. Prints JSON.
     python3 scripts/ta.py excerpt BOOK.txt              # prints only the [HEAD] and [TAIL] the model would read (for an agent: read this, not the whole book)
     python3 scripts/ta.py verify  BOOK.txt --title "..." --author "..."    # only if a draft already exists (an agent's own answer): check and repair it
     python3 scripts/ta.py selftest
-Options: --chars N sets the block size (default 3,000, the size everything was measured with; 2,000 is untested).
+Options: --second-look re-checks the author with one more model call on works that need review (about a third of the works; see references/second_look.md).
+--chars N sets the block size (default 3,000, the size everything was measured with; 2,000 is untested).
 Output keys: title, title_region, author, author_region, notes, needs_review, review_reasons.
 `verify` makes both strings exact substrings (finds them again if a space or newline differs), puts back a role word that touches the author's name,
 and falls back to the rule script's author when the draft's cannot be found. It never compares against labels."""
@@ -62,7 +63,7 @@ def selftest():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=["llm", "rules", "excerpt", "verify", "selftest"]); ap.add_argument("file", nargs="?"); ap.add_argument("model", nargs="?", default="gemini-3.8-flash")
-    ap.add_argument("--title"); ap.add_argument("--author"); ap.add_argument("--json"); ap.add_argument("--chars", type=int)
+    ap.add_argument("--title"); ap.add_argument("--author"); ap.add_argument("--json"); ap.add_argument("--chars", type=int); ap.add_argument("--second-look", action="store_true")
     a = ap.parse_args()
     if a.cmd == "selftest": selftest(); sys.exit()
     if a.chars: S.MAX_BLOCK = a.chars
@@ -76,5 +77,5 @@ if __name__ == "__main__":
     elif a.cmd == "verify":
         if not (a.title or a.author or a.json): sys.exit("give --title/--author or --json")
         out = verify(head, tail, whole, a.title, a.author, json.loads(a.json) if a.json else None)
-    else: out = S.extract(head, tail, whole, call_llm=S.llm_for(a.model))
+    else: out = S.extract(head, tail, whole, call_llm=S.llm_for(a.model), second=a.second_look)
     print(json.dumps(out, ensure_ascii=False, indent=1))

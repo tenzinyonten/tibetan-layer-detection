@@ -140,7 +140,26 @@ def postprocess(ans, head, tail, hybrid=True):
     return ans, notes
 
 
-def extract(head, tail="", whole_work=False, call_llm=None, prompt=None, hybrid=True):
+def second_look(ans, head, tail, whole_work, call_llm):
+    """Second look for a work that needs review: one more call that re-checks the AUTHOR with the first answer, the rule script's name candidates
+    and the excerpt in view (prompt: references/second_look.md). Returns (answer, outcome) with outcome "changed", "kept" or "no reply".
+    Measured with tools (text search, name candidates, BDRC) on 139 flagged validation works with gemini-3.5-flash-lite: author 0.597 -> 0.669,
+    11 fixed and 1 broken. This version has no tools and is NOT measured."""
+    import title_author_fix as F
+    cands = F.candidates(head, tail, whole_work)
+    user = F.build_fix_input(ans, cands) + "\n\n" + build_input(head, tail, whole_work)
+    d = parse_answer(call_llm((REF / "second_look.md").read_text(encoding="utf-8"), user))
+    cand = (d or {}).get("author")
+    if d is None: return ans, "no reply"
+    if not cand or cand == ans.get("author"): return ans, "kept"
+    fixed = T.repair_span(cand, head, tail, "tail", last=True)                     # the colophon is usually in the tail: look there first
+    if not fixed: return ans, "kept"
+    new = dict(ans); new["author"], new["author_region"] = fixed
+    new, _ = apply_rules(new, head, tail)                                          # same role-word step as the first pass
+    return new, "changed"
+
+
+def extract(head, tail="", whole_work=False, call_llm=None, prompt=None, hybrid=True, second=False):
     """Title and author of one work. `call_llm(system, user) -> str` is any function that calls your LLM.
     Returns {"title", "title_region", "author", "author_region", "notes", "needs_review", "review_reasons"}."""
     head, tail, whole_work = normalize_input(head, tail, whole_work)
@@ -152,6 +171,11 @@ def extract(head, tail="", whole_work=False, call_llm=None, prompt=None, hybrid=
     ans["notes"] = notes
     why = _review_flags(ans, notes, head, tail)
     ans["needs_review"] = bool(why); ans["review_reasons"] = why            # flagged works were right 56-60% of the time, the others 78-79% (validation)
+    if second and why:                                                      # only the flagged third of the works gets a second call
+        ans2, outcome = second_look(ans, head, tail, whole_work, call_llm)
+        ans2["second_look"] = outcome; ans2["needs_review"] = ans["needs_review"]; ans2["review_reasons"] = ans["review_reasons"]
+        ans2["notes"] = list(ans["notes"]) + [f"second look: {outcome}"]
+        return ans2
     return ans
 
 
@@ -225,6 +249,14 @@ def selftest():
     except ValueError: ok = False
     finally: os.unlink(tf.name)
     assert not ok, "an incomplete prompt must be refused"
+    # second look: a work whose author is doubtful gets one more call; only an exact substring can replace the author
+    wrong = {"title": None, "title_region": None, "author": "ཚེས་བཅུའི་མཆོད་པའི་ཡི་གེ", "author_region": "head"}
+    good = lambda s_, u_: json.dumps({"author": "གྲགས་པ་རྒྱལ་མཚན", "reason": "colophon"})
+    new, out = second_look(wrong, head, "", True, good); assert out == "changed" and new["author"] == "དགེ་སློང་གྲགས་པ་རྒྱལ་མཚན", (new, out)
+    _, out = second_look(wrong, head, "", True, lambda s_, u_: json.dumps({"author": "not in the text"})); assert out == "kept"
+    _, out = second_look(wrong, head, "", True, lambda s_, u_: "no json"); assert out == "no reply"
+    two = extract(head, "", True, call_llm=lambda s_, u_: json.dumps({"title": None, "author": None}), second=True)
+    assert two.get("second_look") in ("changed", "kept", "no reply") and two["needs_review"], two
     # provider routing + the Claude adapter, with a fake SDK (no key, no network)
     import types
     sent = {}

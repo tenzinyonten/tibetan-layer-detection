@@ -19,7 +19,9 @@ text of one work
  5. flag     title_author_fix.flags (no model)
              needs_review when: the author was repaired or came from the fallback or is missing,
              a requester cue follows the name (བསྐུལ, ངོར, ཞུས, གསོལ་བ, བཀའ་བསྒོ), or two or more signature verbs sit in the region
- 6. answer   title, title_region, author, author_region, notes, needs_review, review_reasons
+ 5b. second   only with --second-look and only when needs_review: one more call re-checks the author (references/second_look.md);
+             only an exact substring can replace it; result in "second_look": changed / kept / no reply
+ 6. answer   title, title_region, author, author_region, notes, needs_review, review_reasons, second_look
 ```
 
 ## Who does step 3 (the draft)
@@ -39,12 +41,13 @@ text of one work
 | `scripts/ta.py` | The command: `llm`, `rules`, `excerpt`, `verify`, `selftest`; guard and cut |
 | `scripts/title_author_skill.py` | `extract()`, `postprocess()`, `normalize_input()`, `parse_answer()`, adapters (`gemini_call`, `anthropic_call`, `llm_for`); refuses a prompt that lacks its Title/Author sections or the examples |
 | `scripts/ta_rule_extract.py` + two `*_weights.json` | The rule script: candidates, repair of spans, role-word list |
-| `scripts/title_author_fix.py` | The `needs_review` flags; an experimental candidate picker (not used by `ta.py`) |
+| `scripts/title_author_fix.py` | The `needs_review` flags and the name candidates used by the second look; an experimental candidate picker (not used by `ta.py`) |
 | `scripts/tool_handler.py` + `references/tool_schema.json` | The skill as a tool for Claude, OpenAI or Gemini |
 | `scripts/efficiency.py` | `cached`, `retrying`, `metered`, `extract_many` (thread-safe) |
 | `scripts/server.py` | Local HTTP service: `POST /extract`, `/tool`, `/stats`, `/health` |
 | `scripts/run_tests.py` | All offline self-tests (no key, no network) |
 | `references/rules.md`, `references/examples.md` | The prompt: GEPA-rewritten rules, then 12 worked examples |
+| `references/second_look.md` | The prompt for the second look at a doubted author |
 
 ## Extending
 
