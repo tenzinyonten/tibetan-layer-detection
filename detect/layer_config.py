@@ -27,11 +27,14 @@ from dataclasses import dataclass
 @dataclass
 class LayerConfig:
     repo: str | None
-    scheme: str  # "bio" or "bioe"
+    scheme: str  # "bio" or "bioe" ("ta" for the title/author layers, which read the labels from the model)
     break_penalty: float
     stride: int
     color: str
     source: str  # where break_penalty/stride came from, for the --help text and logs
+    kind: str = "window"  # "window": sliding windows over the book (every layer but title/author);
+    # "head_tail": one sequence from the first and last 3,000 characters, one span per field
+    # (title, author) -- see title_author.py
     stitch_first_window: bool = False  # see infer.run_layer_stitched(); only Yigchung as of 2026-09-28
     caveat: str = ""  # printed once when the layer is loaded, for a known-weak model
     # Post-Viterbi cleanup switches, read by decode.apply_linguistic_rules (see its docstring).
@@ -57,6 +60,35 @@ class LayerConfig:
     # sabche's model is very precise (0.85, a high bar), chapter fairly precise (0.75),
     # quotation moderate (0.65), tsawa and yigchung are the hardest tasks (0.5, a low bar
     # so more of their spans surface for review rather than being silently trusted).
+
+
+TITLE_AUTHOR_MODEL = "Yontenn/mmbert-title-author-run2"  # private; weights are in its best/ folder
+TA_FIELDS = ("title", "author")
+TA_LAYER_NAMES = TA_FIELDS + tuple(f + "_skill" for f in TA_FIELDS)  # the _skill ones appear with system "both"
+
+
+def is_title_author(name: str) -> bool:
+    return name in TA_LAYER_NAMES
+
+
+def base_layer(name: str) -> str:
+    """The LAYERS key a layer name styles/thresholds by: title_skill -> title."""
+    return name[:-len("_skill")] if name.endswith("_skill") and name[:-len("_skill")] in TA_FIELDS else name
+
+
+@dataclass
+class TitleAuthorOptions:
+    """How the title/author layers are run. Stage 2 reads system, the models and
+    the skill settings; Stage 3 reads opf and review_threshold. Defaults are free and local."""
+    system: str = "model"                  # "model", "skill" or "both"
+    title_model: str = TITLE_AUTHOR_MODEL  # a Hugging Face repo, or a local folder
+    author_model: str = TITLE_AUTHOR_MODEL  # same joint model for both until the single-entity models exist
+    skill_model: str = "gemini-3.8-flash"  # only used by system "skill" / "both"; PAID, needs GEMINI_API_KEY or ANTHROPIC_API_KEY
+    skill_dir: str | None = None           # folder holding title_author_skill.py (default: TA_SKILL_DIR, else the repo's)
+    crop_chars: int = 3000                 # characters kept at each end
+    break_penalty: float = 12.0            # Viterbi; picked on validation (the trainer used 5)
+    opf: bool = False                      # .opf output for title/author: not implemented, raises if switched on
+    review_threshold: float | None = None  # None: LAYERS[title/author].default_review_threshold
 
 
 LAYERS: dict[str, LayerConfig] = {
@@ -104,5 +136,21 @@ LAYERS: dict[str, LayerConfig] = {
                "recall 0.402), well below the other layers; one test book had 107 gold spans "
                "and zero true positives at this break penalty",
         default_review_threshold=0.5,
+    ),
+    "title": LayerConfig(
+        repo=TITLE_AUTHOR_MODEL, scheme="ta", break_penalty=12.0, stride=0, color="#b07df5",  # purple
+        source="Yontenn/mmbert-title-author-run2 docs/run2_results.md (Viterbi break penalty 12, picked on "
+               "validation); test title F1 0.828 on the older 2,389-work test",
+        kind="head_tail", extend_to_tsheg=False, merge_small_gaps=False,
+        default_review_threshold=0.7,  # untuned placeholder; to be calibrated on validation once the final models exist
+        caveat="title/author reads only the first and last 3,000 characters and gives one title for the whole file",
+    ),
+    "author": LayerConfig(
+        repo=TITLE_AUTHOR_MODEL, scheme="ta", break_penalty=12.0, stride=0, color="#4dd8d8",  # teal
+        source="Yontenn/mmbert-title-author-run2 docs/run2_results.md (Viterbi break penalty 12, picked on "
+               "validation); test author F1 0.744 on the older 2,389-work test",
+        kind="head_tail", extend_to_tsheg=False, merge_small_gaps=False,
+        default_review_threshold=0.7,  # untuned placeholder; to be calibrated on validation once the final models exist
+        caveat="title/author reads only the first and last 3,000 characters and gives one author for the whole file",
     ),
 }
