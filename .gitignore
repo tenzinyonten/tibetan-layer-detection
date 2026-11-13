@@ -42,3 +42,11 @@ build/
 
 # Spell checker lives in its own repo: https://github.com/tenzinyonten/TiSpell
 TiSpell/
+
+# Title/author built datasets and run dumps (multi-GB). Prompts and small tables stay tracked.
+title_author/data/processed/gold_dataset*/
+title_author/data/processed/parquet_export*
+title_author/data/gemini_batches/
+title_author/data/mmbert_preds/
+title_author/data/gemini_runs/
+title_author/data/exports/

@@ -1,0 +1,27 @@
+{
+ "split": "test",
+ "n": 2384,
+ "seed": 0,
+ "parquet": "/Users/tenzinyonten/layer_detection/title_author/data/processed/parquet_export_strat_both_notrans_nous",
+ "title": {
+  "precision": 0.688,
+  "recall": 0.688,
+  "f1": 0.688,
+  "outcomes": {
+   "low_iou": 671,
+   "ok": 1641,
+   "wrong_region": 72
+  }
+ },
+ "author": {
+  "precision": 0.375,
+  "recall": 0.375,
+  "f1": 0.375,
+  "outcomes": {
+   "low_iou": 1356,
+   "ok": 894,
+   "wrong_region": 134
+  }
+ },
+ "mean_f1": 0.531
+}

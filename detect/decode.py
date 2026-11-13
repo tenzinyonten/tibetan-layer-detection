@@ -325,6 +325,36 @@ def remove_short_spans(
     return kept, len(spans) - len(kept)
 
 
+def has_tibetan(s: str) -> bool:
+    """True if s contains any character in the Tibetan block (U+0F00-U+0FFF)."""
+    return any("\u0f00" <= ch <= "\u0fff" for ch in s)
+
+
+def drop_non_tibetan(
+    spans: list[tuple[int, int, float, int]], text: str
+) -> tuple[list[tuple[int, int, float, int]], int]:
+    """Drops spans whose text has no Tibetan character -- scraping artifacts
+    such as English navigation text. Returns (kept_spans, n_removed)."""
+    kept = [sp for sp in spans if has_tibetan(text[sp[0]:sp[1]])]
+    return kept, len(spans) - len(kept)
+
+
+SHAD_RULE_MAX_CHARS = 8  # shad rule: spans shorter than this must be followed by a shad
+
+
+def drop_short_unless_shad(
+    spans: list[tuple[int, int, float, int]], text: str, max_len: int = SHAD_RULE_MAX_CHARS
+) -> tuple[list[tuple[int, int, float, int]], int]:
+    """Precision rule for a layer whose headings are whole lines closed by a
+    shad (Sabche): a span shorter than max_len is kept only if the character
+    right after it is a shad. Real short headings end just before their
+    closing shad; truncated predictions stop mid-word or mid-line. Spans of
+    max_len or more are untouched. Returns (kept_spans, n_removed)."""
+    kept = [sp for sp in spans
+            if sp[1] - sp[0] >= max_len or (sp[1] < len(text) and text[sp[1]] == SHAD)]
+    return kept, len(spans) - len(kept)
+
+
 FRAGMENT_LOOKAHEAD = 250  # how far repair_fragments looks for the end of the heading line
 
 
@@ -367,18 +397,22 @@ def apply_linguistic_rules(
     spans: list[tuple[int, int, float, int]], text: str, *,
     extend_to_tsheg: bool = True, merge_gaps: bool = True, repair: bool = False,
     extend_fragments: bool = False, extend_brackets: bool = False,
+    shad_rule: bool = False,
 ) -> tuple[list[tuple[int, int, float, int]], int]:
     """Post-Viterbi cleanup, in order: extend a short ༼ stub to the next ༽
     (extend_brackets), extend truncated spans to the next tsheg
     (extend_to_tsheg), merge spans separated only by a short run of
     punctuation/whitespace (merge_gaps), repair fragments (repair: see
-    repair_fragments), then drop any span still under MIN_SPAN_CHARS
-    characters as noise. The switches come from the layer's LayerConfig
+    repair_fragments), drop spans under SHAD_RULE_MAX_CHARS not followed by
+    a shad (shad_rule: see drop_short_unless_shad), then drop any span still
+    under MIN_SPAN_CHARS characters as noise, then any span with no Tibetan
+    character (all layers). The switches come from the layer's LayerConfig
     (extend_to_tsheg / merge_small_gaps / repair_fragments /
-    extend_to_closing_bracket); the defaults here are the original behavior
+    extend_to_closing_bracket / shad_rule); the defaults here are the original behavior
     (bracket-extend off). Returns (cleaned_spans, n_removed), counting both
-    fragments dropped as duplicates and short spans dropped as noise."""
-    n_dup = 0
+    fragments dropped as duplicates, short spans dropped as noise, and spans
+    with no Tibetan text."""
+    n_dup = n_shad = 0
     if extend_brackets:
         spans = extend_to_closing_bracket(spans, text)
     if extend_to_tsheg:
@@ -387,8 +421,11 @@ def apply_linguistic_rules(
         spans = merge_small_gaps(spans, text)
     if repair:
         spans, n_dup = repair_fragments(spans, text, extend=extend_fragments)
+    if shad_rule:
+        spans, n_shad = drop_short_unless_shad(spans, text)
     spans, n_removed = remove_short_spans(spans)
-    return spans, n_removed + n_dup
+    spans, n_non_tibetan = drop_non_tibetan(spans, text)
+    return spans, n_removed + n_dup + n_shad + n_non_tibetan
 
 
 # ---------------------------------------------------------------------------

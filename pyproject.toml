@@ -20,10 +20,10 @@ dependencies = [
 ]
 
 [project.scripts]
-tibetan-preprocess = "tibetan_layer_detection.preprocess:main"
-tibetan-infer = "tibetan_layer_detection.infer:main"
-tibetan-postprocess = "tibetan_layer_detection.postprocess:main"
-tibetan-detect = "tibetan_layer_detection.detect_layers:main"
+tibetan-preprocess = "detect.preprocess:main"
+tibetan-infer = "detect.infer:main"
+tibetan-postprocess = "detect.postprocess:main"
+tibetan-detect = "detect.detect_layers:main"
 
 [tool.setuptools]
-packages = ["tibetan_layer_detection"]
+packages = ["detect"]

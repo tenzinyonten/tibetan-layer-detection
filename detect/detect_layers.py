@@ -11,7 +11,7 @@ own module with its own console script:
 This file holds no detection logic of its own -- it builds the three
 intermediate folders under --out and calls each stage's own main() in turn.
 For a Python API that returns results in-process instead of writing files
-you manage yourself, see tibetan_layer_detection.detect() in __init__.py.
+you manage yourself, see detect.detect() in __init__.py.
 
 Usage
 -----

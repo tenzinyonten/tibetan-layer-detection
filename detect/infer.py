@@ -170,7 +170,8 @@ def rule_flags(cfg: LayerConfig) -> dict:
     return {"extend_to_tsheg": cfg.extend_to_tsheg, "merge_gaps": cfg.merge_small_gaps,
             "repair": cfg.repair_fragments,
             "extend_fragments": cfg.extend_lone_fragments,
-            "extend_brackets": cfg.extend_to_closing_bracket}
+            "extend_brackets": cfg.extend_to_closing_bracket,
+            "shad_rule": cfg.shad_rule}
 
 
 def run_layer_dual(text: str, tok, model, cfg: LayerConfig, device: str,
@@ -288,7 +289,7 @@ def infer_one(book: dict, layer_names: list[str], device: str,
                                for s, e, c, v in spans]
             if n_removed:
                 print(f"  [note] {book_id}: layer '{name}': removed {n_removed} span(s) "
-                      f"under {MIN_SPAN_CHARS} chars as noise", file=sys.stderr)
+                      f"(under {MIN_SPAN_CHARS} chars, duplicate fragments, or no Tibetan text)", file=sys.stderr)
             short_spans_removed[name] = n_removed
             n_windows[name] = n_win
         except Exception as e:
