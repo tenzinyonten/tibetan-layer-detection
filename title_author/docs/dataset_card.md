@@ -4,7 +4,7 @@ language: [bo]
 task_categories: [token-classification]
 pretty_name: Tibetan title / author (BIO)
 ---
-# formatting-title-author-v1 (private)
+# Tibetan title / author, tokenized (BIO)
 
 Token-classification data for finding the **title** and the **author** of each work in Tibetan volumes, for fine-tuning `jhu-clsp/mmBERT-base`. One model learns both.
 

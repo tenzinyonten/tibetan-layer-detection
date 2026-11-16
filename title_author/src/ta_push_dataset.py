@@ -13,7 +13,8 @@ LABEL2ID = {"O": 0, "B-TITLE": 1, "I-TITLE": 2, "B-AUTHOR": 3, "I-AUTHOR": 4}
 p = argparse.ArgumentParser()
 p.add_argument("--local-dir", type=Path, default=ROOT / "title_author/data/processed/gold_dataset_all")
 p.add_argument("--card", type=Path, default=ROOT / "title_author/docs/dataset_card.md")
-p.add_argument("--repo-id", default="Yontenn/formatting-title-author-v1")
+p.add_argument("--repo-id", required=True,
+               help="no default on purpose: pushing over Yontenn/title-author-training replaces the data that models were trained on")
 p.add_argument("--public", action="store_true")
 a = p.parse_args()
 dset = load_from_disk(str(a.local_dir))
