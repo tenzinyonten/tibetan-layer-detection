@@ -31,8 +31,10 @@ def build_input(r):
 _KEY_I = [0]
 
 def call_gemini(prompt, user, key, tries=5):
+    gc = {"temperature": 0, "responseMimeType": "application/json"}
+    if os.environ.get("THINK_LEVEL"): gc["thinkingConfig"] = {"thinkingLevel": os.environ["THINK_LEVEL"]}     # gemini-3.8-flash: "low", as in the batch runs
     body = json.dumps({"systemInstruction": {"parts": [{"text": prompt}]}, "contents": [{"role": "user", "parts": [{"text": user}]}],
-                       "generationConfig": {"temperature": 0, "responseMimeType": "application/json"}}).encode()
+                       "generationConfig": gc}).encode()
     keys = [x for x in (os.environ.get("GEMINI_API_KEYS") or key).split(",") if x.strip()]   # several keys: rotate on 429
     tries = max(tries, 2 * len(keys) + 3)
     for k in range(tries):
