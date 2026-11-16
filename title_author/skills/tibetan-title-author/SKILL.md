@@ -12,7 +12,9 @@ The skill reads only the first 3,000 and the last 3,000 characters (a text of 6,
 ## Quick Start
 
 ```bash
-python3 scripts/ta.py llm book.txt gemini-3.8-flash     # or claude-sonnet-5-5; needs GEMINI_API_KEY / ANTHROPIC_API_KEY; costs money
+python3 scripts/ta.py book.txt          # everything in one command; uses the model your key allows (GEMINI_API_KEY or ANTHROPIC_API_KEY), else a free weak guess
+python3 scripts/ta.py books_folder/     # every .txt file in a folder: one JSON line per book
+python3 scripts/ta.py llm book.txt gemini-3.8-flash     # or name the model yourself, for example claude-sonnet-5-5; costs money
 ```
 
 ```json
@@ -40,7 +42,8 @@ The command cuts the text, lets the model read the excerpt with the rules, then 
 
 | Task | Command |
 |---|---|
-| Book in, answer out (API model, costs money) | `python3 scripts/ta.py llm book.txt MODEL` |
+| Book in, answer out, automatic | `python3 scripts/ta.py book.txt` (a folder works too) |
+| Same with a model you choose (costs money) | `python3 scripts/ta.py llm book.txt MODEL` |
 | Free first guess, no model (author right about 36%) | `python3 scripts/ta.py rules book.txt` |
 | Only the text the model would read | `python3 scripts/ta.py excerpt book.txt` |
 | Check and repair a draft that already exists | `python3 scripts/ta.py verify book.txt --title "..." --author "..."` |

@@ -29,7 +29,7 @@ text of one work
 | Mode | How | Command |
 |---|---|---|
 | Agent | The host agent runs `ta.py excerpt` (only the cut text, never the whole book), reads `rules.md`, decides, then runs `ta.py verify` on its own answer (steps 4-5). | `ta.py excerpt BOOK.txt`, then `ta.py verify` |
-| API model | `ta.py llm` sends `rules.md` + `examples.md` (joined with a blank line) as the system prompt and the text as the user message. `llm_for(model)` picks the adapter: `claude-*` -> `anthropic_call`, `gemini-*` -> `gemini_call`. Any other provider: pass your own `call_llm(system, user) -> str`. | `ta.py llm WORK.txt MODEL` |
+| API model | `ta.py BOOK.txt` (auto: picks the model your key allows) or `ta.py llm BOOK.txt MODEL` sends `rules.md` + `examples.md` (joined with a blank line) as the system prompt and the text as the user message. `llm_for(model)` picks the adapter: `claude-*` -> `anthropic_call`, `gemini-*` -> `gemini_call`. Any other provider: pass your own `call_llm(system, user) -> str`. | `ta.py llm WORK.txt MODEL` |
 | Rules only | No model. The rule script ranks name candidates. Free and instant, weak on the author. | `ta.py rules WORK.txt` |
 
 `ta.py verify` runs only steps 4-5 on a draft that already exists (the agent's own answer). It is not needed with `llm`, which runs all steps. It never compares against labels. `ta.py excerpt` prints the cut text only (step 2). `--chars N` changes the block size (default 3,000; 2,000 is untested).
