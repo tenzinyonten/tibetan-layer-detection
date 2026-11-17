@@ -25,7 +25,15 @@ It reads the first 3,000 and the last 3,000 characters of a work (a work of 6,00
 
 ## Training data
 
-[`BDRC/Bo-Title-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Title-Dataset) (revision `092bcd55`, the last commit that changed the data files). It has the same rows, windows and splits as the joint data `Yontenn/title-author-training` (revision `1c3226b3`); only the labels changed. 32,074 / 2,494 / 2,384 works for train / validation / test, one sequence per work (`[CLS] head [SEP] tail [SEP]`). The train split includes 7,811 works with automatically found spans (BDRC v3 outlines); validation and test are annotator spans only. See the dataset card.
+Trained on [`BDRC/Bo-Title-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Title-Dataset).
+
+| Split | Works |
+|---|---|
+| Train | 32,074 (24,263 labelled by annotators, 7,811 labelled automatically) |
+| Validation | 2,494 (annotators) |
+| Test | 2,384 (annotators) |
+
+Each example is one work: the first 3,000 and the last 3,000 characters of its text, or the whole text if it is 6,000 characters or fewer. Only the title is labelled; the author counts as "other" (`O`). The automatic labels are used in training only. See the dataset card for the sources and how the data was prepared.
 
 ## Training
 
@@ -54,8 +62,6 @@ Metric: per-work span precision, recall and F1 at IoU >= 0.5 against the gold sp
 | test split | F1 | precision | recall |
 |---|---|---|---|
 | all 2,384 works | 0.845 | 0.848 | 0.842 |
-
-On the same works the joint model `Yontenn/mmbert-title-author-run2` scores F1 0.835, and the Gemini skill (gemini-3.8-flash, GEPA prompt, rule layer) 0.787. The recall difference to the joint model is +0.010 (95% range -0.002 to +0.021), so it is not clearly different.
 
 ## Usage
 
