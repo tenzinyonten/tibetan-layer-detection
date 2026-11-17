@@ -16,15 +16,17 @@ The gold datasets, parquet exports, Gemini batches and runs, and model predictio
 
 ## Models and data
 
-| | |
-|---|---|
-| Training data, 5 labels (O, B/I-TITLE, B/I-AUTHOR) | [Yontenn/title-author-training](https://huggingface.co/datasets/Yontenn/title-author-training) |
-| Title-only and author-only views of the same data | `Yontenn/title-only-training`, `Yontenn/author-only-training` (private) |
-| Text and span tables | [Yontenn/formatting-title-author](https://huggingface.co/datasets/Yontenn/formatting-title-author) |
-| Trained model (joint, run 2) | `Yontenn/mmbert-title-author-run2` (private, weights in `best/`) |
-| Trained title-only and author-only models | `Yontenn/mmbert-title-only`, `Yontenn/mmbert-author-only` (private, weights in `best/`) |
+| | Hugging Face repo | Card |
+|---|---|---|
+| Final model, title | `BDRC/Bo-Title-Detection` (private, weights in `best/`) | [`docs/hf_cards/Bo-Title-Detection.md`](docs/hf_cards/Bo-Title-Detection.md) |
+| Final model, author | `BDRC/Bo-Author-Detection` (private, weights in `best/`) | [`docs/hf_cards/Bo-Author-Detection.md`](docs/hf_cards/Bo-Author-Detection.md) |
+| Dataset for the title model | `BDRC/Bo-Title-Dataset` (private) | [`docs/hf_cards/Bo-Title-Dataset.md`](docs/hf_cards/Bo-Title-Dataset.md) |
+| Dataset for the author model | `BDRC/Bo-Author-Dataset` (private) | [`docs/hf_cards/Bo-Author-Dataset.md`](docs/hf_cards/Bo-Author-Dataset.md) |
+| Joint data, 5 labels (O, B/I-TITLE, B/I-AUTHOR); both datasets above are relabelled copies of it | [Yontenn/title-author-training](https://huggingface.co/datasets/Yontenn/title-author-training) | [`docs/dataset_card.md`](docs/dataset_card.md) |
+| Text and span tables (an older version, with auto-labelled works) | [Yontenn/formatting-title-author](https://huggingface.co/datasets/Yontenn/formatting-title-author) | |
+| Joint model, run 2 (an experiment, trained on data before the translator and `_` cleaning) | `Yontenn/mmbert-title-author-run2` (private, weights in `best/`) | [`docs/model_cards/mmbert-title-author-run2.md`](docs/model_cards/mmbert-title-author-run2.md) |
 
-Training is `common/train_layer.py`. The joint model is `--label-name TITLE_AUTHOR --scheme multi`. A single-entity model is `--label-name TITLE --scheme bio --dataset Yontenn/title-only-training` (or `AUTHOR` with `Yontenn/author-only-training`), with `--weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test`. The title-only run used all 8 epochs; the author-only run stopped early at epoch 5.5, with its best checkpoint at step 10,020.
+Training is `common/train_layer.py`. The joint model is `--label-name TITLE_AUTHOR --scheme multi`. A single-entity model is `--label-name TITLE --scheme bio --dataset BDRC/Bo-Title-Dataset` (or `AUTHOR` with `BDRC/Bo-Author-Dataset`), with `--weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test`. The title-only run used all 8 epochs; the author-only run stopped early at epoch 5.5, with its best checkpoint at step 10,020.
 
 Decoding is Viterbi, then one span per work: title = first span, author = last span. The joint model uses break penalty 12; the single-entity models use 6 (chosen on validation). Scoring: `src/ta_mmbert_score.py` (joint) and `src/ta_mmbert_single_score.py` (single-entity).
 

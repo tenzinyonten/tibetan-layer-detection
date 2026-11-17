@@ -59,6 +59,6 @@ The public BDRC API resolves our work IDs, but the record describes the whole bo
 - Tool calling, retrieval, voting, two-model judge: each at most about 1 point on author. BDRC matches the label about 25%.
 
 ## Update 2026-11-16: single-entity models
-- Two mmBERT-base models trained from the same 5-label data with the other entity relabelled O (not masked): `Yontenn/mmbert-title-only` (all 8 epochs, validation title F1 0.830 at IoU 0.5) and `Yontenn/mmbert-author-only` (stopped at epoch 5.5, best step 10,020, validation author F1 0.805). Those trainer scores count every predicted span, so they are not comparable to the one-span-per-work numbers below.
+- Two mmBERT-base models trained from the same 5-label data with the other entity relabelled O (not masked): `BDRC/Bo-Title-Detection` (all 8 epochs, validation title F1 0.830 at IoU 0.5) and `BDRC/Bo-Author-Detection` (stopped at epoch 5.5, best step 10,020, validation author F1 0.805). Those trainer scores count every predicted span, so they are not comparable to the one-span-per-work numbers below.
 - One span per work, break penalty chosen on validation: title-only 0.825 (penalty 6), author-only 0.790 (penalty 6), joint model 0.832 and 0.770 (penalty 12).
 - Test, 2,384 works, scored once: title-only 0.842 and author-only 0.734 (mean 0.788) against the joint model 0.833 and 0.711 (mean 0.772) and the skill 0.786 and 0.756 (mean 0.771). Title-only for the title plus the skill for the author: 0.842 and 0.756 (mean 0.799). Details and ranges: `README.md`.

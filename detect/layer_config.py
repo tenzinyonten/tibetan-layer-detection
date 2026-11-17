@@ -65,8 +65,8 @@ class LayerConfig:
 # All private; weights are in each repo's best/ folder. The two single-entity models know one field
 # each (3 labels O, B, I); the joint model knows both (5 labels). Test, 2,384 works, share correct at IoU >= 0.5:
 # joint (penalty 12) title 0.833 / author 0.711; title-only + author-only (penalty 6) 0.842 / 0.734.
-TITLE_MODEL = "Yontenn/mmbert-title-only"
-AUTHOR_MODEL = "Yontenn/mmbert-author-only"
+TITLE_MODEL = "BDRC/Bo-Title-Detection"
+AUTHOR_MODEL = "BDRC/Bo-Author-Detection"
 JOINT_MODEL = "Yontenn/mmbert-title-author-run2"
 TITLE_AUTHOR_MODEL = JOINT_MODEL  # the earlier name, kept for callers that import it
 TA_FIELDS = ("title", "author")
@@ -170,7 +170,7 @@ LAYERS: dict[str, LayerConfig] = {
     ),
     "title": LayerConfig(
         repo=TITLE_MODEL, scheme="ta", break_penalty=6.0, stride=0, color="#b07df5",  # purple
-        source="Yontenn/mmbert-title-only, Viterbi break penalty 6 picked on validation; test title 0.842 "
+        source="BDRC/Bo-Title-Detection, Viterbi break penalty 6 picked on validation; test title 0.842 "
                "share correct (2,384 works; the joint model: 0.833)",
         kind="head_tail", extend_to_tsheg=False, merge_small_gaps=False,
         default_review_threshold=0.7,  # untuned placeholder; to be calibrated on validation once the final models exist
@@ -178,7 +178,7 @@ LAYERS: dict[str, LayerConfig] = {
     ),
     "author": LayerConfig(
         repo=AUTHOR_MODEL, scheme="ta", break_penalty=6.0, stride=0, color="#4dd8d8",  # teal
-        source="Yontenn/mmbert-author-only, Viterbi break penalty 6 picked on validation; test author 0.734 "
+        source="BDRC/Bo-Author-Detection, Viterbi break penalty 6 picked on validation; test author 0.734 "
                "share correct (2,384 works; the joint model: 0.711; the skill: 0.756)",
         kind="head_tail", extend_to_tsheg=False, merge_small_gaps=False,
         default_review_threshold=0.7,  # untuned placeholder; to be calibrated on validation once the final models exist
