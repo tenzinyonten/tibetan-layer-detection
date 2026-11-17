@@ -67,10 +67,12 @@ Held-out test (19 books). Decoder picked on validation, then frozen (Viterbi bre
 
 ## Usage
 
+The tokenizer is the one of the base model, `jhu-clsp/mmBERT-base`. Load it from there: the tokenizer file stored in this repo was written by a newer version of `transformers` and does not load with version 4.
+
 ```python
 from transformers import AutoModelForTokenClassification, AutoTokenizer
 
-tok = AutoTokenizer.from_pretrained("BDRC/Bo-Quotation-Detection")
+tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base")
 model = AutoModelForTokenClassification.from_pretrained("BDRC/Bo-Quotation-Detection")
 ```
 
