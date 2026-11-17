@@ -5,6 +5,8 @@ in a train book, how many short/boilerplate titles repeat, and how many book
 pairs share text. Informational only: cross-book shared text is not treated as
 leakage for this project.
 
+Prints to the terminal; takes no flags. Optional, after the split.
+
 Usage:
     python chapter/src/check_chapter_leakage.py
 """

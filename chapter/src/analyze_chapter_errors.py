@@ -7,6 +7,9 @@ matches them against the cleaned gold spans at IoU >= 0.5 in character space.
 Prints per-book results, what kind of gold spans are missed, and what the false
 positives look like, and writes missed/false-positive lists as CSV.
 
+Writes CSVs to --out-dir (default scratch/chapter, gitignored); copies of the
+validation ones are kept in chapter/results/.
+
 Use it on the VALIDATION dump. Reading test errors and then changing the model
 would use up the frozen test split.
 
@@ -65,11 +68,14 @@ def bucket(n):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--spans", type=Path, required=True)
-    ap.add_argument("--pred-key", default="viterbi_bp4.0")
-    ap.add_argument("--tag", default="val")
-    ap.add_argument("--out-dir", type=Path, default=ROOT / "scratch/chapter")
-    ap.add_argument("--show", type=int, default=25)
+    ap.add_argument("--spans", type=Path, required=True,
+                    help="the eval_viterbi_iou.py --dump-spans file (JSONL), validation only")
+    ap.add_argument("--pred-key", default="viterbi_bp4.0",
+                    help="decoding key in the dump (viterbi_bp4.0 = Viterbi, break penalty 4.0)")
+    ap.add_argument("--tag", default="val", help="label used in the output file names")
+    ap.add_argument("--out-dir", type=Path, default=ROOT / "scratch/chapter",
+                    help="where the missed and false-positive CSVs are written")
+    ap.add_argument("--show", type=int, default=25, help="how many missed and false-positive examples to print")
     args = ap.parse_args(argv)
 
     from transformers import AutoTokenizer

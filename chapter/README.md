@@ -3,7 +3,7 @@
 Finds **chapter and section headings** in Tibetan Buddhist books: the heading line that opens a division (a numbered chapter line, the title of a work inside a collected volume, a plain section title, or front matter such as a table of contents). One binary token classifier (labels `O`, `B-CHAPTER`, `I-CHAPTER`), fine-tuned from `jhu-clsp/mmBERT-base`. Chapter spans are short and sparse: about 0.18% of tokens.
 
 - **In:** the `Chapter.yml` layers of the OpenPecha books, plus the book list `data/shared/tsawa_audit.csv`.
-- **Out:** the dataset [BDRC/Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) and the model [BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection). Both are private (read from the Hub, 2026-11-17); a 404 means you need access from the owner.
+- **Out:** a dataset and a model on Hugging Face (see below).
 - **In the whole system:** `detect/` runs this model on a text (the `chapter` entry in [layer_config.py](../detect/layer_config.py)). The data scripts live here in `src/`; training and scoring use the shared scripts in [common/](../common/).
 
 ## Folder layout
@@ -13,9 +13,18 @@ chapter/
 ├── src/             scripts: clean, split, build, push, analyze
 ├── tests/           tests for Chapter post-processing
 ├── data/processed/  cleaned spans, book verdicts, frozen split, stats
-├── docs/            model card, dataset card, Hub notes, pipeline details, prompt
+├── docs/            model card, dataset card, zero-shot prompt
 └── results/         validation tables and zero-shot baselines
 ```
+
+## Hugging Face
+
+| | Repo | Visibility |
+|---|---|---|
+| Model | [BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) ([card](docs/model_card.md)) | private |
+| Dataset | [BDRC/Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) ([card](docs/dataset_card.md)) | private |
+
+Both are private (read from the Hub, 2026-11-17); a 404 means you need access from the owner.
 
 ## Pipeline
 
@@ -44,7 +53,7 @@ flowchart TD
   TRAIN --> EVAL
 ```
 
-Boxes are steps; rounded boxes are the files that flow between them. Dashed arrows are optional steps. The scripts for each step are in the table below. The frozen split and the shared book list are inputs, so they are not drawn. The cards are in [docs/](docs/): [model card](docs/model_card.md), [dataset card](docs/dataset_card.md), [Hugging Face notes](docs/huggingface.md).
+Boxes are steps; rounded boxes are the files that flow between them. Dashed arrows are optional steps. The scripts for each step are in the table below. The frozen split and the shared book list are inputs, so they are not drawn. The cards are in [docs/](docs/).
 
 ## Main pipeline
 
@@ -66,7 +75,7 @@ All commands run from the repository root.
 ```bash
 # 1. Clean the spans and flag bad books
 python chapter/src/clean_chapter_spans.py
-# 2. Make the frozen train/validation/test split
+# 2. Make the train/validation/test split. Test split is frozen: score it once.
 python chapter/src/prepare_chapter_split.py --keep-v3
 # 3. Build the BIO dataset (8,192-token windows)
 python chapter/src/build_chapter_dataset.py
@@ -81,14 +90,10 @@ python common/eval_viterbi_iou.py --model BDRC/Bo-Chapter-Detection --dataset BD
     --split validation --break-penalty 4.0 --dump-spans scratch/chapter/chapter_val_spans.jsonl
 ```
 
-**The test split is frozen: do not re-run step 2 casually, and score test once.**
-
-Full details for each step: [pipeline_details.md](docs/pipeline_details.md)
-
 ## Optional tools
 
 - **Check leakage**: reports long spans shared with train. `python chapter/src/check_chapter_leakage.py`
-- **Analyze errors** (validation only, never test): lists missed and false-positive spans. `python chapter/src/analyze_chapter_errors.py --spans scratch/chapter/chapter_val_spans.jsonl --pred-key viterbi_bp4.0 --tag val`
+- **Analyze errors**: lists missed and false-positive spans. Validation only, never test. `python chapter/src/analyze_chapter_errors.py --spans scratch/chapter/chapter_val_spans.jsonl --pred-key viterbi_bp4.0 --tag val`
 - **Tests**: `python -m unittest chapter/tests/test_chapter_cleanup.py` tests the Chapter post-processing rules and config. [test_drop_quoted_tsawa.py](tests/test_drop_quoted_tsawa.py) tests tsawa and quotation code, not Chapter.
 
 ## Results
@@ -103,7 +108,7 @@ Test set. Numbers are copied from the [model card](docs/model_card.md) and the z
 | [Claude Sonnet 5, zero-shot (all 36 books)](results/zeroshot/claude-sonnet-5/README.md) | 0.302 | 0.196 | 0.651 |
 | [Gemini 3.1 Flash Lite, zero-shot (all 36 books)](results/zeroshot/gemini-3.1-flash-lite/README.md) | 0.540 | 0.400 | 0.829 |
 
-The Gemini run is not independent of the test set. How these were measured: [pipeline_details.md](docs/pipeline_details.md#how-the-results-were-measured).
+The Gemini prompt was edited after seeing Claude's test errors, so its score is not independent.
 
 ## Zero-shot baselines
 
@@ -147,8 +152,6 @@ chapter/
 ├── docs/
 │   ├── dataset_card.md                # also the Hugging Face README of the dataset
 │   ├── model_card.md                  # also the Hugging Face README of the model
-│   ├── huggingface.md                 # repo links and visibility
-│   ├── pipeline_details.md            # thresholds, flags and edge cases for each step
 │   └── prompts/gemini_chapter_anchors.md  # zero-shot prompt (draft)
 └── results/
     ├── chapter_val_per_book.csv       # validation score per book

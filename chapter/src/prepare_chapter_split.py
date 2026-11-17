@@ -20,6 +20,12 @@ leakage. With ``--keep-v3`` the books already in tsawa's frozen split_v3 keep
 their split and only the rest are optimised; without it every book is free.
 The seed with the lowest score among ``SEEDS`` is kept.
 
+Reads:  data/shared/tsawa_audit.csv, chapter_spans_clean.csv, chapter_book_verdicts.csv
+        and, with --keep-v3, data/shared/split_v3_frozen.csv.
+Writes: chapter/data/processed/chapter_split_frozen.csv and a report at
+        scratch/chapter/splits/chapter_split_report.json (gitignored).
+The test split is frozen: do not re-run this casually.
+
 Usage:
     python chapter/src/prepare_chapter_split.py [--keep-v3] [--out PATH]
 """
@@ -141,7 +147,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--keep-v3", action="store_true",
                     help="books in tsawa split_v3 keep their split")
-    ap.add_argument("--out", type=Path, default=OUT_SPLIT)
+    ap.add_argument("--out", type=Path, default=OUT_SPLIT,
+                    help="output CSV (default chapter/data/processed/chapter_split_frozen.csv)")
     args = ap.parse_args(argv)
 
     audit = {r["pecha_id"]: r for r in csv.DictReader(AUDIT.open(encoding="utf-8"))}

@@ -5,6 +5,15 @@ Reuses the tsawa builder's labeling / windowing (``label_tokens``,
 ``sliding_windows``, ``pack_window``) with a Chapter label map. Inputs are the
 cleaned sidecar and the frozen Chapter split; nothing is re-cleaned here.
 
+Windows are 8,192 tokens with stride 5,120 (mmBERT tokenizer). Writes
+chapter/data/processed/chapter_dataset/ (gitignored) and chapter_dataset_stats.json.
+
+Next: push it with push_chapter_dataset.py, then train with
+    python common/train_layer.py --label-name CHAPTER --weight-scheme sqrt_inv \\
+        --epochs 8 --evals-per-epoch 4 --output-dir /workspace/runs/chapter_bio_sqrt
+sqrt_inv class weights are used because Chapter is about 0.18% of tokens.
+Training can also read the local chapter_dataset folder instead of the Hub copy.
+
 Usage:
     python chapter/src/build_chapter_dataset.py
 """
@@ -35,14 +44,19 @@ SPLIT_NAMES = {"train": "train", "val": "validation", "test": "test"}
 
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--audit-csv", type=Path, default=ROOT / "data/shared/tsawa_audit.csv")
-    p.add_argument("--sidecar", type=Path, default=ROOT / "chapter/data/processed/chapter_spans_clean.csv")
-    p.add_argument("--split-file", type=Path, default=ROOT / "chapter/data/processed/chapter_split_frozen.csv")
-    p.add_argument("--tokenizer", default="jhu-clsp/mmBERT-base")
-    p.add_argument("--max-length", type=int, default=8192)
-    p.add_argument("--stride", type=int, default=5120)
-    p.add_argument("--out-dir", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset")
-    p.add_argument("--stats-json", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset_stats.json")
+    p.add_argument("--audit-csv", type=Path, default=ROOT / "data/shared/tsawa_audit.csv",
+                   help="book list with the text paths")
+    p.add_argument("--sidecar", type=Path, default=ROOT / "chapter/data/processed/chapter_spans_clean.csv",
+                   help="cleaned spans from clean_chapter_spans.py")
+    p.add_argument("--split-file", type=Path, default=ROOT / "chapter/data/processed/chapter_split_frozen.csv",
+                   help="frozen split from prepare_chapter_split.py")
+    p.add_argument("--tokenizer", default="jhu-clsp/mmBERT-base", help="tokenizer name or path")
+    p.add_argument("--max-length", type=int, default=8192, help="window length in tokens")
+    p.add_argument("--stride", type=int, default=5120, help="step between window starts, in tokens")
+    p.add_argument("--out-dir", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset",
+                   help="where the DatasetDict is saved (gitignored)")
+    p.add_argument("--stats-json", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset_stats.json",
+                   help="window, book, span and label counts")
     p.add_argument("--limit", type=int, default=None, help="debug: first N documents only")
     return p.parse_args(argv)
 

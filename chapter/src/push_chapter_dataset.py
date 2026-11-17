@@ -2,7 +2,8 @@
 """Push the local Chapter DatasetDict and dataset card to the Hugging Face Hub.
 
 Expects ``chapter/data/processed/chapter_dataset/`` from build_chapter_dataset.py.
-Does not re-tokenize.
+Does not re-tokenize. Uploads the card as the repo README.md and a label_map.json.
+Needs a Hugging Face login with write access.
 
 Usage:
     python chapter/src/push_chapter_dataset.py --private
@@ -23,10 +24,12 @@ LABEL2ID = {"O": 0, "B-CHAPTER": 1, "I-CHAPTER": 2}
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--local-dir", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset")
-    p.add_argument("--card", type=Path, default=ROOT / "chapter/docs/dataset_card.md")
-    p.add_argument("--repo-id", default="BDRC/Bo-Chapter-Dataset")
-    p.add_argument("--private", action="store_true")
+    p.add_argument("--local-dir", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset",
+                   help="the DatasetDict made by build_chapter_dataset.py")
+    p.add_argument("--card", type=Path, default=ROOT / "chapter/docs/dataset_card.md",
+                   help="uploaded as the dataset repo README.md")
+    p.add_argument("--repo-id", default="BDRC/Bo-Chapter-Dataset", help="target Hugging Face dataset repo")
+    p.add_argument("--private", action="store_true", help="create the repo as private")
     args = p.parse_args(argv)
     if not (args.local_dir / "dataset_dict.json").is_file():
         raise SystemExit(f"No DatasetDict at {args.local_dir}")
