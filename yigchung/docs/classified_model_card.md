@@ -83,11 +83,11 @@ Caveats: the test set is small and uneven; two documents hold 86% of the test sp
 
 ## Usage
 
-Cut windows of 8,192 tokens with stride 5,120, average the logits of overlapping windows per token, then Viterbi-decode the whole text once with break penalty 5 (leaving a span costs 5; `O` to `I` is forbidden). Spans are inclusive: `text[start:end + 1]`. The tokenizer is the one of the base model.
+Cut windows of 8,192 tokens with stride 5,120, average the logits of overlapping windows per token, then Viterbi-decode the whole text once with break penalty 5 (leaving a span costs 5; `O` to `I` is forbidden). Spans are inclusive: `text[start:end + 1]`. The repo includes the tokenizer files, copied unchanged from `jhu-clsp/mmBERT-base`.
 
 ```python
 from transformers import AutoTokenizer, AutoModelForTokenClassification
-tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base")
+tok = AutoTokenizer.from_pretrained("BDRC/Bo-Yigchung-Classified-Detection")
 model = AutoModelForTokenClassification.from_pretrained("BDRC/Bo-Yigchung-Classified-Detection")
 ```
 

@@ -67,12 +67,12 @@ About 11% of gold authors differ from the author a reader would name (stanza wri
 
 ## Usage
 
-The weights are in the `best/` subfolder of the repo. The repo has no tokenizer files; use the base tokenizer.
+The weights are in the `best/` subfolder of the repo. The tokenizer files are at the repo root, copied unchanged from `jhu-clsp/mmBERT-base`.
 
 ```python
 from transformers import AutoModelForTokenClassification, AutoTokenizer
 
-tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base")
+tok = AutoTokenizer.from_pretrained("BDRC/Bo-Author-Detection")
 model = AutoModelForTokenClassification.from_pretrained("BDRC/Bo-Author-Detection", subfolder="best")
 ```
 
