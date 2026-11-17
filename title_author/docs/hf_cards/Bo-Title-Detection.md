@@ -63,8 +63,6 @@ Metric: per-work span precision, recall and F1 at IoU >= 0.5 against the gold sp
 |---|---|---|---|
 | all 2,384 works | 0.845 | 0.848 | 0.842 |
 
-On the same works the joint model `Yontenn/mmbert-title-author-run2` scores F1 0.835, and the Gemini skill (gemini-3.8-flash, GEPA prompt, rule layer) 0.787. The recall difference to the joint model is +0.010 (95% range -0.002 to +0.021), so it is not clearly different.
-
 ## Usage
 
 The weights are in the `best/` subfolder of the repo. The repo has no tokenizer files; use the base tokenizer.

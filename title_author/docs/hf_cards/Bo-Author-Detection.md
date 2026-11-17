@@ -63,8 +63,6 @@ Metric: per-work span precision, recall and F1 at IoU >= 0.5 against the gold sp
 |---|---|---|---|
 | all 2,384 works | 0.738 | 0.742 | 0.734 |
 
-On the same works the joint model `Yontenn/mmbert-title-author-run2` scores F1 0.727, and the Gemini skill (gemini-3.8-flash, GEPA prompt, rule layer) 0.756. The recall difference to the joint model is +0.023 (95% range +0.009 to +0.038).
-
 About 11% of gold authors differ from the author a reader would name (stanza writer, compiler, copyist, requester), so every number has a ceiling.
 
 ## Usage
