@@ -10,6 +10,6 @@
 | Text and span tables | [Yontenn/formatting-title-author](https://huggingface.co/datasets/Yontenn/formatting-title-author) | public | yes (older version) |
 | Joint model, run 2 (experiment) | `Yontenn/mmbert-title-author-run2` | private | [`model_cards/mmbert-title-author-run2.md`](model_cards/mmbert-title-author-run2.md) |
 
-Pairs: `Bo-Title-Detection` was trained on `Bo-Title-Dataset`, and `Bo-Author-Detection` on `Bo-Author-Dataset`. Both datasets are relabelled copies of `title-author-training` (same rows and splits). The model weights are in the `best/` subfolder of each model repo. The four BDRC repos were moved from `Yontenn/mmbert-title-only`, `mmbert-author-only`, `title-only-training` and `author-only-training` on 2026-11-17; the old names redirect.
+Pairs: `Bo-Title-Detection` was trained on `Bo-Title-Dataset`, and `Bo-Author-Detection` on `Bo-Author-Dataset`. Both datasets are relabelled copies of `title-author-training` (same rows and splits). The model weights are in the `best/` subfolder of each model repo.
 
 If a page returns 404, the repo is private and needs access from its owner.

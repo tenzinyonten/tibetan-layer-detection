@@ -53,7 +53,7 @@ Each example is one work: the first 3,000 and the last 3,000 characters of its t
 | Best checkpoint | chosen on validation IoU 0.5 F1 |
 | Input length | one sequence per work, `[CLS] head [SEP] tail [SEP]`, up to 8,192 tokens |
 
-Command: `common/train_layer.py --label-name TITLE --scheme bio --dataset Yontenn/title-only-training --weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test`
+Command: `common/train_layer.py --label-name TITLE --scheme bio --dataset BDRC/Bo-Title-Dataset --weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test`
 
 ## Results
 
