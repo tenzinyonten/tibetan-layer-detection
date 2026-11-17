@@ -8,7 +8,6 @@ tags:
 - tibetan
 - layer-detection
 - yigchung
-license: other
 ---
 
 # Bo-Yigchung-Classified-Dataset

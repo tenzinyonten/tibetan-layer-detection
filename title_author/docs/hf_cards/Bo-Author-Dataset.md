@@ -9,7 +9,6 @@ tags:
 - author
 - bio
 - mmbert
-license: other
 ---
 
 
