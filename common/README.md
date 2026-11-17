@@ -125,6 +125,25 @@ These score a general LLM with no training: 16,000-character windows overlapping
 | [`zeroshot/gemini_chunks.py`](zeroshot/gemini_chunks.py) | Library: cuts text into chunks at shads and checks gold-span inclusion. Copied verbatim from the quotation benchmark repo | imported, not run | - | - | `run_layer_zeroshot.py` |
 | [`zeroshot/gemini_locate.py`](zeroshot/gemini_locate.py) | Library: recovers book offsets from the LLM's span text (`str.find`, then a fuzzy fallback). Copied verbatim from the quotation benchmark repo | imported, not run | - | - | `run_layer_zeroshot.py`; documented in tsawa (`docs/prompts/gemini_tsawa_anchors.md`) |
 
+#### Chapter baselines: how to run
+
+The Chapter zero-shot results are in `chapter/results/zeroshot/`; this is how they were produced. The prompt is [`chapter/docs/prompts/gemini_chapter_anchors.md`](../chapter/docs/prompts/gemini_chapter_anchors.md), a draft written from train and validation books only.
+
+`claude_batch.py` runs Claude Sonnet 5 on the test windows through the Message Batches API and writes a per-window cache. **It sends nothing without `--yes`, which spends money.**
+
+```bash
+python common/zeroshot/claude_batch.py --layer chapter plan --groups 3
+python common/zeroshot/claude_batch.py --layer chapter create --group g1 --books ... [--yes]
+python common/zeroshot/claude_batch.py --layer chapter poll --group g1
+python common/zeroshot/claude_batch.py --layer chapter fetch --group g1
+```
+
+`run_layer_zeroshot.py` runs Gemini on 16,000-character windows (overlap 2,000) and scores the anchors against the gold at IoU 0.5. With `--locate-only` it only re-scores a finished cache. Other flags: `--provider gemini` or `anthropic`, `--model`.
+
+```bash
+python common/zeroshot/run_layer_zeroshot.py --layer chapter --books <ids> --out scratch/chapter/claude/test --locate-only
+```
+
 ### Annotation audit (`annotation_audit/`)
 
 Read-only checks on `data/raw_opf`; they write reports and CSVs next to the scripts. All run from the repo root. The one folder that mentions this directory is `tsawa/README.md` ("the shared audit that also covers sabche and chapter stays in `common/annotation_audit/`"); no script in a layer folder imports these, so they are run by hand when the data changes.
