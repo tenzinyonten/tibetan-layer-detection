@@ -1,5 +1,5 @@
 ---
-pretty_name: Formatting Chapter
+pretty_name: Bo-Chapter-Dataset
 language:
 - bo
 task_categories:
@@ -7,6 +7,7 @@ task_categories:
 tags:
 - tibetan
 - chapter
+- layer-detection
 - bio
 - mmbert
 - openpecha
@@ -24,90 +25,88 @@ configs:
     path: data/test-*
 ---
 
-# Chapter (ལེའུ་, chapter heading) dataset — mmBERT BIO
+# Bo-Chapter-Dataset
 
-Binary token classification for the Chapter layer, built with the same
-labeling and windowing as the tsawa and sabche datasets. Generated 2026-09-24 (split rebuilt with stratification the same day).
+Binary token classification data for the Chapter layer (ལེའུ་, chapter and section headings) of
+Tibetan Buddhist books, in BIO labels over 8,192-token windows. It trains
+[`BDRC/Bo-Chapter-Detection`](https://huggingface.co/BDRC/Bo-Chapter-Detection). It has 378 books and
+11,070 windows.
 
-Split: 83/8.5/8.5 by window count, stratified on batch, spans per window and
-share of short spans (`chapter_split_frozen.csv`), by book only.
+## Format
 
 | item | value |
 |---|---|
-| tokenizer | `jhu-clsp/mmBERT-base` (fast, offsets) |
-| window / stride | 8192 (8190 content + CLS/SEP) / 5120 |
-| labels | `O`=0, `B-CHAPTER`=1, `I-CHAPTER`=2; CLS/SEP/pad = -100 |
-| label rule | token-start rule (`build_tsawa_dataset.label_tokens`) |
-| columns | input_ids, attention_mask, labels, token_start, token_end, char_start, char_end, pecha_id, source_batch, window_index, n_tokens_doc, coverage_pct |
-| span source | `chapter/data/processed/chapter_spans_clean.csv` (dropped=False) |
-| split | `chapter/data/processed/chapter_split_frozen.csv` (**test frozen**) |
+| tokenizer | `jhu-clsp/mmBERT-base` (fast, with offsets) |
+| labels | `O` = 0, `B-CHAPTER` = 1, `I-CHAPTER` = 2; CLS, SEP and padding = -100 |
+| label rule | token-start rule (`label_tokens` in `common/build_tsawa_dataset.py`) |
+| columns | `input_ids`, `attention_mask`, `labels`, `token_start`, `token_end`, `char_start`, `char_end`, `pecha_id`, `source_batch`, `window_index`, `n_tokens_doc`, `coverage_pct` |
 
-## Size
+**Window geometry.** A window holds 8,192 tokens (8,190 content tokens plus CLS and SEP) and starts
+every 5,120 tokens, so consecutive windows overlap by 3,070 content tokens. Here "stride" means the
+step between window starts; the Hugging Face tokenizer argument `stride` means the overlap, so the
+equivalent value there is 3,070. Tokens in the overlap are labelled in both windows.
 
-| split | books | old / new | windows | Chapter spans | spans per window | short spans (<30 chars) | old-batch windows |
-|---|---|---|---|---|---|---|---|
-| train | 308 | 114 / 194 | 9,165 (82.8%) | 2,509 | 0.274 | 31.8% | 49.3% |
-| validation | 34 | 13 / 21 | 965 (8.7%) | 275 | 0.285 | 34.5% | 49.2% |
-| test | 36 | 16 / 20 | 940 (8.5%) | 258 | 0.274 | 32.2% | 49.3% |
+**Offsets.** `token_start` and `token_end` give the window's token range in the book, and
+`char_start` and `char_end` its character range. `source_batch` is `old` or `new` (the two annotation
+batches). Scoring code in the GitHub repository uses character offsets with an inclusive end.
 
-Train tokens: 74.8M `O`, 3,688 `B-CHAPTER`, 129,338 `I-CHAPTER` (windows overlap,
-so a token is counted once per window it appears in). Chapter is about 0.18% of
-tokens, far sparser than the other layers. `train_layer.py`'s default `inv` weights
-(relative to `O`) come out around 20,000 (B) and 580 (I); `sqrt_inv` gives about
-142 and 24, which is the setting to start from.
+## Splits
 
-## Pipeline
+Split by book (one book in one split only), 83 / 8.5 / 8.5 by window count.
 
-```bash
-python chapter/src/clean_chapter_spans.py      # sidecar + book verdicts
-python chapter/src/prepare_chapter_split.py --keep-v3   # frozen, stratified book-level split
-python chapter/src/build_chapter_dataset.py
-python chapter/src/check_chapter_leakage.py    # optional, read-only
-python chapter/src/push_chapter_dataset.py --private
+| split | books | old / new books | windows | Chapter spans | spans per window | old-batch windows |
+|---|---|---|---|---|---|---|
+| train | 308 | 114 / 194 | 9,165 | 2,509 | 0.274 | 49.3% |
+| validation | 34 | 13 / 21 | 965 | 275 | 0.285 | 49.2% |
+| test | 36 | 16 / 20 | 940 | 258 | 0.274 | 49.3% |
+
+Train tokens: 74,840,009 `O`, 3,688 `B-CHAPTER`, 129,338 `I-CHAPTER` (windows overlap, so a token
+is counted once per window it appears in). Chapter is about 0.18% of tokens. About a third of all
+spans are shorter than 30 characters.
+
+## Data source and preparation
+
+Source texts are BDRC books in OpenPecha `.opf` format, from two annotation batches. 394 books
+have a Chapter layer; books with none are not in the dataset.
+
+| batch | books with a Chapter layer |
+|---|---|
+| old | 159 |
+| new | 235 |
+| total | 394 (3,252 raw spans) |
+
+Steps, in order:
+
+1. **Clean the spans** (`chapter/src/clean_chapter_spans.py`). Cut edges inside a syllable are walked to the nearest boundary within 3 characters; spans stop before the trailing shad. Spans separated only by shad, tsheg or spaces (never a newline) are merged: 5 merges, since each line is its own heading. Short spans are kept: 306 raw spans are under 15 characters, such as `ལེའུ་བརྒྱད་པ`. Result: 3,042 spans in 378 books.
+2. **Exclude books** (same script, verdicts in `chapter_book_verdicts.csv`). 16 books are left out: one with unfixable edges, and 15 old-batch books whose offsets drift partway through (the first spans are right, later ones are cut mid-sentence; a constant shift does not recover them). A heading-shape check finds the drifted books.
+3. **Split by book** (`chapter/src/prepare_chapter_split.py`). A greedy multi-objective assignment, best of 14 seeds, balances window share, Chapter spans per window, share of short spans and old-batch share across the three splits. Hard constraints: one book in one split, at least 30 books in validation and in test.
+4. **Tokenize and label** (`chapter/src/build_chapter_dataset.py`). Windows of 8,192 tokens, stride 5,120, token-start labelling rule. No deduplication of text between books.
+
+## Annotation
+
+Chapter spans come from the `Chapter` layer of the OpenPecha books, in the old and the new batch.
+On top of the raw annotations, only the cleaning in steps 1 and 2 was applied; no span was
+relabelled by hand.
+
+## Known limits
+
+- Most books have very few Chapter spans (216 of 378 kept books have one or two), and some may be under-annotated.
+- The test split has 258 spans in 36 books, so scores are noisy.
+- Text shared between different books is not grouped, so the same passage can appear in more than one split.
+- Chapter spans are sparse (0.18% of tokens), so class weights are needed in training.
+- Data rights: the source texts and annotations come from BDRC and OpenPecha. Reuse of the source texts is subject to BDRC's terms.
+
+## Citation
+
+```bibtex
+@misc{bo_chapter_dataset,
+  title  = {Bo-Chapter-Dataset: Tibetan chapter-heading token classification data},
+  author = {Yonten, Tenzin},
+  year   = {2026},
+  url    = {https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset}
+}
 ```
 
-## Cleaning
+## Acknowledgements
 
-Raw `Chapter.yml` offsets from 394 books with a Chapter layer (159 old, 235 new;
-3,252 spans). Books with no Chapter layer are not in the dataset.
-
-- **Edge snapping.** A start or end cut inside a syllable is walked to the nearest
-  boundary within 3 characters (316 spans). Spans stop before the trailing shad.
-  The Tsawa boundary checker reports about 72% dirty ends on the raw data; that
-  is an artifact of the shad convention. Only about 8% of ends and 3.6% of starts
-  (old batch) were actually mid-syllable.
-- **Merging.** Only spans separated by shad, tsheg or spaces (never a newline) are
-  merged: 5 merges. Each line is its own heading.
-- **Book exclusions (16).** One book has unfixable edges. Fifteen old-batch books
-  have offsets that drift partway through: the first few spans are correct and
-  every span after some point is cut mid-sentence. A constant shift does not
-  recover them, so the books are left out entirely. They hold 27 correct spans
-  in the five largest cases checked (out of 131 spans).
-- **Short spans are kept.** 306 raw spans are under 15 characters (short chapter
-  numbers like `ལེའུ་བརྒྱད་པ`), plus a few 2-character stubs such as `༼ཇ`.
-- **Splitting.** A greedy multi-objective assignment (books largest first, then
-  single-book moves and swaps, best of 14 seeds) minimises the deviation of window
-  share, Chapter spans per window, share of short spans (under 30 characters) and
-  old-batch window share across train/val/test. The 97 books already in tsawa
-  split v3 keep their split so val/test books stay frozen across layers; the rest
-  are optimised. The only hard constraints are one book, one split, and at least 30
-  books in val and test. Books that share text are not grouped.
-
-## Leakage
-
-Text shared between different books is not treated as leakage for this project,
-so it is reported and not constrained. Shingle matching on spans of 40+ characters:
-12 of 138 val spans (8.7%) and 21 of 152 test spans (13.8%) also appear verbatim
-in a train book; the test leaks are concentrated in a few books (I52248444 has 6).
-Exact-title matches that include short spans are 8.7% (val) and 15.1% (test) and
-are mostly stock headings: `དཀར་ཆག` (table of contents) and publisher's notes such
-as `དཔེ་སྐྲུན་སྨོན་ཚིག` and `དཔེ་སྐྲུན་གསལ་བཤད`. 439 book pairs share at least one long
-span, and 185 of them sit in different splits.
-
-## Known limitations
-
-- Most books have very few Chapter spans (216 of 393 have one or two before
-  exclusions), and some may be under-annotated. Not audited.
-- About 1.1% of new-batch Chapter spans overlap a BookTitle span. Not resolved.
-- The test split has 258 spans in 36 books, so scores will be noisy.
-- The heading-shape check used to find drifted books is a heuristic.
+Source texts were digitized and made available by the [Buddhist Digital Resource Center (BDRC)](https://www.bdrc.io/). We gratefully acknowledge BDRC. Annotations were prepared through [OpenPecha](https://openpecha.org/) with support from the [Tsadra Foundation](https://www.tsadra.org/).
