@@ -126,7 +126,8 @@ LAYERS: dict[str, LayerConfig] = {
     "tsawa": LayerConfig(
         repo="BDRC/Bo-Tsawa-Detection", scheme="bio",
         break_penalty=4.0, stride=5120, color="#f5e34d",  # yellow
-        source="BDRC/Bo-Tsawa-Detection training/test_metrics.json (decoding.break_penalty)",
+        source="BDRC/Bo-Tsawa-Detection README.md, training/train_results.json (break penalty 5.0 in training) "
+               "and training/v10_with_test_bp4.json (decoding at test, break penalty 4.0)",
         default_review_threshold=0.5,
     ),
     "sabche": LayerConfig(

@@ -10,8 +10,8 @@ Training uses `common/train_layer.py`. The book-level audit and the frozen split
 
 | | Repo | Visibility (read from the Hub, 2026-11-17) | Cards |
 |---|---|---|---|
-| Model | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) | public | model card is the Hub README; no copy in this folder |
-| Dataset | [BDRC/Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) | private (needs access from BDRC) | [`docs/dataset_card.md`](docs/dataset_card.md) and [`docs/huggingface.md`](docs/huggingface.md) are old (they describe the Yontenn v6 repos, see Known issues) |
+| Model | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) | public | [`docs/model_card.md`](docs/model_card.md) |
+| Dataset | [BDRC/Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) | private (needs access from BDRC) | [`docs/dataset_card.md`](docs/dataset_card.md) |
 
 The working dataset and model repos used while developing were under the `Yontenn` account (for example `Yontenn/formatting-tsawa-v10`, the dataset in the training command of the model card). The `push_*` scripts still default to those names; pass `--repo-id` to publish elsewhere.
 
@@ -267,7 +267,7 @@ tsawa/
 ├── data/processed/           span tables, split files, reports (built Arrow datasets are gitignored)
 │   ├── classical_v3/         converted classical commentaries and their split files
 │   └── classical_v3_collapsed/   same with blank lines collapsed
-├── docs/                     dataset_card.md, huggingface.md (both old), prompts/gemini_tsawa_anchors.md
+├── docs/                     model_card.md, dataset_card.md, huggingface.md, prompts/gemini_tsawa_anchors.md
 └── tests/                    four standalone claim checks (not pytest)
 ```
 
@@ -281,7 +281,7 @@ All checked in the code or on the Hub on 2026-11-17.
 - Several scripts read files under `scratch/` that are not in the repo: `prepare_v6.py` (`scratch/tsawa/scripts/build_stratified_split`), `build_v7` to `build_v10` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_classical_v3.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `rescore_masked.py`, the three `audit/` studies (saved predictions in `scratch/tsawa/analysis/`, `scratch/postprocess_round2/`), and the analysis scripts' default outputs. The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
 - `tsawa_spans_merged_reannotated_normalized.csv` is read by the builders and `convert_classical_v3.py` mentions the same convention, but no script in the repo produces that file.
 - `build_tsawa_catalog.py` has a hard-coded `ROOT = Path("/Users/tenzinyonten/layer_detection")`.
-- `docs/dataset_card.md` describes dataset v6 and `docs/huggingface.md` lists `Yontenn/formatting-tsawa-v6` and `Yontenn/mmbert-tsawa-v6-nofeat`. The published repos are `BDRC/Bo-Tsawa-Dataset` (private) and `BDRC/Bo-Tsawa-Detection` (public). The root README lists the dataset as `BDRC/Tibetan-Tsawa-Detection`; the Hub API answers that name with a redirect (HTTP 307), so it was probably renamed, but this was not followed up.
+- The root README lists the dataset as `BDRC/Tibetan-Tsawa-Detection`; the Hub API answers that name with a redirect (HTTP 307), so it was probably renamed, but this was not followed up.
 - The analysis and eval scripts default to old models and datasets (`Yontenn/mmbert-tsawa-io-v2`, `formatting-tsawa-v1`, `ds_v5`, `runs/v5_merged/best`); they need explicit `--model` and `--dataset` for the current ones.
 - `tests/` holds standalone scripts with argparse, not pytest tests (no `test_` functions).
 - Argmax decoding gives test F1 0.49; always decode with Viterbi (`common/eval_viterbi_iou.py`).
