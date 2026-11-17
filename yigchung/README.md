@@ -84,21 +84,21 @@ python yigchung/src/build_genre_bio.py with_lotsawa  # -> $YIGCHUNG_DATA/genre_t
 
 # train on Vast (see setup_vast.sh)
 python common/train_layer.py --label-name YIGCHUNG --scheme bio \
-    --dataset Yontenn/yigchung-genre-bio-lotsawa-v2 --epochs 20 --lr 1e-5 \
+    --dataset BDRC/Bo-Yigchung-Classified-Dataset --epochs 20 --lr 1e-5 \
     --break-penalty 5 --stitched-eval --skip-test \
     --run-name yigchung-genre-lotsawa-v3-swap --output-dir /workspace/runs/yigchung_genre_v3
 
 # predict validation + test, then analyse on the Mac
 python common/predict_layer_spans.py --label-name YIGCHUNG \
     --model /workspace/runs/yigchung_genre_v3/best \
-    --dataset Yontenn/yigchung-genre-bio-lotsawa-v2 --splits validation,test \
+    --dataset BDRC/Bo-Yigchung-Classified-Dataset --splits validation,test \
     --break-penalty 5 --out /workspace/runs/yigchung_genre_v3/predictions_validation_test.json
 python yigchung/src/analyze_predictions.py predictions_validation_test.json with_lotsawa
 ```
 
 The other training settings are the `train_layer.py` defaults: batch size 2, gradient accumulation 4, weight decay 0.01, gradient clip 0.3, warmup 6%, bf16, seed 42, inverse-frequency class weights, early stopping with patience 3, and the best checkpoint picked on validation span F1 (IoU ≥ 0.5, per window). The stitched validation score (whole documents, overlapping windows averaged) is computed once at the end and is the one reported below. All of these are recorded in `results/genre_v*/results.json`.
 
-The `--dataset` above is the private Hub copy of `bio_with_lotsawa`. A local path from `build_genre_bio.py` works too.
+The `--dataset` above is the private BDRC copy of `bio_with_lotsawa`. A local path from `build_genre_bio.py` works too.
 
 ## Results
 
@@ -138,9 +138,9 @@ The genre model wins on liturgy (0.79 against 0.62) but scores 0.06 on the "othe
 |---|---|---|
 | Production, general | [`BDRC/Bo-Yigchung-Detection`](https://huggingface.co/BDRC/Bo-Yigchung-Detection) | `karma689/yigchung_detection` rev `v1.0`, which is no longer available |
 | Previous general (not in production) | [`karma689/mmbert-yigchung-v2`](https://huggingface.co/karma689/mmbert-yigchung-v2) | `karma689/yigchung_detection` rev `v2.0`; the published copy is `BDRC/yigchung_detection_v2` |
-| Genre v3 (this folder) | `Yontenn/mmbert-yigchung-genre-v3` (private) | `Yontenn/yigchung-genre-bio-lotsawa-v2` (private) |
+| Classified (genre v3, this folder) | `BDRC/Bo-Yigchung-Classified-Detection` (private) | `BDRC/Bo-Yigchung-Classified-Dataset` (private) |
 
-The genre model decodes differently from production: stride 5120 instead of 4914, windows averaged instead of first-window-only, and break penalty 5 instead of 1. `detect/layer_config.py` still loads the production model.
+Cards: [`docs/classified_model_card.md`](docs/classified_model_card.md), [`docs/classified_dataset_card.md`](docs/classified_dataset_card.md); both pairs are listed in [`docs/huggingface.md`](docs/huggingface.md). The classified model is for the four genres only. It decodes differently from production: stride 5120 instead of 4914, windows averaged instead of first-window-only, and break penalty 5 instead of 1. `detect/layer_config.py` still loads the production model.
 
 ## Known limits
 

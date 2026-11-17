@@ -25,7 +25,7 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--local-dir", type=Path, default=ROOT / "chapter/data/processed/chapter_dataset")
     p.add_argument("--card", type=Path, default=ROOT / "chapter/docs/dataset_card.md")
-    p.add_argument("--repo-id", default="Yontenn/formatting-chapter-v1")
+    p.add_argument("--repo-id", default="BDRC/Bo-Chapter-Dataset")
     p.add_argument("--private", action="store_true")
     args = p.parse_args(argv)
     if not (args.local_dir / "dataset_dict.json").is_file():

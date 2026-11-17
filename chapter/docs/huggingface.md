@@ -1,8 +1,8 @@
 # Chapter on Hugging Face
 
-| | HF link |
-|---|---|
-| Dataset | [huggingface.co/datasets/Yontenn/formatting-chapter-v1](https://huggingface.co/datasets/Yontenn/formatting-chapter-v1) |
-| Model | not trained yet |
+| | HF link | Visibility |
+|---|---|---|
+| Dataset | [huggingface.co/datasets/BDRC/Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) | private |
+| Model | [huggingface.co/BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) | private |
 
-The dataset repo is private and holds the current stratified 83/8.5/8.5 split described in [`dataset_card.md`](dataset_card.md). It was re-pushed on 2026-09-24 after the split was rebuilt. If a page returns 404, the repo is private and needs access from its owner.
+Cards: [`dataset_card.md`](dataset_card.md) and [`model_card.md`](model_card.md); each is the README of its Hub repo. The dataset was renamed from `BDRC/Tibetan-Chapter-Detection` on 2026-11-17; the old name (and the older `Yontenn/formatting-chapter-v1`) may no longer resolve. If a page returns 404, the repo is private and needs access from its owner.
