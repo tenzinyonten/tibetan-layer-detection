@@ -6,17 +6,45 @@ Finds **chapter and section headings** in Tibetan Buddhist books: the heading li
 - **Out:** the dataset [BDRC/Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) and the model [BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection). Both are private (read from the Hub, 2026-11-17); a 404 means you need access from the owner.
 - **In the whole system:** `detect/` runs this model on a text (the `chapter` entry in [layer_config.py](../detect/layer_config.py)). The data scripts live here in `src/`; training and scoring use the shared scripts in [common/](../common/).
 
-```mermaid
-flowchart LR
-  A["Clean spans"] --> B["Make split"]
-  B --> C["Build dataset"]
-  C --> D["Push dataset"]
-  D --> E["Train model"]
-  E --> F["Evaluate"]
-  F --> G["Analyze errors"]
+## Folder layout
+
+```
+chapter/
+├── src/             scripts: clean, split, build, push, analyze
+├── tests/           tests for Chapter post-processing
+├── data/processed/  cleaned spans, book verdicts, frozen split, stats
+├── docs/            model card, dataset card, Hub notes, zero-shot prompt
+└── results/         validation tables and zero-shot baselines
 ```
 
-Each box is a pipeline step; the scripts are in the table below. Analyze errors is optional. The frozen split and the shared book list are inputs, so they are not drawn. The cards are in [docs/](docs/): [model card](docs/model_card.md), [dataset card](docs/dataset_card.md), [Hugging Face notes](docs/huggingface.md).
+## Pipeline
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 30, "rankSpacing": 28, "padding": 12}}}%%
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction LR
+    F1(["Raw Chapter.yml"]) --> S1["Clean spans"]
+    S1 --> F2(["Clean spans CSV"])
+    F2 --> S2["Make split"]
+    S2 --> S3["Build and push"]
+    S3 --> F4(["HF dataset"])
+    S2 -.-> L["Check leakage"]
+  end
+  subgraph TRAIN["Train"]
+    direction LR
+    S4["Train model"] --> F5(["HF model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction LR
+    S5["Evaluate"] --> F6(["Scores"])
+    F6 -.-> A["Analyze errors"]
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL
+```
+
+Boxes are steps; rounded boxes are the files that flow between them. Dashed arrows are optional steps. The scripts for each step are in the table below. The frozen split and the shared book list are inputs, so they are not drawn. The cards are in [docs/](docs/): [model card](docs/model_card.md), [dataset card](docs/dataset_card.md), [Hugging Face notes](docs/huggingface.md).
 
 ## Main pipeline
 
@@ -167,19 +195,18 @@ Results are in [results/zeroshot/](results/zeroshot/).
 
 ## Known issues
 
-<details><summary>Show</summary>
+<details><summary>Show 4 known issues</summary>
 
 - [test_drop_quoted_tsawa.py](tests/test_drop_quoted_tsawa.py) tests `drop_quoted_tsawa` and `layers_for_run` in `detect/`: tsawa and quotation code, not the Chapter layer, although the file sits here. Run it with `python -m unittest chapter/tests/test_drop_quoted_tsawa.py` after changing `detect/postprocess.py` or `detect/infer.py`.
 - `tests/test_chapter_cleanup.py` skips its frozen-dump tests unless `scratch/chapter/chapter_test_spans.jsonl` exists; that file is gitignored and not in the repo.
-- `docs/dataset_card.md` still has `license: other` in its front matter; the workplan says to leave the licence line out until a licence is chosen.
 - The model repo's `training/test_metrics.json` could not be read here (the repo is private), so the model-card numbers above are copied from the card, not re-checked against it.
 - The Gemini zero-shot run is not independent of the test set (see Results).
 
 </details>
 
-## Folder layout
+## All files
 
-<details><summary>Show</summary>
+<details><summary>Show the full file tree</summary>
 
 ```
 chapter/
