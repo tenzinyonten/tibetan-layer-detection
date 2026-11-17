@@ -22,98 +22,38 @@ Each box is one script in the table below. The frozen split and the shared book 
 
 | Script | What it does | When to run |
 |---|---|---|
-| [clean_chapter_spans.py](src/clean_chapter_spans.py) | Cleans span edges, merges fragments, marks each book keep or exclude. | First, and again if annotations change. |
-| [prepare_chapter_split.py](src/prepare_chapter_split.py) | Makes the frozen book-level train, validation and test split. | After cleaning. The test split is frozen. |
-| [build_chapter_dataset.py](src/build_chapter_dataset.py) | Tokenizes books into 8,192-token windows with BIO labels. | After the split. |
-| [check_chapter_leakage.py](src/check_chapter_leakage.py) | Reports long spans shared between train and validation or test. | Optional, after the split. |
-| [push_chapter_dataset.py](src/push_chapter_dataset.py) | Uploads the dataset and its card to the Hub. | After building and checking. |
-| [train_layer.py](../common/train_layer.py) (shared) | Fine-tunes mmBERT with `--label-name CHAPTER`. | On a GPU machine. |
-| [eval_viterbi_iou.py](../common/eval_viterbi_iou.py) (shared) | Scores a model with Viterbi decoding, span F1 at IoU 0.5. | After training, validation first. |
-| [analyze_chapter_errors.py](src/analyze_chapter_errors.py) | Lists missed and false-positive spans from a validation run. | After a validation evaluation. |
-| [test_chapter_cleanup.py](tests/test_chapter_cleanup.py) | Tests the Chapter post-processing rules and config. | After changing `detect/` post-processing or the Chapter config. |
+| [clean_chapter_spans.py](src/clean_chapter_spans.py) | Cleans raw chapter spans and flags bad books. | First; rerun on new annotations. |
+| [prepare_chapter_split.py](src/prepare_chapter_split.py) | Makes the frozen train, validation and test split. | After cleaning; test split is frozen. |
+| [build_chapter_dataset.py](src/build_chapter_dataset.py) | Tokenizes books into BIO windows for mmBERT. | After the split. |
+| [check_chapter_leakage.py](src/check_chapter_leakage.py) | Reports long spans shared with train. | Optional, after the split. |
+| [push_chapter_dataset.py](src/push_chapter_dataset.py) | Uploads the dataset and its card to the Hub. | After building the dataset. |
+| [train_layer.py](../common/train_layer.py) | Fine-tunes mmBERT for the Chapter layer. | On a GPU machine. |
+| [eval_viterbi_iou.py](../common/eval_viterbi_iou.py) | Scores a model: Viterbi decoding, span F1. | After training; validation first. |
+| [analyze_chapter_errors.py](src/analyze_chapter_errors.py) | Lists missed and false-positive spans. | After a validation evaluation. |
+| [test_chapter_cleanup.py](tests/test_chapter_cleanup.py) | Tests Chapter post-processing and config. | After changing `detect/` or config. |
+
+`train_layer.py` and `eval_viterbi_iou.py` are shared scripts in [common/](../common/).
 
 ## How to run
 
 All commands run from the repository root.
 
-**1. Clean the spans** and decide which books to keep.
-
 ```bash
+# 1. Clean the spans and flag bad books
 python chapter/src/clean_chapter_spans.py
-```
-
-<details><summary>Details</summary>
-
-Reads `data/shared/tsawa_audit.csv` and the `layers/v001/Chapter.yml` of each book; writes `chapter/data/processed/chapter_spans_clean.csv` and `chapter_book_verdicts.csv`. No `Chapter.yml` is rewritten. It snaps cut edges inside a syllable to the nearest boundary within 3 characters (the end stops before the trailing shad), trims the overlaps this creates, and merges spans separated only by shad, tsheg or spaces (never a newline). A book is `exclude` when more than 30% of its spans still have an edge mid-syllable, or when it has at least 3 spans and under 50% are heading-shaped (old-batch books whose offsets drift partway through). No flags.
-
-</details>
-
-**2. Make the frozen split.**
-
-```bash
+# 2. Make the frozen train/validation/test split
 python chapter/src/prepare_chapter_split.py --keep-v3
-```
-
-<details><summary>Details</summary>
-
-A greedy multi-objective assignment, best of 14 seeds, gives a book-level split of 83 / 8.5 / 8.5 by window count. It balances window share, Chapter spans per window, the share of short spans (under 30 characters) and the old-batch share. Hard constraints: one book in one split, at least 30 books in validation and in test. With `--keep-v3`, books already in the tsawa `data/shared/split_v3_frozen.csv` keep their split. Writes `chapter_split_frozen.csv` and a report at `scratch/chapter/splits/chapter_split_report.json` (gitignored). Other flag: `--out PATH`. Do not re-run casually: the test split is frozen.
-
-</details>
-
-**3. Build the BIO dataset** (mmBERT tokenizer, 8,192-token windows, stride 5,120).
-
-```bash
+# 3. Build the BIO dataset (8,192-token windows)
 python chapter/src/build_chapter_dataset.py
-```
-
-<details><summary>Details</summary>
-
-Reuses `label_tokens`, `sliding_windows` and `pack_window` from `common/build_tsawa_dataset.py`. Nothing is re-cleaned here. Writes `chapter/data/processed/chapter_dataset/` (gitignored) and `chapter_dataset_stats.json`. Flags: `--audit-csv`, `--sidecar`, `--split-file`, `--tokenizer`, `--max-length 8192`, `--stride 5120`, `--out-dir`, `--stats-json`, and `--limit N` for debugging.
-
-</details>
-
-**4. Check leakage** (optional).
-
-```bash
+# 4. Optional: check leakage
 python chapter/src/check_chapter_leakage.py
-```
-
-<details><summary>Details</summary>
-
-A read-only report using verbatim shingle matching: how many long (at least 40 characters) Chapter spans in validation and test also appear verbatim in a train book, and how many book pairs share text. It prints to the terminal and has no flags. It is informational only: text shared between books is not treated as leakage in this project.
-
-</details>
-
-**5. Push the dataset** and its card (private).
-
-```bash
+# 5. Push the dataset and its card (private)
 python chapter/src/push_chapter_dataset.py --private --repo-id BDRC/Bo-Chapter-Dataset
-```
-
-<details><summary>Details</summary>
-
-Pushes the local `DatasetDict` to the Hub, then uploads `docs/dataset_card.md` as the repo `README.md` and a `label_map.json`. It does not re-tokenize. Needs a Hugging Face login with write access. Other flags: `--local-dir`, `--card`.
-
-</details>
-
-**6. Train** on a GPU machine (Vast.ai, see `../setup_vast.sh`).
-
-```bash
+# 6. Train on a GPU machine
 python common/train_layer.py --label-name CHAPTER --weight-scheme sqrt_inv \
     --epochs 8 --evals-per-epoch 4 --output-dir /workspace/runs/chapter_bio_sqrt
-```
-
-<details><summary>Details</summary>
-
-The weight scheme is `sqrt_inv` because Chapter is about 0.18% of tokens. Training can also read the local `chapter_dataset` folder instead of the Hub copy.
-
-</details>
-
-**7. Upload the model** and `docs/model_card.md` (as the model README) to `BDRC/Bo-Chapter-Detection`. This is done by hand; no script in this folder does it.
-
-**8. Evaluate.** Score on **validation** first and look at errors only there. The test split is frozen: score it once.
-
-```bash
+# 7. Upload the model and docs/model_card.md to the Hub by hand (no script)
+# 8. Evaluate on validation, then analyze the errors
 python common/eval_viterbi_iou.py --model BDRC/Bo-Chapter-Detection --dataset BDRC/Bo-Chapter-Dataset \
     --split validation --break-penalty 4.0 --dump-spans scratch/chapter/chapter_val_spans.jsonl
 python chapter/src/analyze_chapter_errors.py --spans scratch/chapter/chapter_val_spans.jsonl \
@@ -121,11 +61,59 @@ python chapter/src/analyze_chapter_errors.py --spans scratch/chapter/chapter_val
 python -m unittest chapter/tests/test_chapter_cleanup.py
 ```
 
-<details><summary>Details</summary>
+**The test split is frozen: do not re-run step 2 casually, and score test once.** **Analyze errors on validation only, never test.**
+
+### Step details
+
+<details><summary>1. Clean the spans</summary>
+
+Reads `data/shared/tsawa_audit.csv` and the `layers/v001/Chapter.yml` of each book; writes `chapter/data/processed/chapter_spans_clean.csv` and `chapter_book_verdicts.csv`. No `Chapter.yml` is rewritten. It snaps cut edges inside a syllable to the nearest boundary within 3 characters (the end stops before the trailing shad), trims the overlaps this creates, and merges spans separated only by shad, tsheg or spaces (never a newline). A book is `exclude` when more than 30% of its spans still have an edge mid-syllable, or when it has at least 3 spans and under 50% are heading-shaped (old-batch books whose offsets drift partway through). No flags.
+
+</details>
+
+<details><summary>2. Make the split</summary>
+
+A greedy multi-objective assignment, best of 14 seeds, gives a book-level split of 83 / 8.5 / 8.5 by window count. It balances window share, Chapter spans per window, the share of short spans (under 30 characters) and the old-batch share. Hard constraints: one book in one split, at least 30 books in validation and in test. With `--keep-v3`, books already in the tsawa `data/shared/split_v3_frozen.csv` keep their split. Writes `chapter_split_frozen.csv` and a report at `scratch/chapter/splits/chapter_split_report.json` (gitignored). Other flag: `--out PATH`.
+
+</details>
+
+<details><summary>3. Build the dataset</summary>
+
+Uses the mmBERT tokenizer, 8,192-token windows and stride 5,120. Reuses `label_tokens`, `sliding_windows` and `pack_window` from `common/build_tsawa_dataset.py`. Nothing is re-cleaned here. Writes `chapter/data/processed/chapter_dataset/` (gitignored) and `chapter_dataset_stats.json`. Flags: `--audit-csv`, `--sidecar`, `--split-file`, `--tokenizer`, `--max-length 8192`, `--stride 5120`, `--out-dir`, `--stats-json`, and `--limit N` for debugging.
+
+</details>
+
+<details><summary>4. Check leakage</summary>
+
+A read-only report using verbatim shingle matching: how many long (at least 40 characters) Chapter spans in validation and test also appear verbatim in a train book, and how many book pairs share text. It prints to the terminal and has no flags. It is informational only: text shared between books is not treated as leakage in this project.
+
+</details>
+
+<details><summary>5. Push the dataset</summary>
+
+Pushes the local `DatasetDict` to the Hub, then uploads `docs/dataset_card.md` as the repo `README.md` and a `label_map.json`. It does not re-tokenize. Needs a Hugging Face login with write access. Other flags: `--local-dir`, `--card`.
+
+</details>
+
+<details><summary>6. Train</summary>
+
+Run on Vast.ai (see `../setup_vast.sh`). The weight scheme is `sqrt_inv` because Chapter is about 0.18% of tokens. Training can also read the local `chapter_dataset` folder instead of the Hub copy.
+
+</details>
+
+<details><summary>7. Upload the model</summary>
+
+Upload the trained model and `docs/model_card.md` (as the model README) to `BDRC/Bo-Chapter-Detection`. This is done by hand; no script in this folder does it.
+
+</details>
+
+<details><summary>8. Evaluate</summary>
+
+Score on **validation** first and look at errors only there. The test split is frozen and was not scored during training; score it once.
 
 `eval_viterbi_iou.py`: `--dump-spans` writes per-window gold and predicted spans as JSONL (keys such as `viterbi_bp4.0`). Other flags: `--sweep`, `--batch-size`, `--device`, `--limit`, `--out`. The metric is span F1 at IoU 0.5 in character offsets, greedy one-to-one matching, Viterbi decoding with break penalty 4.0, whole-book scores. The model card names `training/test_metrics.json` in the model repo as the machine-readable test metrics.
 
-`analyze_chapter_errors.py`: light, no model. It maps predicted token spans back to characters, removes duplicates from overlapping windows, matches them to the cleaned gold at IoU 0.5, and prints per-book results, what kinds of gold spans are missed and what the false positives look like. It writes the missed and false-positive lists as CSV to `--out-dir` (default `scratch/chapter`; copies of the validation ones are in `results/`). Other flag: `--show` (default 25). Use it on the **validation** dump only: reading test errors and then changing the model would use up the frozen test split.
+`analyze_chapter_errors.py`: light, no model. It maps predicted token spans back to characters, removes duplicates from overlapping windows, matches them to the cleaned gold at IoU 0.5, and prints per-book results, what kinds of gold spans are missed and what the false positives look like. It writes the missed and false-positive lists as CSV to `--out-dir` (default `scratch/chapter`; copies of the validation ones are in `results/`). Other flag: `--show` (default 25). Reading test errors and then changing the model would use up the frozen test split.
 
 `test_chapter_cleanup.py`: tests the `༼...༽` stub-extend rule (`extend_to_closing_bracket` in `detect/decode.py`) and the Chapter `LayerConfig` flags. If `scratch/chapter/chapter_test_spans.jsonl` exists, it also checks that the rules reproduce F1 about 0.8448 on that dump and that the stubs in P000110 and P000275 extend to an exact gold match.
 
@@ -157,12 +145,14 @@ The zero-shot LLM baselines were run with shared scripts in `common/zeroshot/`, 
 
 | Script | What it does | When to run |
 |---|---|---|
-| [claude_batch.py](../common/zeroshot/claude_batch.py) (shared) | Runs Claude Sonnet 5 on the test windows through the Message Batches API. | Only to repeat the Claude baseline. It spends money. |
-| [run_layer_zeroshot.py](../common/zeroshot/run_layer_zeroshot.py) (shared) | Runs Gemini on long windows and scores the headings it finds. | Only to repeat a zero-shot baseline. |
+| [claude_batch.py](../common/zeroshot/claude_batch.py) | Runs the Claude zero-shot baseline. | Only to repeat it; costs money. |
+| [run_layer_zeroshot.py](../common/zeroshot/run_layer_zeroshot.py) | Runs the Gemini zero-shot baseline. | Only to repeat the baseline. |
+
+Not part of the Chapter flow: [test_drop_quoted_tsawa.py](tests/test_drop_quoted_tsawa.py) tests tsawa and quotation code (see Known issues).
 
 <details><summary>How to run the baselines</summary>
 
-`claude_batch.py` sends nothing without `--yes`, which spends money. It reads the prompt `docs/prompts/gemini_chapter_anchors.md` and writes a per-window cache.
+`claude_batch.py` runs Claude Sonnet 5 on the test windows through the Message Batches API. **It sends nothing without `--yes`, which spends money.** It reads the prompt `docs/prompts/gemini_chapter_anchors.md` and writes a per-window cache.
 
 ```bash
 python common/zeroshot/claude_batch.py --layer chapter plan --groups 3
