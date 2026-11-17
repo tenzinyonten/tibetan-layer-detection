@@ -80,9 +80,11 @@ Caveats: the test set is dominated by two sources (nalanda and bdrc hold 78% of 
 
 Cut windows of 8,192 tokens (8,190 content tokens) with step 4,914, take each token's logits from the first window that covers it, then Viterbi-decode the whole text once with break penalty 8 (the value chosen on validation). Leaving a span costs the break penalty and `O` to `I` is not allowed. Spans are inclusive: `text[start:end + 1]`. The `detect/` folder of the GitHub repository does this end to end.
 
+The tokenizer is the one of the base model, `jhu-clsp/mmBERT-base`. Load it from there: the tokenizer file stored in this repo was written by a newer version of `transformers` and does not load with version 4.
+
 ```python
 from transformers import AutoTokenizer, AutoModelForTokenClassification
-tok = AutoTokenizer.from_pretrained("BDRC/Bo-Yigchung-Detection")
+tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base")
 model = AutoModelForTokenClassification.from_pretrained("BDRC/Bo-Yigchung-Detection")
 ```
 
