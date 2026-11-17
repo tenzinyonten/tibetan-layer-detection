@@ -6,7 +6,7 @@ stage has to import the other's internals.
 Each break_penalty/stride is the value documented on the model's own Hugging
 Face repo (README.md / training/test_metrics.json / training/config.yaml),
 checked 2026-09-28, not an assumed project-wide default -- see `source` on
-each entry. All five layers (BDRC/Bo-Tsawa-Detection, Bo-Sabche-detection,
+each entry. All five layers (BDRC/Bo-Tsawa-Detection, Bo-Sabche-Detection,
 Bo-Chapter-Detection, Bo-Quotation-Detection, Bo-Yigchung-Detection) have a
 dedicated model as of that date. Yigchung uses a different windowing stride
 (4914, not 5120) and a different overlap policy: a token's logits come from
@@ -130,9 +130,9 @@ LAYERS: dict[str, LayerConfig] = {
         default_review_threshold=0.5,
     ),
     "sabche": LayerConfig(
-        repo="BDRC/Bo-Sabche-detection", scheme="bio",  # NB: repo has lowercase 'detection'
+        repo="BDRC/Bo-Sabche-Detection", scheme="bio",
         break_penalty=4.0, stride=5120, color="#4d9df5",  # blue
-        source="BDRC/Bo-Sabche-detection training/test_metrics.json (decoding.break_penalty)",
+        source="BDRC/Bo-Sabche-Detection training/test_metrics.json (decoding.break_penalty)",
         default_review_threshold=0.85,
         extend_to_tsheg=False, merge_small_gaps=False, repair_fragments=True, shad_rule=True,
     ),
