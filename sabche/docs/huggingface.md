@@ -2,7 +2,7 @@
 
 | | HF link |
 |---|---|
-| Dataset | [huggingface.co/datasets/Yontenn/formatting-sabche-v1](https://huggingface.co/datasets/Yontenn/formatting-sabche-v1) |
-| Model | [huggingface.co/Yontenn/mmbert-sabche-v1](https://huggingface.co/Yontenn/mmbert-sabche-v1) |
+| Dataset | [huggingface.co/datasets/BDRC/Bo-Sabche-Dataset](https://huggingface.co/datasets/BDRC/Bo-Sabche-Dataset) (private) |
+| Model | [huggingface.co/BDRC/Bo-Sabche-Detection](https://huggingface.co/BDRC/Bo-Sabche-Detection) (private) |
 
-The dataset repo is named `-v1` but holds the current 83/8.5/8.5 split described in [`dataset_card.md`](dataset_card.md). If a page returns 404, the repo is private and needs access from its owner.
+Cards: [`model_card.md`](model_card.md), [`dataset_card.md`](dataset_card.md) (equal to the Hub READMEs). If a page returns 404, the repo is private and needs access from its owner.

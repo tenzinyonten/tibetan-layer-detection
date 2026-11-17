@@ -53,7 +53,7 @@ Each example is one work: the first 3,000 and the last 3,000 characters of its t
 | Best checkpoint | step 10,020 (epoch 2.5), chosen on validation IoU 0.5 F1 |
 | Input length | one sequence per work, `[CLS] head [SEP] tail [SEP]`, up to 8,192 tokens |
 
-Command: `common/train_layer.py --label-name AUTHOR --scheme bio --dataset Yontenn/author-only-training --weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test`
+Command: `common/train_layer.py --label-name AUTHOR --scheme bio --dataset BDRC/Bo-Author-Dataset --weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test`
 
 ## Results
 
@@ -67,12 +67,12 @@ About 11% of gold authors differ from the author a reader would name (stanza wri
 
 ## Usage
 
-The weights are in the `best/` subfolder of the repo. The repo has no tokenizer files; use the base tokenizer.
+The weights are in the `best/` subfolder of the repo. The tokenizer files are at the repo root, copied unchanged from `jhu-clsp/mmBERT-base`.
 
 ```python
 from transformers import AutoModelForTokenClassification, AutoTokenizer
 
-tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base")
+tok = AutoTokenizer.from_pretrained("BDRC/Bo-Author-Detection")
 model = AutoModelForTokenClassification.from_pretrained("BDRC/Bo-Author-Detection", subfolder="best")
 ```
 

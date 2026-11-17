@@ -13,7 +13,6 @@ tags:
 - openpecha
 size_categories:
 - 10K<n<100K
-license: other
 configs:
 - config_name: default
   data_files:
