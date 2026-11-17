@@ -8,7 +8,6 @@ tags:
 - tibetan
 - layer-detection
 - yigchung
-license: other
 dataset_info:
 - config_name: default
   features:
