@@ -12,6 +12,7 @@ loading the published per-layer models, is the `detect` package
 | Sabche | outline headings | `sabche/` | `sabche/results/zeroshot/` |
 | Chapter | chapter breaks | `chapter/` | `chapter/results/zeroshot/<model>/` |
 | Title and author | title and author spans | `title_author/` (`src/`, `skills/tibetan-title-author/`, `docs/`) | prompts in `title_author/data/gemini_prompts/` |
+| Yigchung | small-print interlinear notes (ཡིག་ཆུང་) | `yigchung/` (`src/`, `data/processed/`) | `yigchung/results/` |
 
 Book text paths and the frozen document split are shared, because more than one layer reads them: `data/shared/tsawa_audit.csv`, `data/shared/split_v3_frozen.csv`. Cloned `.opf` repos are in `data/raw_opf/` (gitignored). A loose OCR sample is in `data/ocr/`.
 
@@ -24,6 +25,8 @@ Datasets and models on Hugging Face:
 | Tsawa | [Yontenn/formatting-tsawa-v6](https://huggingface.co/datasets/Yontenn/formatting-tsawa-v6) | [Yontenn/mmbert-tsawa-v6-nofeat](https://huggingface.co/Yontenn/mmbert-tsawa-v6-nofeat) |
 | Sabche | [Yontenn/formatting-sabche-v1](https://huggingface.co/datasets/Yontenn/formatting-sabche-v1) | [Yontenn/mmbert-sabche-v1](https://huggingface.co/Yontenn/mmbert-sabche-v1) |
 | Chapter | [Yontenn/formatting-chapter-v1](https://huggingface.co/datasets/Yontenn/formatting-chapter-v1) (private) | not trained yet |
+| Yigchung (general, production) | [BDRC/yigchung_detection_v2](https://huggingface.co/datasets/BDRC/yigchung_detection_v2) (newer data; the model's own v1.0 data is no longer available) | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) |
+| Yigchung (genre: liturgy, prayer, sadhana, songs) | Yontenn/yigchung-genre-bio-lotsawa-v2 (private) | Yontenn/mmbert-yigchung-genre-v3 (private) |
 
 If a page returns 404, the repo is private and needs access from its owner. Per-layer copies
 with more detail are in `tsawa/docs/huggingface.md`, `sabche/docs/huggingface.md` and `chapter/docs/huggingface.md`.

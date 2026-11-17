@@ -1,0 +1,56 @@
+You are an expert cataloguer of Tibetan Buddhist literature. Classify the book below into ONE primary category: liturgy, prayer, sadhana, songs, or other. If you choose "other", you must specify its exact sub-genre. Base your decision on the title, opening excerpt, middle excerpt, and colophon.
+
+PRIMARY CATEGORIES
+1. liturgy: Ritual and ceremonial manuals, offering liturgies, empowerment rites, fire pujas, purification ceremonies.
+   Key markers: ཆོ་ག (rite), དབང་བསྐུར (empowerment), སྦྱིན་སྲེག (fire offering), མཆོད་པ (offering), ལས་རིམ (ritual sequence), ཆོས་སྤྱོད (liturgical recitation).
+2. prayer: Devotional supplications, aspirations, praises, and dedications in verse.
+   Key markers: གསོལ་འདེབས (supplication), སྨོན་ལམ (aspiration), བསྟོད་པ (praise), བཀྲ་ཤིས (auspicious verses), བརྒྱུད་འདེབས (lineage prayer). High verse-like percentage (>55%).
+3. sadhana: Deity-yoga practice scripts meant for active meditation/recitation with visualization and mantra sequences.
+   Key markers: སྒྲུབ་ཐབས (means of accomplishment), བསྙེན་སྒྲུབ, བསྐྱེད་རིམ, རྫོགས་རིམ, བླ་མའི་རྣལ་འབྱོར.
+4. songs: Spiritual poetry of realization, dohas, and experiential songs.
+   Key markers: མགུར (spiritual song), གསུང་མགུར, ཉམས་མགུར, རྡོ་རྗེའི་གླུ (vajra song), དོ་ཧ (doha). Typically 1st-person reflection.
+5. other: Scholastic texts, instructional guides, philosophical treatises, histories, biographies, or compendiums that do not fit the 4 performative genres above.
+
+SUB-GENRES FOR "OTHER" (Choose exactly ONE if category is "other", else "none"):
+- commentary: Word-by-word or section commentaries (འགྲེལ་པ, རྣམ་བཤད, མཆན་འགྲེལ, ཊཱིཀྐ).
+- instruction_manual: Discursive guidance on how to meditate or practice (ཁྲིད་ཡིག, ཞལ་ཁྲིད, ཟིན་བྲིས, དམིགས་ཁྲིད) without being a scripted recitation text.
+- treatise_philosophy: Root philosophical texts, logic, Abhidharma, Madhyamaka, Vinaya treatises (གཞུང་, བསྟན་བཅོས, རྣམ་གཞག).
+- biography_history: Hagiographies, life stories, or chronicles (རྣམ་ཐར, ལོ་རྒྱུས, ཆོས་འབྱུང).
+- collected_works: Multi-text volumes, general compendiums, or collected works lacking one dominant genre (གསུང་འབུམ, གླེགས་བམ).
+- poetics_grammar_astrology: Texts on grammar, poetics, astrology, medicine, or secular arts (སྙན་ངག, བརྡ་དག, རྩིས).
+
+RULES
+- Practice vs. Instruction: A manual (ཁྲིད་ཡིག / ཟིན་ཁྲིད) explaining meditation theory belongs in category "other" (sub-genre: "instruction_manual"). Only choose "sadhana" if [MIDDLE BODY EXCERPT] contains active first-person deity generation formulas (བདག་ཉིད་... སྐད་ཅིག་གིས...) or continuous mantra recitations.
+- Multi-title Bundles (separated by " | "): Classify by the dominant genre. If genuinely mixed or a general anthology, use category "other" and sub-genre "collected_works".
+- Inspect Colophons & Ignore Publisher Back-Matter: In [COLOPHON / ENDING EXCERPT], ignore modern publishing matter (དཀར་ཆག, པར་སྐྲུན, editors, ISBN). Rely only on genuine author colophons (...ཞེས་བྱ་བ..., ...མཛད་པ..., ...སྦྱར་བ...).
+- Use Middle Excerpt as Tie-Breaker: Analytical debate/glosses (ཞེས་པ་ནི, ཕྱིར་རོ, ཞེ་ན) -> "other"; deity generation and mantras -> "sadhana"; stage directions (ལན་གསུམ, tormas, bells/drums, mudras) -> "liturgy"; regular metered verses -> "prayer" or "songs".
+- Set "fits_well": true for clear category members (including genuine scholastic "other" texts). Set "fits_well": false only for uncertain, heavily mixed, or borderline books.
+
+INPUT
+book_id: {book_id}
+source: {source}
+title_tibetan: {title_tibetan}
+title_english: {title_english}
+author: {author}
+verse_like_pct: {verse_like_pct}
+
+[OPENING EXCERPT]
+{opening_text}
+
+[MIDDLE BODY EXCERPT]
+{middle_text}
+
+[COLOPHON / ENDING EXCERPT]
+{ending_text}
+
+OUTPUT
+Return ONLY one valid JSON object, no markdown code fence, no additional commentary:
+{
+  "category": "liturgy | prayer | sadhana | songs | other",
+  "other_subgenre": "commentary | instruction_manual | treatise_philosophy | biography_history | collected_works | poetics_grammar_astrology | none",
+  "book_kind": "concise descriptive label in English (e.g. Abhidharma commentary, Lamrim manual, Hevajra sadhana)",
+  "confidence": "high | medium | low",
+  "fits_well": true or false,
+  "clues": ["specific keywords found in title, excerpts, or colophon"],
+  "reason": "one concise sentence explaining the classification"
+}

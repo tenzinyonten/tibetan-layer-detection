@@ -1,0 +1,309 @@
+﻿model,gold,book_id,source,group,category,n_gold,n_pred,matched
+karma689_v2,before,I058DD999,reviewed_opf,other reviewed books (25),other,55,28,21
+karma689_v2,after,I058DD999,reviewed_opf,other reviewed books (25),other,55,28,21
+karma689_v2,before,I11440433,reviewed_opf,other reviewed books (25),other,2,2,1
+karma689_v2,after,I11440433,reviewed_opf,other reviewed books (25),other,2,2,1
+karma689_v2,before,I24EDBDA0,reviewed_opf,other reviewed books (25),other,1,0,0
+karma689_v2,after,I24EDBDA0,reviewed_opf,other reviewed books (25),other,1,0,0
+karma689_v2,before,I27F687A4,reviewed_opf,other reviewed books (25),other,6,0,0
+karma689_v2,after,I27F687A4,reviewed_opf,other reviewed books (25),other,6,0,0
+karma689_v2,before,I45222122,reviewed_opf,other reviewed books (25),other,1,1,1
+karma689_v2,after,I45222122,reviewed_opf,other reviewed books (25),other,1,1,1
+karma689_v2,before,I5AEEE5CA,reviewed_opf,other reviewed books (25),other,1,1,1
+karma689_v2,after,I5AEEE5CA,reviewed_opf,other reviewed books (25),other,1,1,1
+karma689_v2,before,I617FDD1E,reviewed_opf,other reviewed books (25),other,2,1,1
+karma689_v2,after,I617FDD1E,reviewed_opf,other reviewed books (25),other,2,1,1
+karma689_v2,before,I6EFF9668,reviewed_opf,other reviewed books (25),other,25,0,0
+karma689_v2,after,I6EFF9668,reviewed_opf,other reviewed books (25),other,26,0,0
+karma689_v2,before,I85C28EDA,reviewed_opf,other reviewed books (25),other,9,17,1
+karma689_v2,after,I85C28EDA,reviewed_opf,other reviewed books (25),other,9,17,1
+karma689_v2,before,IDDA7F69E,reviewed_opf,other reviewed books (25),other,1,2,0
+karma689_v2,after,IDDA7F69E,reviewed_opf,other reviewed books (25),other,1,2,0
+karma689_v2,before,IE1B4BBB9,reviewed_opf,other reviewed books (25),other,82,19,4
+karma689_v2,after,IE1B4BBB9,reviewed_opf,other reviewed books (25),other,83,19,4
+karma689_v2,before,IE8D2B7C5,reviewed_opf,other reviewed books (25),other,1,0,0
+karma689_v2,after,IE8D2B7C5,reviewed_opf,other reviewed books (25),other,1,0,0
+karma689_v2,before,IEF3A4022,reviewed_opf,other reviewed books (25),other,1,2,1
+karma689_v2,after,IEF3A4022,reviewed_opf,other reviewed books (25),other,1,2,1
+karma689_v2,before,P000030,reviewed_opf,other reviewed books (25),liturgy,563,508,360
+karma689_v2,after,P000030,reviewed_opf,other reviewed books (25),liturgy,565,508,360
+karma689_v2,before,P000034,reviewed_opf,other reviewed books (25),other,32,16,10
+karma689_v2,after,P000034,reviewed_opf,other reviewed books (25),other,32,16,10
+karma689_v2,before,P000047,reviewed_opf,other reviewed books (25),other,2,2,1
+karma689_v2,after,P000047,reviewed_opf,other reviewed books (25),other,2,2,1
+karma689_v2,before,P000070,reviewed_opf,other reviewed books (25),other,6,5,4
+karma689_v2,after,P000070,reviewed_opf,other reviewed books (25),other,6,5,4
+karma689_v2,before,P000095,reviewed_opf,other reviewed books (25),other,1,4,1
+karma689_v2,after,P000095,reviewed_opf,other reviewed books (25),other,1,4,1
+karma689_v2,before,P000136,reviewed_opf,other reviewed books (25),other,2,0,0
+karma689_v2,after,P000136,reviewed_opf,other reviewed books (25),other,2,0,0
+karma689_v2,before,P000137,reviewed_opf,other reviewed books (25),other,3,1,0
+karma689_v2,after,P000137,reviewed_opf,other reviewed books (25),other,3,1,0
+karma689_v2,before,P000154,reviewed_opf,other reviewed books (25),other,2,3,0
+karma689_v2,after,P000154,reviewed_opf,other reviewed books (25),other,2,3,0
+karma689_v2,before,P000228,reviewed_opf,other reviewed books (25),liturgy,26,6,2
+karma689_v2,after,P000228,reviewed_opf,other reviewed books (25),liturgy,29,6,3
+karma689_v2,before,P000249,reviewed_opf,other reviewed books (25),prayer,8,1,1
+karma689_v2,after,P000249,reviewed_opf,other reviewed books (25),prayer,8,1,1
+karma689_v2,before,P000268,reviewed_opf,other reviewed books (25),liturgy,16,0,0
+karma689_v2,after,P000268,reviewed_opf,other reviewed books (25),liturgy,16,0,0
+karma689_v2,before,L13D46642,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L13D46642,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L151EE5DB,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L151EE5DB,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L167759FC,lotsawa,Lotsawa (47),lotsawa,2,3,1
+karma689_v2,after,L167759FC,lotsawa,Lotsawa (47),lotsawa,2,3,1
+karma689_v2,before,L1A5514BA,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L1A5514BA,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L236F5B36,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L236F5B36,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L3699F918,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L3699F918,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L3740AEBA,lotsawa,Lotsawa (47),lotsawa,2,2,1
+karma689_v2,after,L3740AEBA,lotsawa,Lotsawa (47),lotsawa,2,2,1
+karma689_v2,before,L3B7B0CD1,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L3B7B0CD1,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L3F01CE7E,lotsawa,Lotsawa (47),lotsawa,1,2,1
+karma689_v2,after,L3F01CE7E,lotsawa,Lotsawa (47),lotsawa,1,2,1
+karma689_v2,before,L49EF6BF3,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L49EF6BF3,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L52122A08,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L52122A08,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L53E408D7,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L53E408D7,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L54964B07,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L54964B07,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L58DB1EDD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L58DB1EDD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L5D44A0FE,lotsawa,Lotsawa (47),lotsawa,2,6,2
+karma689_v2,after,L5D44A0FE,lotsawa,Lotsawa (47),lotsawa,2,6,2
+karma689_v2,before,L609C6446,lotsawa,Lotsawa (47),lotsawa,2,2,2
+karma689_v2,after,L609C6446,lotsawa,Lotsawa (47),lotsawa,2,2,2
+karma689_v2,before,L66B616F8,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L66B616F8,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L6C45CC7B,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L6C45CC7B,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L78C17E8E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L78C17E8E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L7C28286E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L7C28286E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L82DEAF2F,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L82DEAF2F,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L84578C9A,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L84578C9A,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L8564CC12,lotsawa,Lotsawa (47),lotsawa,1,5,1
+karma689_v2,after,L8564CC12,lotsawa,Lotsawa (47),lotsawa,1,5,1
+karma689_v2,before,L883F35DC,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L883F35DC,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L90B911AA,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L90B911AA,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L93907F4F,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L93907F4F,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,L9AC1B4B0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,L9AC1B4B0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LA4097826,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LA4097826,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LA5123153,lotsawa,Lotsawa (47),lotsawa,2,1,1
+karma689_v2,after,LA5123153,lotsawa,Lotsawa (47),lotsawa,2,1,1
+karma689_v2,before,LA8C115C2,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LA8C115C2,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LB0C3BA3A,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LB0C3BA3A,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LB230F962,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LB230F962,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LB892F490,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LB892F490,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LBBCDDE4A,lotsawa,Lotsawa (47),lotsawa,3,3,3
+karma689_v2,after,LBBCDDE4A,lotsawa,Lotsawa (47),lotsawa,3,3,3
+karma689_v2,before,LBC107653,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LBC107653,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LBF60C95C,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LBF60C95C,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LC449E4C4,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LC449E4C4,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LC5BA8971,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LC5BA8971,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LCCC58CAB,lotsawa,Lotsawa (47),lotsawa,5,2,2
+karma689_v2,after,LCCC58CAB,lotsawa,Lotsawa (47),lotsawa,5,2,2
+karma689_v2,before,LD923A703,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LD923A703,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LDA19BD78,lotsawa,Lotsawa (47),lotsawa,2,1,1
+karma689_v2,after,LDA19BD78,lotsawa,Lotsawa (47),lotsawa,2,1,1
+karma689_v2,before,LECCEBD39,lotsawa,Lotsawa (47),lotsawa,3,3,3
+karma689_v2,after,LECCEBD39,lotsawa,Lotsawa (47),lotsawa,3,3,3
+karma689_v2,before,LEE3DE216,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LEE3DE216,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LF0364C25,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LF0364C25,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LF1B9BC54,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LF1B9BC54,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LF4AA07AD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LF4AA07AD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,LFABF7AB0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,after,LFABF7AB0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+karma689_v2,before,N-vinaya_r9-test1,nalanda,other reviewed books (25),other,1580,1058,503
+karma689_v2,after,N-vinaya_r9-test1,nalanda,other reviewed books (25),other,1580,1058,503
+karma689_v2,before,B-UT1ER1204_0001,bdrc,"BDRC, annotator-reviewed (5)",other,24,0,0
+karma689_v2,after,B-UT1ER1204_0001,bdrc,"BDRC, annotator-reviewed (5)",other,34,0,0
+karma689_v2,before,B-UT1ER1213_0001,bdrc,"BDRC, annotator-reviewed (5)",other,529,2,0
+karma689_v2,after,B-UT1ER1213_0001,bdrc,"BDRC, annotator-reviewed (5)",other,239,2,0
+karma689_v2,before,B-UT1ER1571_0001,bdrc,"BDRC, annotator-reviewed (5)",other,38,41,12
+karma689_v2,after,B-UT1ER1571_0001,bdrc,"BDRC, annotator-reviewed (5)",other,38,41,12
+karma689_v2,before,B-UT1ER2092_0001,bdrc,"BDRC, annotator-reviewed (5)",other,1,3,0
+karma689_v2,after,B-UT1ER2092_0001,bdrc,"BDRC, annotator-reviewed (5)",other,1,3,0
+karma689_v2,before,B-UT1ER2253_0001,bdrc,"BDRC, annotator-reviewed (5)",liturgy,978,1591,773
+karma689_v2,after,B-UT1ER2253_0001,bdrc,"BDRC, annotator-reviewed (5)",liturgy,985,1591,775
+genre_v2,before,I058DD999,reviewed_opf,other reviewed books (25),other,55,41,30
+genre_v2,after,I058DD999,reviewed_opf,other reviewed books (25),other,55,41,30
+genre_v2,before,I11440433,reviewed_opf,other reviewed books (25),other,2,0,0
+genre_v2,after,I11440433,reviewed_opf,other reviewed books (25),other,2,0,0
+genre_v2,before,I24EDBDA0,reviewed_opf,other reviewed books (25),other,1,10,0
+genre_v2,after,I24EDBDA0,reviewed_opf,other reviewed books (25),other,1,10,0
+genre_v2,before,I27F687A4,reviewed_opf,other reviewed books (25),other,6,2,0
+genre_v2,after,I27F687A4,reviewed_opf,other reviewed books (25),other,6,2,0
+genre_v2,before,I45222122,reviewed_opf,other reviewed books (25),other,1,75,0
+genre_v2,after,I45222122,reviewed_opf,other reviewed books (25),other,1,75,0
+genre_v2,before,I5AEEE5CA,reviewed_opf,other reviewed books (25),other,1,30,0
+genre_v2,after,I5AEEE5CA,reviewed_opf,other reviewed books (25),other,1,30,0
+genre_v2,before,I617FDD1E,reviewed_opf,other reviewed books (25),other,2,8,1
+genre_v2,after,I617FDD1E,reviewed_opf,other reviewed books (25),other,2,8,1
+genre_v2,before,I6EFF9668,reviewed_opf,other reviewed books (25),other,25,28,14
+genre_v2,after,I6EFF9668,reviewed_opf,other reviewed books (25),other,26,28,15
+genre_v2,before,I85C28EDA,reviewed_opf,other reviewed books (25),other,9,23,1
+genre_v2,after,I85C28EDA,reviewed_opf,other reviewed books (25),other,9,23,1
+genre_v2,before,IDDA7F69E,reviewed_opf,other reviewed books (25),other,1,4,0
+genre_v2,after,IDDA7F69E,reviewed_opf,other reviewed books (25),other,1,4,0
+genre_v2,before,IE1B4BBB9,reviewed_opf,other reviewed books (25),other,82,21,1
+genre_v2,after,IE1B4BBB9,reviewed_opf,other reviewed books (25),other,83,21,2
+genre_v2,before,IE8D2B7C5,reviewed_opf,other reviewed books (25),other,1,1,0
+genre_v2,after,IE8D2B7C5,reviewed_opf,other reviewed books (25),other,1,1,0
+genre_v2,before,IEF3A4022,reviewed_opf,other reviewed books (25),other,1,139,0
+genre_v2,after,IEF3A4022,reviewed_opf,other reviewed books (25),other,1,139,0
+genre_v2,before,P000030,reviewed_opf,other reviewed books (25),liturgy,563,632,408
+genre_v2,after,P000030,reviewed_opf,other reviewed books (25),liturgy,565,632,410
+genre_v2,before,P000034,reviewed_opf,other reviewed books (25),other,32,39,16
+genre_v2,after,P000034,reviewed_opf,other reviewed books (25),other,32,39,16
+genre_v2,before,P000047,reviewed_opf,other reviewed books (25),other,2,13,1
+genre_v2,after,P000047,reviewed_opf,other reviewed books (25),other,2,13,1
+genre_v2,before,P000070,reviewed_opf,other reviewed books (25),other,6,26,4
+genre_v2,after,P000070,reviewed_opf,other reviewed books (25),other,6,26,4
+genre_v2,before,P000095,reviewed_opf,other reviewed books (25),other,1,1,1
+genre_v2,after,P000095,reviewed_opf,other reviewed books (25),other,1,1,1
+genre_v2,before,P000136,reviewed_opf,other reviewed books (25),other,2,0,0
+genre_v2,after,P000136,reviewed_opf,other reviewed books (25),other,2,0,0
+genre_v2,before,P000137,reviewed_opf,other reviewed books (25),other,3,2,1
+genre_v2,after,P000137,reviewed_opf,other reviewed books (25),other,3,2,1
+genre_v2,before,P000154,reviewed_opf,other reviewed books (25),other,2,2,0
+genre_v2,after,P000154,reviewed_opf,other reviewed books (25),other,2,2,0
+genre_v2,before,P000228,reviewed_opf,other reviewed books (25),liturgy,26,19,8
+genre_v2,after,P000228,reviewed_opf,other reviewed books (25),liturgy,29,19,11
+genre_v2,before,P000249,reviewed_opf,other reviewed books (25),prayer,8,1,1
+genre_v2,after,P000249,reviewed_opf,other reviewed books (25),prayer,8,1,1
+genre_v2,before,P000268,reviewed_opf,other reviewed books (25),liturgy,16,0,0
+genre_v2,after,P000268,reviewed_opf,other reviewed books (25),liturgy,16,0,0
+genre_v2,before,L13D46642,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L13D46642,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L151EE5DB,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L151EE5DB,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L167759FC,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,after,L167759FC,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,before,L1A5514BA,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,L1A5514BA,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,L236F5B36,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L236F5B36,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L3699F918,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,L3699F918,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,L3740AEBA,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,after,L3740AEBA,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,before,L3B7B0CD1,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L3B7B0CD1,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L3F01CE7E,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,L3F01CE7E,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,L49EF6BF3,lotsawa,Lotsawa (47),lotsawa,1,2,0
+genre_v2,after,L49EF6BF3,lotsawa,Lotsawa (47),lotsawa,1,2,0
+genre_v2,before,L52122A08,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L52122A08,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L53E408D7,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L53E408D7,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L54964B07,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,L54964B07,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,L58DB1EDD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L58DB1EDD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L5D44A0FE,lotsawa,Lotsawa (47),lotsawa,2,1,0
+genre_v2,after,L5D44A0FE,lotsawa,Lotsawa (47),lotsawa,2,1,0
+genre_v2,before,L609C6446,lotsawa,Lotsawa (47),lotsawa,2,2,2
+genre_v2,after,L609C6446,lotsawa,Lotsawa (47),lotsawa,2,2,2
+genre_v2,before,L66B616F8,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,L66B616F8,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,L6C45CC7B,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L6C45CC7B,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L78C17E8E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L78C17E8E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L7C28286E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L7C28286E,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L82DEAF2F,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L82DEAF2F,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L84578C9A,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,after,L84578C9A,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,before,L8564CC12,lotsawa,Lotsawa (47),lotsawa,1,4,1
+genre_v2,after,L8564CC12,lotsawa,Lotsawa (47),lotsawa,1,4,1
+genre_v2,before,L883F35DC,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L883F35DC,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L90B911AA,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L90B911AA,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,L93907F4F,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,L93907F4F,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,L9AC1B4B0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,L9AC1B4B0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LA4097826,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,after,LA4097826,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,before,LA5123153,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,after,LA5123153,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,before,LA8C115C2,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LA8C115C2,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LB0C3BA3A,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,LB0C3BA3A,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,LB230F962,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,after,LB230F962,lotsawa,Lotsawa (47),lotsawa,1,1,0
+genre_v2,before,LB892F490,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LB892F490,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LBBCDDE4A,lotsawa,Lotsawa (47),lotsawa,3,3,3
+genre_v2,after,LBBCDDE4A,lotsawa,Lotsawa (47),lotsawa,3,3,3
+genre_v2,before,LBC107653,lotsawa,Lotsawa (47),lotsawa,1,2,1
+genre_v2,after,LBC107653,lotsawa,Lotsawa (47),lotsawa,1,2,1
+genre_v2,before,LBF60C95C,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,after,LBF60C95C,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,before,LC449E4C4,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LC449E4C4,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LC5BA8971,lotsawa,Lotsawa (47),lotsawa,1,2,0
+genre_v2,after,LC5BA8971,lotsawa,Lotsawa (47),lotsawa,1,2,0
+genre_v2,before,LCCC58CAB,lotsawa,Lotsawa (47),lotsawa,5,2,2
+genre_v2,after,LCCC58CAB,lotsawa,Lotsawa (47),lotsawa,5,2,2
+genre_v2,before,LD923A703,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LD923A703,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LDA19BD78,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,after,LDA19BD78,lotsawa,Lotsawa (47),lotsawa,2,1,1
+genre_v2,before,LECCEBD39,lotsawa,Lotsawa (47),lotsawa,3,3,2
+genre_v2,after,LECCEBD39,lotsawa,Lotsawa (47),lotsawa,3,3,2
+genre_v2,before,LEE3DE216,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LEE3DE216,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LF0364C25,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,after,LF0364C25,lotsawa,Lotsawa (47),lotsawa,1,0,0
+genre_v2,before,LF1B9BC54,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LF1B9BC54,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LF4AA07AD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LF4AA07AD,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,LFABF7AB0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,after,LFABF7AB0,lotsawa,Lotsawa (47),lotsawa,1,1,1
+genre_v2,before,N-vinaya_r9-test1,nalanda,other reviewed books (25),other,1580,4,1
+genre_v2,after,N-vinaya_r9-test1,nalanda,other reviewed books (25),other,1580,4,1
+genre_v2,before,B-UT1ER1204_0001,bdrc,"BDRC, annotator-reviewed (5)",other,24,5,0
+genre_v2,after,B-UT1ER1204_0001,bdrc,"BDRC, annotator-reviewed (5)",other,34,5,0
+genre_v2,before,B-UT1ER1213_0001,bdrc,"BDRC, annotator-reviewed (5)",other,529,4,2
+genre_v2,after,B-UT1ER1213_0001,bdrc,"BDRC, annotator-reviewed (5)",other,239,4,2
+genre_v2,before,B-UT1ER1571_0001,bdrc,"BDRC, annotator-reviewed (5)",other,38,549,28
+genre_v2,after,B-UT1ER1571_0001,bdrc,"BDRC, annotator-reviewed (5)",other,38,549,28
+genre_v2,before,B-UT1ER2092_0001,bdrc,"BDRC, annotator-reviewed (5)",other,1,14,1
+genre_v2,after,B-UT1ER2092_0001,bdrc,"BDRC, annotator-reviewed (5)",other,1,14,1
+genre_v2,before,B-UT1ER2253_0001,bdrc,"BDRC, annotator-reviewed (5)",liturgy,978,1040,870
+genre_v2,after,B-UT1ER2253_0001,bdrc,"BDRC, annotator-reviewed (5)",liturgy,985,1040,874

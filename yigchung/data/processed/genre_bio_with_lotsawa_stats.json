@@ -1,0 +1,72 @@
+{
+  "label2id": {
+    "O": 0,
+    "B-YIGCHUNG": 1,
+    "I-YIGCHUNG": 2
+  },
+  "max_length": 8192,
+  "stride": 5120,
+  "tokenizer": "jhu-clsp/mmBERT-base",
+  "source": "yigchung/data/local/genre_training/with_lotsawa",
+  "windows": {
+    "train": 1388,
+    "validation": 137,
+    "test": 229
+  },
+  "docs": {
+    "train": {
+      "docs": 49,
+      "spans": 9306,
+      "by_category": {
+        "prayer": 26,
+        "liturgy": 15,
+        "sadhana": 2,
+        "songs": 6
+      }
+    },
+    "validation": {
+      "docs": 8,
+      "spans": 1290,
+      "by_category": {
+        "sadhana": 1,
+        "prayer": 5,
+        "songs": 1,
+        "liturgy": 1
+      }
+    },
+    "test": {
+      "docs": 10,
+      "spans": 1806,
+      "by_category": {
+        "songs": 1,
+        "sadhana": 1,
+        "liturgy": 4,
+        "prayer": 4
+      }
+    }
+  },
+  "label_counts": {
+    "train": {
+      "O": 10411381,
+      "B-YIGCHUNG": 14854,
+      "I-YIGCHUNG": 933542
+    },
+    "validation": {
+      "O": 990718,
+      "B-YIGCHUNG": 2078,
+      "I-YIGCHUNG": 129234
+    },
+    "test": {
+      "O": 1669729,
+      "B-YIGCHUNG": 2856,
+      "I-YIGCHUNG": 195129
+    }
+  },
+  "class_weights_inverse_freq_train": {
+    "O": 0.3637,
+    "B-YIGCHUNG": 254.9207,
+    "I-YIGCHUNG": 4.0562
+  },
+  "spans": 12402,
+  "spans_without_B_token": 0
+}

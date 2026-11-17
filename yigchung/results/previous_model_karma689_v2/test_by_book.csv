@@ -1,0 +1,11 @@
+﻿split,book_id,category,source,gold,pred,matched,precision,recall,f1
+test,I518A01A8,songs,reviewed_opf,1,3,0,0.0,0.0,0.0
+test,B-UT1ER1399_0001,sadhana,bdrc,142,117,78,0.667,0.549,0.602
+test,P000030,liturgy,reviewed_opf,564,508,360,0.709,0.638,0.672
+test,P000228,liturgy,reviewed_opf,29,6,3,0.5,0.103,0.171
+test,P000249,prayer,reviewed_opf,8,1,1,1.0,0.125,0.222
+test,P000268,liturgy,reviewed_opf,16,0,0,0.0,0.0,0.0
+test,B-UT1ER2253_0001,liturgy,bdrc,985,1591,775,0.487,0.787,0.602
+test,LOTSAWA_COMBINED_test_001,prayer,lotsawa_combined,29,24,20,0.833,0.69,0.755
+test,LOTSAWA_COMBINED_test_002,prayer,lotsawa_combined,23,21,20,0.952,0.87,0.909
+test,LOTSAWA_COMBINED_test_003,prayer,lotsawa_combined,9,10,9,0.9,1.0,0.947
