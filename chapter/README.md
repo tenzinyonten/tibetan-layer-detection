@@ -30,9 +30,9 @@ Both are private (read from the Hub, 2026-11-17); a 404 means you need access fr
 
 ![Chapter pipeline](docs/pipeline.svg)
 
-Chart source: docs/pipeline.mmd (re-render with mmdc after changes).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
 
-Boxes are steps; rounded boxes are the files that flow between them. Dashed arrows are optional steps. The scripts for each step are in the table below. The frozen split and the shared book list are inputs, so they are not drawn. The cards are in [docs/](docs/).
+Chart source: docs/pipeline.mmd (re-render with mmdc after changes).
 
 ## Main pipeline
 
