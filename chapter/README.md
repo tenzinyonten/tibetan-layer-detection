@@ -13,7 +13,7 @@ chapter/
 ├── src/             scripts: clean, split, build, push, analyze
 ├── tests/           tests for Chapter post-processing
 ├── data/processed/  cleaned spans, book verdicts, frozen split, stats
-├── docs/            model card, dataset card, zero-shot prompt
+├── docs/            model card, dataset card, pipeline chart, zero-shot prompt
 └── results/         validation tables and zero-shot baselines
 ```
 
@@ -28,30 +28,9 @@ Both are private (read from the Hub, 2026-11-17); a 404 means you need access fr
 
 ## Pipeline
 
-```mermaid
-%%{init: {"flowchart": {"nodeSpacing": 30, "rankSpacing": 28, "padding": 12}}}%%
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction LR
-    F1(["Raw Chapter.yml"]) --> S1["Clean spans"]
-    S1 --> F2(["Clean spans CSV"])
-    F2 --> S2["Make split"]
-    S2 --> S3["Build and push"]
-    S3 --> F4(["HF dataset"])
-    S2 -.-> L["Check leakage"]
-  end
-  subgraph TRAIN["Train"]
-    direction LR
-    S4["Train model"] --> F5(["HF model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction LR
-    S5["Evaluate"] --> F6(["Scores"])
-    F6 -.-> A["Analyze errors"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+![Chapter pipeline](docs/pipeline.svg)
+
+Chart source: docs/pipeline.mmd (re-render with mmdc after changes).
 
 Boxes are steps; rounded boxes are the files that flow between them. Dashed arrows are optional steps. The scripts for each step are in the table below. The frozen split and the shared book list are inputs, so they are not drawn. The cards are in [docs/](docs/).
 
@@ -152,6 +131,8 @@ chapter/
 ├── docs/
 │   ├── dataset_card.md                # also the Hugging Face README of the dataset
 │   ├── model_card.md                  # also the Hugging Face README of the model
+│   ├── pipeline.mmd                   # source of the chart (re-render with mmdc)
+│   ├── pipeline.svg                   # the chart shown in this README
 │   └── prompts/gemini_chapter_anchors.md  # zero-shot prompt (draft)
 └── results/
     ├── chapter_val_per_book.csv       # validation score per book
