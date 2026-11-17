@@ -1,5 +1,4 @@
 ---
-license: other
 pretty_name: Bo-Quotation-Dataset
 tags:
 - tibetan
