@@ -15,9 +15,9 @@ license: other
 
 # Bo-Title-Dataset
 
-Windowed BIO token-classification data for the **title** of a Tibetan work, from the first and last 3,000 characters of each work. It is the training data of [`BDRC/Bo-Title-Detection`](https://huggingface.co/BDRC/Bo-Title-Detection) (revision `092bcd55`, the last commit that changed the data files).
+Windowed BIO token-classification data for the **title** of a Tibetan work, from the first and last 3,000 characters of each work. It is the training data of [`BDRC/Bo-Title-Detection`](https://huggingface.co/BDRC/Bo-Title-Detection).
 
-It is derived from the joint title/author data `Yontenn/title-author-training` (revision `1c3226b3`) with the same rows, windows and splits. Only `labels` changed: the author is relabelled `O` (not masked). The author version is `BDRC/Bo-Author-Dataset`.
+It is the title version of the joint title/author data: the same works and splits, with only the title labelled and the author counted as "other" (`O`). The author version is `BDRC/Bo-Author-Dataset`.
 
 ## Format
 

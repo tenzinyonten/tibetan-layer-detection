@@ -25,7 +25,15 @@ It reads the first 3,000 and the last 3,000 characters of a work (a work of 6,00
 
 ## Training data
 
-[`BDRC/Bo-Author-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Author-Dataset) (revision `a9609000`, the last commit that changed the data files). It has the same rows, windows and splits as the joint data `Yontenn/title-author-training` (revision `1c3226b3`); only the labels changed. 32,074 / 2,494 / 2,384 works for train / validation / test, one sequence per work (`[CLS] head [SEP] tail [SEP]`). The train split includes 7,811 works with automatically found spans (BDRC v3 outlines); validation and test are annotator spans only. See the dataset card.
+Trained on [`BDRC/Bo-Author-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Author-Dataset).
+
+| Split | Works |
+|---|---|
+| Train | 32,074 (24,263 labelled by annotators, 7,811 labelled automatically) |
+| Validation | 2,494 (annotators) |
+| Test | 2,384 (annotators) |
+
+Each example is one work: the first 3,000 and the last 3,000 characters of its text, or the whole text if it is 6,000 characters or fewer. Only the author is labelled; the title counts as "other" (`O`). The automatic labels are used in training only. See the dataset card for the sources and how the data was prepared.
 
 ## Training
 
