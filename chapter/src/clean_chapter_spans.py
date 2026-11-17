@@ -19,6 +19,10 @@ Per book with a non-empty Chapter layer:
    old-batch books whose offsets drift partway through (first spans right, the
    rest cut mid-sentence); a constant shift does not recover them.
 
+Reads:  data/shared/tsawa_audit.csv and the layers/v001/Chapter.yml of each book.
+Writes: chapter/data/processed/chapter_spans_clean.csv and chapter_book_verdicts.csv.
+Takes no flags. Run it first, and again if the raw annotations change.
+
 Usage:
     python chapter/src/clean_chapter_spans.py
 """
