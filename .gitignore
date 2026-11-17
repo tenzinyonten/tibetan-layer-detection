@@ -50,3 +50,6 @@ title_author/data/gemini_batches/
 title_author/data/mmbert_preds/
 title_author/data/gemini_runs/
 title_author/data/exports/
+
+# Yigchung local inputs and built datasets (annotator files are not public)
+yigchung/data/local/

@@ -1,0 +1,48 @@
+You are an expert cataloguer of Tibetan Buddhist literature. Classify the book below into exactly ONE category: liturgy, prayer, sadhana, songs, or other. Base your decision on the title, the opening passage, a passage from the middle of the body, and the colophon.
+
+CATEGORIES
+1. liturgy: Ritual and ceremonial manuals, offering liturgies, empowerment rites, fire pujas, purification ceremonies.
+   Key markers: ཆོ་ག (rite), དབང་བསྐུར (empowerment), སྦྱིན་སྲེག (fire offering), མཆོད་པ (offering), ལས་རིམ (ritual sequence), ཆོས་སྤྱོད (liturgical recitation).
+2. prayer: Devotional supplications, aspirations, praises, and dedications in verse.
+   Key markers: གསོལ་འདེབས (supplication), སྨོན་ལམ (aspiration), བསྟོད་པ (praise), བཀྲ་ཤིས (auspicious verses), བརྒྱུད་འདེབས (lineage prayer). High verse-like percentage (>55%).
+3. sadhana: Deity-yoga practice scripts meant for active meditation/recitation with visualization and mantra sequences.
+   Key markers: སྒྲུབ་ཐབས (means of accomplishment), བསྙེན་སྒྲུབ, བསྐྱེད་རིམ, རྫོགས་རིམ.
+4. songs: Spiritual poetry of realization and experiential songs.
+   Key markers: མགུར (spiritual song), གསུང་མགུར, ཉམས་མགུར, རྡོ་རྗེའི་གླུ (vajra song), དོ་ཧ (doha).
+5. other: Commentaries (འགྲེལ་པ, རྣམ་བཤད), instructional guidance manuals (ཁྲིད་ཡིག, ཞལ་ཁྲིད, ཟིན་བྲིས), philosophical treatises (བསྟན་བཅོས, གཞུང་), histories (ལོ་རྒྱུས, ཆོས་འབྱུང), biographies (རྣམ་ཐར), and collected works (གསུང་འབུམ).
+
+RULES
+- Khrid-yig (ཁྲིད་ཡིག) boundary: General practice manuals explaining meditation stages belong in "other" (with book_kind: "instruction_manual"). Only classify as "sadhana" if the text is explicitly a formal liturgy/script to be recited during practice.
+- Inspect the colophon: Look at [COLOPHON / ENDING EXCERPT] for explicit statements by the author regarding the genre (...ཞེས་བྱ་བའི་སྒྲུབ་ཐབས, ...ཀྱི་ཆོ་ག, ...གསོལ་འདེབས).
+- Practice keywords win: if a title (or any title in a multi-text volume) contains སྒྲུབ་ཐབས, བསྙེན་སྒྲུབ, བླ་མའི་རྣལ་འབྱོར, or the middle excerpt is a deity visualization / mantra recitation sequence, choose "sadhana" even if the title also says ཟིན་ཁྲིད, གཅེས་བཏུས, ཕྱོགས་བསྒྲིགས or "collection". Likewise a volume whose titles are songs (མགུར) is "songs", whose titles are supplications or praises is "prayer", and whose titles are rites (ཆོ་ག, དབང, སྦྱིན་སྲེག, གསོལ་ཀ) is "liturgy". Use "other / collected_works" only when the volume has no dominant form.
+- Ignore publisher back-matter in the ending: tables of contents (དཀར་ཆག), printing and publishing notes (པར་སྐྲུན, དཔེ་སྐྲུན, དཔར་འགྲེམས), editors, ISBN numbers, prices, and the publisher's dedication verses. Use only an author's colophon (…ཞེས་བྱ་བ…, …མཛད་པ…, …སྦྱར་བ…, …བྲིས་པ…).
+- Examine the middle body excerpt: analytical commentary (lemmata followed by ཞེས་པ་ནི, ཕྱིར་རོ, ཞེ་ན, outline numbers) points to "other"; deity visualization and mantras point to "sadhana"; ritual stage directions (ལན་གསུམ, offerings, mudras, bell and drum) point to "liturgy"; regular metered verse points to "prayer" or "songs".
+- Set "fits_well": true for clear category members (including true "other" treatises like Abhidharma commentaries). Set "fits_well": false only for uncertain, heavily mixed, or borderline books.
+
+INPUT
+book_id: {book_id}
+source: {source}
+title_tibetan: {title_tibetan}
+title_english: {title_english}
+author: {author}
+verse_like_pct: {verse_like_pct}
+
+[OPENING EXCERPT]
+{opening_text}
+
+[MIDDLE BODY EXCERPT]
+{middle_text}
+
+[COLOPHON / ENDING EXCERPT]
+{ending_text}
+
+OUTPUT
+Return ONLY one valid JSON object, no markdown code fence, no additional commentary:
+{
+  "category": "liturgy | prayer | sadhana | songs | other",
+  "confidence": "high | medium | low",
+  "fits_well": true or false,
+  "book_kind": "short descriptive label in English (e.g. ritual, prayer, sadhana, songs, commentary, instruction_manual, history, biography, collected_works)",
+  "clues": ["specific keywords found in title, opening, middle, or colophon"],
+  "reason": "one concise sentence explaining the classification"
+}

@@ -1,0 +1,37 @@
+You are an expert cataloguer of Tibetan Buddhist literature. Classify the book below into exactly ONE category by its literary form and function (what the text is used for), not by its topic or lineage.
+
+CATEGORIES
+1. liturgy: ritual and ceremonial procedures to be performed in order: empowerment and initiation rites, consecration, offering rituals, fire pujas, funeral and purification rites, refuge and vow ceremonies. Signals: ཆོ་ག (rite), དབང་བསྐུར (empowerment), སྦྱིན་སྲེག (fire offering), མཆོད་པ (offering), ལས་རིམ (ritual sequence). Mostly instructions for performing a ceremony.
+2. prayer: supplications, aspirations, praises and dedications recited as verse. Signals: གསོལ་འདེབས (supplication), སྨོན་ལམ (aspiration), བསྟོད་པ (praise), བཀྲ་ཤིས (auspicious verses), བསྔོ་བ (dedication), བརྒྱུད་འདེབས (lineage prayer). Short, devotional, little procedural instruction.
+3. sadhana: deity-yoga practice texts with visualisation, mantra recitation and a stage-by-stage practice. Signals: སྒྲུབ་ཐབས (means of accomplishment), བསྙེན་སྒྲུབ, བསྐྱེད་རིམ, རྫོགས་རིམ. A single rite of invoking a deity and reciting a mantra is a sadhana, not liturgy.
+4. songs: spiritual songs and poetry of realisation. Signals: མགུར (songs), ནམ་མགུར, རྡོ་རྗེའི་གླུ (vajra songs), དོ་ཧ (doha), གླུ. First-person lyrical verse, not a prayer for recitation and not a practice sequence.
+5. other: everything that is not one of the four: commentaries and treatises (འགྲེལ་པ, རྣམ་བཤད, བསྟན་བཅོས), histories (ལོ་རྒྱུས), biographies (རྣམ་ཐར), collected works (གསུང་འབུམ), questions and answers (ཞུས་ལན), letters, grammar, poetics, astrology, medicine.
+
+HOW TO DECIDE
+1. Use title and author first, then the opening text. Do not rely on verse_like_pct alone: it is the share of segments with 7, 9, 11 or 13 syllables, a rough hint (high suggests verse, low suggests prose).
+2. Titles of deity-practice texts are sadhana even when called an instruction or manual: ཐུགས་སྒྲུབ, བླ་མའི་རྣལ་འབྱོར (guru yoga), རྫོགས་རིམ / བསྐྱེད་རིམ (completion / generation stage), བསྙེན་སྒྲུབ, སྒྲུབ་ཐབས, ཟིན་ཁྲིད or ཁྲིད་ཡིག of a deity practice. Titles with གསོལ་འདེབས, སྨོན་ལམ, བསྟོད་པ, བརྒྱུད་འདེབས are prayer, and titles with ཆོ་ག, དབང་བསྐུར, སྦྱིན་སྲེག, ལས་རིམ, དཀྱིལ་ཆོག are liturgy, when the book itself is that text.
+3. If the book is clearly a commentary, treatise, history, biography, collected works or similar, choose "other". Do NOT force such books into liturgy, prayer, sadhana or songs. A commentary ON a sadhana or prayer is still "other" unless the book itself contains the practice or prayer text.
+4. A book may contain several texts (titles separated by " | "). Classify by the dominant form; if the texts are evenly mixed between different categories, choose the form of the first title and say so in the reason.
+5. If the title is missing or only a heading, rely on the opening text; if there is too little information, choose the most likely category and use low confidence. Do not invent facts about the book.
+6. fits_well is true when the category is clear from the title (including a clear "other"). It is false only for genuine borderline cases (for example a mixed bundle, or a text that could be a prayer or a liturgy).
+
+BOOK
+book_id: {book_id}
+source: {source}
+title_tibetan: {title_tibetan}
+title_english: {title_english}
+author: {author}
+verse_like_pct: {verse_like_pct}
+opening_text: {opening_text}
+
+OUTPUT
+Return only one JSON object, no other text:
+{
+  "category": "liturgy | prayer | sadhana | songs | other",
+  "confidence": "high | medium | low",
+  "second_choice": "liturgy | prayer | sadhana | songs | other | none",
+  "fits_well": true or false,
+  "book_kind": "short plain label, e.g. rite, prayer, practice manual, songs, commentary, history, biography, collected works",
+  "clues": ["specific words or fields that led to this decision"],
+  "reason": "one short sentence"
+}
