@@ -77,7 +77,7 @@ def detect(path, layers="all", *, out_dir=None, device=None, review_threshold: f
         about Rs 0.29 at the batch price, more for live calls). Cannot be
         combined with title_author_system="both".
     title_model / author_model: Hugging Face repo (or local folder) per field;
-        default is Yontenn/mmbert-title-only and Yontenn/mmbert-author-only
+        default is BDRC/Bo-Title-Detection and BDRC/Bo-Author-Detection
         (private; each needs HF_TOKEN or a stored login; one forward pass per
         model). The joint Yontenn/mmbert-title-author-run2 also works. title_author_skill_model / _skill_dir:
         which LLM, and where title_author_skill.py lives, for skill / both.

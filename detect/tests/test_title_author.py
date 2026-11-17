@@ -422,7 +422,7 @@ class Config(unittest.TestCase):
     def test_defaults_are_free_and_local(self):
         o = TitleAuthorOptions()
         self.assertEqual((o.system, o.title_model, o.author_model, o.opf), ("model", TITLE_MODEL, AUTHOR_MODEL, False))
-        self.assertEqual((TITLE_MODEL, AUTHOR_MODEL), ("Yontenn/mmbert-title-only", "Yontenn/mmbert-author-only"))
+        self.assertEqual((TITLE_MODEL, AUTHOR_MODEL), ("BDRC/Bo-Title-Detection", "BDRC/Bo-Author-Detection"))
         self.assertIsNone(o.break_penalty)                # per model: 6 single-entity, 12 joint
         self.assertIsNone(o.strip_underscore)             # per model: single-entity models are trained on text without "_"
 
