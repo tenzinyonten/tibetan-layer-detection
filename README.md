@@ -11,10 +11,11 @@ One token-classification model per layer of a Tibetan pecha (OpenPecha `.opf`). 
 | Chapter | chapter breaks | [`chapter/`](chapter/) | [BDRC/Tibetan-Chapter-Detection](https://huggingface.co/datasets/BDRC/Tibetan-Chapter-Detection) (private) | [BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) (private) |
 | Quotation | quotations in commentaries | [`quotation/`](quotation/) | [BDRC/Bo-Quotation-Dataset](https://huggingface.co/datasets/BDRC/Bo-Quotation-Dataset) | [BDRC/Bo-Quotation-Detection](https://huggingface.co/BDRC/Bo-Quotation-Detection) (private) |
 | Yigchung | small-print interlinear notes (ཡིག་ཆུང་) | [`yigchung/`](yigchung/) | [BDRC/yigchung_detection_v2](https://huggingface.co/datasets/BDRC/yigchung_detection_v2) | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) |
+| Yigchung, classified | small-print notes in four genres (liturgy, prayer, sadhana, songs) only | [`yigchung/`](yigchung/) | [BDRC/Bo-Yigchung-Classified-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Classified-Dataset) (private) | [BDRC/Bo-Yigchung-Classified-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Classified-Detection) (private) |
 | Title and author | title and author spans | [`title_author/`](title_author/) | [BDRC/Bo-Title-Dataset](https://huggingface.co/datasets/BDRC/Bo-Title-Dataset), [BDRC/Bo-Author-Dataset](https://huggingface.co/datasets/BDRC/Bo-Author-Dataset) (private) | [BDRC/Bo-Title-Detection](https://huggingface.co/BDRC/Bo-Title-Detection), [BDRC/Bo-Author-Detection](https://huggingface.co/BDRC/Bo-Author-Detection) (private) |
 | Spelling | spelling errors | separate repo: [tenzinyonten/TiSpell](https://github.com/tenzinyonten/TiSpell) | | |
 
-If a page returns 404, the repo is private and needs access from its owner. The Tsawa, Sabche and Chapter datasets still have their older `Tibetan-...-Detection` names. Yigchung also has a genre model (liturgy, prayer, sadhana, songs): `Yontenn/mmbert-yigchung-genre-v3` (private), trained on `Yontenn/yigchung-genre-bio-lotsawa-v2` (private).
+If a page returns 404, the repo is private and needs access from its owner. The Tsawa, Sabche and Chapter datasets still have their older `Tibetan-...-Detection` names. The Yigchung classified model is for four genres only; `detect/layer_config.py` loads the general Yigchung model.
 
 ## Layer folder
 
