@@ -13,7 +13,7 @@ chapter/
 ├── src/             scripts: clean, split, build, push, analyze
 ├── tests/           tests for Chapter post-processing
 ├── data/processed/  cleaned spans, book verdicts, frozen split, stats
-├── docs/            model card, dataset card, pipeline chart, zero-shot prompt
+├── docs/            model card, dataset card, zero-shot prompt
 └── results/         validation tables and zero-shot baselines
 ```
 
@@ -28,11 +28,34 @@ Both are private (read from the Hub, 2026-11-17); a 404 means you need access fr
 
 ## Pipeline
 
-![Chapter pipeline](docs/pipeline.svg)
+```mermaid
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    F1(["Raw Chapter.yml"]) --> S1["Clean spans<br/><i>clean_chapter_spans.py</i>"]
+    S1 --> F2(["Clean spans CSV"])
+    F2 --> S2["Make split<br/><i>prepare_chapter_split.py</i>"]
+    S2 --> F3(["Frozen split"])
+    F3 --> S3["Build dataset<br/><i>build_chapter_dataset.py</i>"]
+    S3 --> S4["Push dataset<br/><i>push_chapter_dataset.py</i>"]
+    S4 --> F4(["HF dataset"])
+    S2 -.-> L["Check leakage<br/><i>check_chapter_leakage.py</i>"]
+  end
+  subgraph TRAIN["Train"]
+    direction LR
+    S5["Train model<br/><i>common/train_layer.py</i>"] --> S6["Upload model<br/><i>Hugging Face CLI</i>"]
+    S6 --> F5(["HF model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction LR
+    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
+    F6 -. "val only" .-> A["Analyze errors<br/><i>analyze_chapter_errors.py</i>"]
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL
+```
 
 Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
-
-Chart source: docs/pipeline.mmd (re-render with mmdc after changes).
 
 ## Main pipeline
 
@@ -63,7 +86,7 @@ python chapter/src/push_chapter_dataset.py --private --repo-id BDRC/Bo-Chapter-D
 # 5. Train on a GPU machine
 python common/train_layer.py --label-name CHAPTER --weight-scheme sqrt_inv \
     --epochs 8 --evals-per-epoch 4 --output-dir /workspace/runs/chapter_bio_sqrt
-# 6. Upload the model and docs/model_card.md to the Hub by hand (no script)
+# 6. Upload the model and docs/model_card.md (as README.md) to BDRC/Bo-Chapter-Detection with the Hugging Face CLI
 # 7. Evaluate on validation
 python common/eval_viterbi_iou.py --model BDRC/Bo-Chapter-Detection --dataset BDRC/Bo-Chapter-Dataset \
     --split validation --break-penalty 4.0 --dump-spans scratch/chapter/chapter_val_spans.jsonl
@@ -131,8 +154,6 @@ chapter/
 ├── docs/
 │   ├── dataset_card.md                # also the Hugging Face README of the dataset
 │   ├── model_card.md                  # also the Hugging Face README of the model
-│   ├── pipeline.mmd                   # source of the chart (re-render with mmdc)
-│   ├── pipeline.svg                   # the chart shown in this README
 │   └── prompts/gemini_chapter_anchors.md  # zero-shot prompt (draft)
 └── results/
     ├── chapter_val_per_book.csv       # validation score per book
