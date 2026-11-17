@@ -108,7 +108,7 @@ Install: `pip install .` from the repo root (dependencies: `transformers`, `torc
 | [`postprocess.py`](postprocess.py) | Joins predictions with the Stage 1 text; drops spans under 5 characters, tsawa spans covered at least 50% by predicted quotation spans (`--keep-quoted-tsawa` turns this off), and spans with no Tibetan character; sets `review_needed`; writes JSON, HTML, OpenPecha `.opf` layers, `_batch_summary.json` and a timestamped run log | Stage 3 |
 | [`detect_layers.py`](detect_layers.py) | Runs the three stages in order under one `--out` | on demand, `tibetan-detect` |
 | [`__init__.py`](__init__.py) | `detect(path, layers="all", ...)`: the same three stages in one process, returns the result dict (one book) or a list (a folder). No checkpointing, so use the console commands for large batches | on demand, from Python |
-| [`tests/`](tests/) | `test_non_tibetan.py`, `test_shad_rule.py`, `test_title_author.py` (offline: stub tokenizer, stub LLM, no download) | `python -m unittest discover -s detect/tests` from the repo root |
+| [`tests/`](tests/) | `test_drop_quoted_tsawa.py`, `test_non_tibetan.py`, `test_shad_rule.py`, `test_title_author.py` (offline: stub tokenizer, stub LLM, no download) | `python -m unittest discover -s detect/tests` from the repo root |
 
 ### Decoding steps inside Stage 2
 
