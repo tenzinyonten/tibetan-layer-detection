@@ -1,5 +1,5 @@
 ---
-pretty_name: Formatting Sabche
+pretty_name: Bo-Sabche-Dataset
 language:
 - bo
 task_categories:
@@ -24,202 +24,101 @@ configs:
     path: data/test-*
 ---
 
-# Sabche (ས་བཅད་, outline heading) dataset — mmBERT BIO
+# Bo-Sabche-Dataset
 
-Binary token classification for the Sabche layer, built with the tsawa
-pipeline's labeling/windowing. Generated 2026-09-22.
+Training data for finding **Sabche** (ས་བཅད་, outline heading) spans in Tibetan Buddhist texts.
+It is the training data of [`BDRC/Bo-Sabche-Detection`](https://huggingface.co/BDRC/Bo-Sabche-Detection).
 
-Split: 83/8.5/8.5 by window count (`sabche_split_frozen.csv`).
+A Sabche span is the heading phrase itself (for example a numbered outline line), stopping just
+before the closing shad, not the section under it.
+
+## Format
 
 | item | value |
 |---|---|
-| tokenizer | `jhu-clsp/mmBERT-base` (fast, offsets) |
-| window / stride | 8192 (8190 content + CLS/SEP) / 5120 — same as tsawa |
-| labels | `O`=0, `B-SABCHE`=1, `I-SABCHE`=2; CLS/SEP/pad = -100 |
-| label rule | token-start rule (`build_tsawa_dataset.label_tokens`) |
-| columns | input_ids, attention_mask, labels, token_start, token_end, char_start, char_end, pecha_id, source_batch, window_index, n_tokens_doc, coverage_pct (no `features` column) |
-| span source | `sabche/data/processed/sabche_spans_clean.csv` (dropped=False) |
-| split | `sabche/data/processed/sabche_split_frozen.csv` (**test frozen**) |
-| metric (for training) | IoU ≥ 0.5, greedy one-to-one, inclusive offsets — same as tsawa/quotation |
+| Tokenizer | `jhu-clsp/mmBERT-base` (fast, offsets) |
+| Window / stride | 8,192 tokens (8,190 content + CLS/SEP) / 5,120 between window starts |
+| Labels | `O`=0, `B-SABCHE`=1, `I-SABCHE`=2; CLS/SEP/pad = -100 |
+| Columns | `input_ids`, `attention_mask`, `labels`, `token_start`, `token_end`, `char_start`, `char_end`, `pecha_id`, `source_batch`, `window_index`, `n_tokens_doc`, `coverage_pct` |
+| Offsets | `char_start`/`char_end` are start-inclusive, end-exclusive (`text[start:end]`). The scoring code in the GitHub repository uses an inclusive end instead, so convert with `end - 1`. |
+| Metric (for training) | IoU >= 0.5, greedy one-to-one, inclusive offsets |
 
-## Pipeline
+Consecutive windows overlap by 3,070 content tokens; tokens in the overlap are labelled in both
+windows (unlike Quotation's dataset, which owns each token to one window only).
 
-```bash
-python scratch/sabche/scripts/audit_sabche.py          # A: audit (read-only)
-python sabche/src/clean_sabche_spans.py        # B: sidecar + book verdicts
-python sabche/src/prepare_sabche_split.py --val-frac 0.085 --test-frac 0.085
-python sabche/src/build_sabche_dataset.py --split-file sabche/data/processed/sabche_split_frozen.csv \
-    --out-dir sabche/data/processed/sabche_dataset --stats-json sabche/data/processed/sabche_dataset_stats.json
+## Splits
+
+Splits are **book-level**, grouped so that no book sharing a long heading verbatim with another
+book, or belonging to the same source outline group, crosses a split.
+
+| Split | Books | Windows | Spans |
+|---|---:|---:|---:|
+| Train | 261 | 8,886 (82.6%) | 35,122 |
+| Validation | 33 | 911 (8.5%) | 3,091 |
+| Test | 29 | 963 (8.9%) | 4,079 |
+
+## Data source and preparation
+
+**Source.** Two annotation batches, told apart by `pecha_id` prefix and carried as `source_batch`:
+an older batch (`P`-prefixed, 266 books, 18,845 raw spans) and a newer batch (`I`-prefixed, 273
+books, 24,378 raw spans) with denser, more consistent heading annotation.
+
+**Cleaning** (`sabche/src/clean_sabche_spans.py`), in order:
+
+1. **Re-align drifted offsets.** 30 old-batch books had spans shifted from the text by a
+   piecewise-constant offset. Found and corrected with a Viterbi alignment over length-matched
+   ordinal-heading anchors (4,173 spans moved).
+2. **Snap off-by-one edges.** Spans within 3 characters of a syllable boundary were walked to it
+   (1,711 spans across both batches); the rest were left as is.
+3. **Drop unverifiable spans.** 227 re-aligned spans that were still not heading-like after the
+   shift were dropped (their text is labeled `O`).
+4. **Exclude 10 books**: offsets that could not be recovered (3), no heading-like spans (2), or
+   outline/table-of-contents annotated but body headings not (5, titled-heading recall < 0.2).
+
+42,292 spans are active after cleaning (18,456 old batch, 23,836 new batch). No spans were merged:
+reading samples confirmed that adjacent one-per-line outline headings are genuinely separate
+spans, not one heading split across lines.
+
+**Split** (`sabche/src/prepare_sabche_split.py`): books are grouped before splitting, by the
+project's shared document-split groups plus a Sabche-specific link (two books sharing at least
+10% of a book's long-span characters, or at least 10 shared spans outright). Groups are then
+placed to hit 83/8.5/8.5 by window count, keeping every book that was already frozen into
+validation or test by the shared split.
+
+**Tokenization and labelling** (`sabche/src/build_sabche_dataset.py`): 8,192-token sliding
+windows, stride 5,120, `jhu-clsp/mmBERT-base` tokenizer, token-start labelling rule.
+
+## Annotation
+
+Headings were annotated through OpenPecha with support from the Tsadra Foundation, over the two
+batches described above. No independent review pass has been run on top of the original
+annotations (unlike the project's Quotation and Chapter layers); the cleaning steps above correct
+offset and formatting problems in the existing annotations, not their coverage.
+
+## Known limits
+
+- Some books are only partly annotated: titled-heading recall is between 0.2 and 0.5 in 21 of the
+  kept books, so some real headings are labeled `O`. Bare `Nth-པ་ནི` headings with no title are
+  annotated inconsistently (about 29% of the time), project-wide.
+- The 227 spans dropped as unverified after offset re-alignment are labeled `O`, not excluded from
+  the text, so their true headings count as missed, not absent.
+- 14.2% of test spans' raw text also appears in train, but 84% of all gold spans are unique text
+  and most of the overlap is stock heading phrasing (numbered templates). Real document-level
+  leakage is about 6.8%, concentrated in one group of books that share a lamrim outline.
+- Data-rights note: source texts are BDRC-digitized Tibetan Buddhist works; see BDRC's own terms
+  for reuse beyond this benchmark.
+
+## Citation
+
+```bibtex
+@misc{bo_sabche_dataset,
+  title  = {Bo-Sabche-Dataset: Tibetan outline-heading (sabche) token classification data},
+  author = {Yontenn},
+  year   = {2026},
+  url    = {https://huggingface.co/datasets/BDRC/Bo-Sabche-Dataset}
+}
 ```
 
-## A. Audit (raw Sabche.yml offsets)
+## Acknowledgements
 
-| | old (P) | new (I) |
-|---|---|---|
-| books / with Sabche | 266 / 138 | 273 / 195 |
-| spans | 18,845 | 24,378 |
-| length median (p10–p90) | 43 (20–204) | 36 (16–160) |
-| next span separated only by punctuation | 0.4% | 25.6% |
-| self-overlap / nested | 0 / 0 | 0 / 0 |
-| overlap Chapter, Tsawa, Quotation or Citation | 0.1% | 0.6% |
-| overlap Commentary | 0.0% | 3.3% |
-| opens with ordinal (དང་པོ…) | 60.6% | 56.8% |
-| closes …ནི | 66.0% | 63.0% |
-| mid-syllable start/end (either) | 21.3% | 1.4% |
-| long spans (≥40 chars) found verbatim in another book | 12.9% | 14.0% |
-
-Notes:
-- `check_boundary_snapping.check_span` reports about 92% bad ends. That's an
-  artifact: Sabche spans stop *before* the shad, and that check expects the
-  shad inside. The mid-syllable test used here counts a cut as bad only when
-  the characters on both sides of it are non-boundary.
-- Cross-layer overlap doesn't affect this binary model, so no precedence
-  rule is applied.
-- About 29% (1,698 of 5,924) of bare `Nth-པ་ནི།` headings with no title are
-  annotated, so the convention is inconsistent. Left as is.
-
-## B. Cleaning decisions
-
-| decision | rule | evidence |
-|---|---|---|
-| **no merge** of adjacent spans | new-batch neighbours are separate one-per-line outline headings (`(2) …`, `{1} …`, `ལ་གསུམ།` then `དང་པོ་…ནི`) | read samples from 99 books |
-| **re-align drifted offsets** | Viterbi over length-matched ordinal-heading anchors, piecewise-constant offset; accept if heading-like rate rises ≥ 20 points and ends ≥ 60% | P000250 +665 throughout; P000063 +116, then +229, then +291; P000185 +360, then +2052 |
-| **snap off-by-one only** | walk ≤ 3 chars to a syllable boundary (end stops before the shad); leave the rest | P000128 `ག\|ཉིས་པ` |
-| drop residual spans in re-aligned books | snapped **and** not heading-like after the shift | 227 spans |
-| trim overlap created by snapping | earlier span's end = next span's start | 1 span (P000128) |
-| exclude books | see table below | read samples before excluding |
-
-Cleaning results (all spans):
-
-| | old | new |
-|---|---|---|
-| spans | 18,845 | 24,378 |
-| shifted (re-aligned) | 4,173 (30 books) | 0 |
-| snapped | 1,359 | 352 |
-| left dirty (> 3 chars) | 29 | 0 |
-| dropped: re-aligned but unverified | 227 | 0 |
-| dropped: book excluded | 147 (+ under-annotated) | 9 (+ under-annotated) |
-| **active in dataset** | **18,456** | **23,836** |
-
-On the kept spans:
-
-| | mid-syllable raw → clean | heading-like raw → clean |
-|---|---|---|
-| old | 20.5% → 0.1% | 77.7% → 97.7% |
-| new | 1.4% → 0.0% | 99.0% → 99.4% |
-
-Excluded books (10, `sabche_excluded_books.csv`):
-
-| reason | books |
-|---|---|
-| offsets unrecoverable (spans on body text, re-alignment fails) | P000016, P000017, P000226 |
-| no heading-like spans | I82AB29CD (8 spans), IC3A7006F (1 span) |
-| under-annotated: outline/TOC annotated, body headings not (titled-heading recall < 0.2) | I100E7DAD, I7A79CC95, I9779A606, IB8F4E5BE, P000031 |
-
-The first heuristic flagged 16 books. Reading them kept 6: IFF541F44,
-I55D7A55C, IE166DA22, I78C84F85, I8698A1DF and IAAADCAA0 have real
-one-per-line headings. Low span count on its own isn't used as an exclusion
-reason: 31 books with fewer than 10 spans are kept.
-
-## B. Split
-
-- All 116 split_v3 books that remain keep their split, except the 3 moved by
-  conflict resolution.
-- Must-link groups combine two sources:
-  - split_v3 `group_id`
-  - Sabche verbatim sharing: ≥ 10% of a book's long-span characters over
-    ≥ 2 spans, or ≥ 10 shared spans at any share.
-- 34 single-span links are ignored. They come from a shared boilerplate
-  title; for example, `དཔེ་དེབ་བལྟ་བར་བསྐུལ་བའི་གཏམ…` links 9 books through
-  I8698A1DF.
-- The ≥ 10 absolute rule was added after leakage stayed high: P000263
-  (train) contains 63 and 55 headings from test books P000015 and P000177.
-- A group with conflicting fixed members goes to test, then val, then train,
-  so no frozen val/test book leaves eval. Moves:
-  - I36A7A668 and I7D476A8B: train → test (lamrim outline shared with
-    I3F4A91F5)
-  - IAE1E11E5: train → val
-- New groups are placed greedily, largest first, toward 83/8.5/8.5 by window
-  count. The split_v3-fixed groups alone already fill 8.9% of test windows,
-  so test received no new groups: every test book comes from split_v3's test
-  set or the moved lamrim group.
-- 240 groups: 34 with more than one book; the largest has 24 books
-  (I048844DB).
-
-| split | books | old / new | from split_v3 | windows | spans |
-|---|---|---|---|---|---|
-| train | 261 | 113 / 148 | 75 | 8,886 (82.6%) | 35,122 |
-| validation | 33 | 10 / 23 | 18 | 911 (8.5%) | 3,091 |
-| test | 29 | 11 / 18 | 23 | 963 (8.9%) | 4,079 |
-
-Leakage (long spans verbatim in any train book):
-
-| split | split_v3 as-is, Sabche books only | this split (8.5/8.5) |
-|---|---|---|
-| val | 0.5% | **1.6% (26 / 1,630)** |
-| test | 1.4% | **2.49% (43 / 1,728)** |
-
-**Test leakage, all span lengths:** 14.2% raw text overlap in test, but 84%
-of gold spans are unique text and most overlap is stock phrasing (e.g.
-numbered heading templates), not document leakage. Real document-level
-leakage is ~6.8%, concentrated in one book group (lamrim). The split is left
-as is.
-
-| test spans (4,079) found verbatim in… | spans | of which < 15 chars |
-|---|---|---|
-| no train book | 3,501 (85.8%) | 140 |
-| 1–2 train books (document-level) | 279 (6.8%) | 55 |
-| 3–9 train books | 119 (2.9%) | 43 |
-| 10+ train books (stock phrases) | 180 (4.4%) | 144 |
-
-- The 1–2 book overlap is concentrated in the lamrim group: I7D476A8B
-  shares 14 headings with train book P000218, and I36A7A668 shares 10 each
-  with I54375004 and P000100. The link rule missed these because it only
-  counts spans of 40+ characters.
-- Gold span diversity (all 42,292 spans, whitespace / `༈` / numbering /
-  trailing shad normalized): 35,541 unique strings (84.0%), and 32,304 of
-  them occur only once. The top 10 strings cover 2.3% of spans and the top
-  100 cover 5.3%. The most common are `གཉིས་པ་ནི` (316), `གསུམ་པ་ནི` (182)
-  and `དང་པོ་ནི` (89). Linked
-pairs straddling splits: 4 → 0.
-
-## C. Label distribution and class weights (train)
-
-Counts are per window, so tokens in overlapping windows are counted twice.
-
-| label | train | val | test |
-|---|---|---|---|
-| O | 69,878,137 | 7,190,531 | 7,602,369 |
-| B-SABCHE | 53,837 | 4,734 | 5,920 |
-| I-SABCHE | 2,797,816 | 258,495 | 274,716 |
-
-Inverse-frequency weights from **this** train set (`N / (K · n_c)`):
-
-| scheme | O | B-SABCHE | I-SABCHE |
-|---|---|---|---|
-| BIO (K=3) | 0.347 | 450.31 | 8.67 |
-| IO (K=2, B folded into I) | 0.520 | — | 12.75 |
-
-Tsawa's B weight was about 1700×. Don't reuse it here.
-
-Every one of the 42,292 active spans has at least one B token (0 lost to
-tokenization).
-
-## Caveats
-
-- Metric: `v2_metrics.py` lives in the team repo
-  (`src/layer_detection/v2_metrics.py`), not here. Use
-  `common/eval_viterbi_iou.py` (`inclusive_iou`, `match_iou`, `score`).
-  It implements the same scheme: IoU ≥ 0.5, inclusive offsets, greedy
-  best-first one-to-one matching, and it runs on this dataset's 3 BIO labels
-  unchanged. `common/train_layer.py` (`iou`, `count_matches`) has the same logic in
-  the working copy, but it isn't committed yet. Don't use
-  `common/span_metrics.py`: it does no one-to-one matching, scores
-  partial overlaps as 0, and approximates false positives. Scoring is per
-  window, so a span that falls in two overlapping windows is counted twice,
-  the same as for tsawa.
-- Titled-heading recall is between 0.2 and 0.5 in 21 kept books, so they're
-  partly annotated and some real headings are labeled O.
-- Bare `Nth-པ་ནི།` headings are inconsistently annotated (29%).
-- The re-aligned books rely on an anchor heuristic. 227 spans were dropped
-  as unverified, and their true headings are labeled O.
+Source texts were digitized and made available by the [Buddhist Digital Resource Center (BDRC)](https://www.bdrc.io/). We gratefully acknowledge BDRC. Annotations were prepared through [OpenPecha](https://openpecha.org/) with support from the [Tsadra Foundation](https://www.tsadra.org/).

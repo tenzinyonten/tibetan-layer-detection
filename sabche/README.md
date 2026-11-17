@@ -6,7 +6,7 @@ One binary token classifier for sabche spans.
 sabche/
 ├── src/              clean spans, freeze the split, build the dataset
 ├── data/processed/   span table, book verdicts, frozen split (the Arrow dataset is gitignored)
-├── docs/             dataset card, Hugging Face notes, the short-span experiment
+├── docs/             model card, dataset card, Hugging Face notes, the short-span experiment
 ├── results/zeroshot/ Gemini and Claude summaries
 └── tests/            none yet
 ```
