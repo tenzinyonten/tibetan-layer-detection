@@ -419,6 +419,12 @@ class Config(unittest.TestCase):
         self.assertEqual(base_layer("author_skill"), "author")
         self.assertEqual(base_layer("tsawa"), "tsawa")
 
+    def test_yigchung_decoding_settings(self):
+        # v2: break penalty 8 (chosen on validation), stride 4914, logits from the first window only
+        y = LAYERS["yigchung"]
+        self.assertEqual((y.repo, y.break_penalty, y.stride, y.stitch_first_window),
+                         ("BDRC/Bo-Yigchung-Detection", 8.0, 4914, True))
+
     def test_defaults_are_free_and_local(self):
         o = TitleAuthorOptions()
         self.assertEqual((o.system, o.title_model, o.author_model, o.opf), ("model", TITLE_MODEL, AUTHOR_MODEL, False))

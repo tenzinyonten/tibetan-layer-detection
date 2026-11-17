@@ -12,9 +12,9 @@ dedicated model as of that date. Yigchung uses a different windowing stride
 (4914, not 5120) and a different overlap policy: a token's logits come from
 only the first window that covers it, and the whole document is decoded once
 (see infer.run_layer_stitched()), matching how its training data masked
-repeated tokens out of the loss. Its own README also says to cite a test F1
-of 0.431, well below the other four layers; that caveat is printed whenever
-it loads. BDRC/Bo-Multilayer-Detection (the old 15-label joint model) is
+repeated tokens out of the loss. The model is v2 (break penalty 8, chosen on
+validation); its test F1 is 0.471 on the published 77-book text, well below the
+other four layers, and a caveat saying so is printed whenever it loads. BDRC/Bo-Multilayer-Detection (the old 15-label joint model) is
 deliberately not used for anything here: its own published metrics put
 tsawa/yigchung/quote F1 at about 0.02-0.04.
 """
@@ -157,15 +157,14 @@ LAYERS: dict[str, LayerConfig] = {
     ),
     "yigchung": LayerConfig(
         repo="BDRC/Bo-Yigchung-Detection", scheme="bio",
-        break_penalty=1.0, stride=4914, color="#f57ec0",  # pink
+        break_penalty=8.0, stride=4914, color="#f57ec0",  # pink
         stitch_first_window=True,
-        source="BDRC/Bo-Yigchung-Detection README.md (break_penalty 1, stride 4914 from "
-               "the 'windowed_w8192_s4914' config; a token's logits come from only the "
-               "FIRST window that covers it, matching how overlap was masked at train time "
-               "-- decode once over the whole stitched document, not per window then merged)",
-        caveat="this model's own README says to cite its test F1 of 0.431 (precision 0.464, "
-               "recall 0.402), well below the other layers; one test book had 107 gold spans "
-               "and zero true positives at this break penalty",
+        source="BDRC/Bo-Yigchung-Detection (v2) README.md: break_penalty 8 chosen on validation, "
+               "stride 4914 from the 'windowed_w8192_s4914' config; a token's logits come from only the "
+               "FIRST window that covers it -- decode once over the whole stitched document, "
+               "not per window then merged",
+        caveat="test F1 0.471 on the published 77-book test text (0.489 with annotator-corrected gold); "
+               "scores differ much by source (Lotsawa 0.85, BDRC 0.49, Nalanda 0.38)",
         default_review_threshold=0.5,
     ),
     "title": LayerConfig(

@@ -1,14 +1,14 @@
 # Yigchung layer (ཡིག་ཆུང་)
 
-Yigchung is the small-print interlinear note written under or beside the main line of a pecha. This folder trains and evaluates a **genre-specific** Yigchung model for four genres: liturgy, prayer, sadhana and songs. The general Yigchung model in production, `BDRC/Bo-Yigchung-Detection`, was trained elsewhere (see [Models](#models)).
+Yigchung is the small-print interlinear note written under or beside the main line of a pecha. This folder trains and evaluates a **genre-specific** Yigchung model for four genres: liturgy, prayer, sadhana and songs. The general Yigchung model in production, `BDRC/Bo-Yigchung-Detection` (v2), was trained elsewhere (see [Models](#models)); its benchmark scores are here too.
 
-Everything here starts from the public dataset [`BDRC/yigchung_detection_v2`](https://huggingface.co/datasets/BDRC/yigchung_detection_v2) (762 books, 601 / 84 / 77) at revision `778c059b`.
+Everything here starts from the public dataset [`BDRC/Bo-Yigchung-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (762 books, 601 / 84 / 77) at revision `778c059b`.
 
 ```
 yigchung/
 ├── src/
 │   ├── paths.py                  # every input and output path; YIGCHUNG_DATA overrides the local folder
-│   ├── fetch_hub.py              # download BDRC/yigchung_detection_v2 (text + spans) at the pinned revision
+│   ├── fetch_hub.py              # download BDRC/Bo-Yigchung-Dataset (text + spans) at the pinned revision
 │   ├── combine_lotsawa.py        # 469 short Lotsawa House books -> 26 documents of ~30k chars, within each HF split
 │   ├── run_classify.py           # Gemini genre label per book (prompts in prompts/); needs GEMINI_KEYS
 │   ├── build_genre_datasets.py   # genre books + corrections -> parquet, with and without Lotsawa
@@ -110,37 +110,36 @@ Metric: one-to-one span matching at IoU ≥ 0.5. Overlapping windows are average
 | genre v2 | `yigchung-genre-bio-lotsawa` | 20 (13, stopped at 16) | 0.737 | 0.768 |
 | **genre v3** | `yigchung-genre-bio-lotsawa-v2` | 20 (17) | **0.737** | **0.786** (P 0.772, R 0.800) |
 
-v3 against the previous general model `karma689/mmbert-yigchung-v2` on the same test documents:
+v3 against the general model `BDRC/Bo-Yigchung-Detection` (v2, from `karma689/mmbert-yigchung-v2`) on the same test documents:
 
-| Test set | Spans | `karma689/mmbert-yigchung-v2` | genre v3 |
+| Test set | Spans | general (v2) | genre v3 |
 |---|---:|---:|---:|
 | 8 docs that neither model trained on | 1,663 | 0.62 | **0.81** |
 | all 10 test docs | 1,806 | 0.62 | **0.79** |
 
-Two test documents (`I518A01A8`, `B-UT1ER1399_0001`) were in the previous model's training data, which is why the fair comparison leaves them out. Per-book scores are in `results/genre_v3/by_book.csv` and `results/previous_model_karma689_v2/`.
+Two test documents (`I518A01A8`, `B-UT1ER1399_0001`) were in the general model's training data, which is why the fair comparison leaves them out. Per-book scores are in `results/genre_v3/by_book.csv` and `results/previous_model_karma689_v2/`.
 
 ### Benchmark (77 books)
 
-`results/benchmark/benchmark_scores.md` scores models on the `BDRC/yigchung_detection_v2` test split, against the original gold ("before") and the corrected gold ("after": annotator review for the 5 BDRC books, the annotator patterns and the head-mark rule elsewhere; 4,059 -> 3,793 spans).
+`results/benchmark/benchmark_scores.md` scores models on the `BDRC/Bo-Yigchung-Dataset` test split, against the original gold ("before") and the corrected gold ("after": annotator review for the 5 BDRC books, the annotator patterns and the head-mark rule elsewhere; 4,059 -> 3,793 spans).
 
 | Model | Before | After |
 |---|---:|---:|
-| `karma689/mmbert-yigchung-v2` | 0.471 | 0.489 |
+| general, `BDRC/Bo-Yigchung-Detection` (v2) | 0.471 | 0.489 |
 | genre v2 | 0.417 | 0.437 |
 
 The genre model wins on liturgy (0.79 against 0.62) but scores 0.06 on the "other" genres, against 0.31 for the general model. **It is not a replacement for the general model.**
 
-`karma689/mmbert-yigchung-v2` reports a BDRC test F1 of 0.980 on its model card. Those scores were computed on a version of the text that still had ༼༽ brackets around the notes. On the published text the same 5 books score 0.49.
+The model's source repo `karma689/mmbert-yigchung-v2` reports a BDRC test F1 of 0.980. Those scores were computed on a version of the text that still had ༼༽ brackets around the notes. On the published text the same 5 books score 0.49.
 
 ## Models
 
 | | Hugging Face repo | Trained on |
 |---|---|---|
-| Production, general | [`BDRC/Bo-Yigchung-Detection`](https://huggingface.co/BDRC/Bo-Yigchung-Detection) | `karma689/yigchung_detection` rev `v1.0`, which is no longer available |
-| Previous general (not in production) | [`karma689/mmbert-yigchung-v2`](https://huggingface.co/karma689/mmbert-yigchung-v2) | `karma689/yigchung_detection` rev `v2.0`; the published copy is `BDRC/yigchung_detection_v2` |
+| General, in production (v2) | [`BDRC/Bo-Yigchung-Detection`](https://huggingface.co/BDRC/Bo-Yigchung-Detection) (public), from `karma689/mmbert-yigchung-v2` | `karma689/yigchung_detection` rev `v2.0`, no longer available; the published data is [`BDRC/Bo-Yigchung-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (public) |
 | Classified (genre v3, this folder) | `BDRC/Bo-Yigchung-Classified-Detection` (private) | `BDRC/Bo-Yigchung-Classified-Dataset` (private) |
 
-Cards: [`docs/classified_model_card.md`](docs/classified_model_card.md), [`docs/classified_dataset_card.md`](docs/classified_dataset_card.md); both pairs are listed in [`docs/huggingface.md`](docs/huggingface.md). The classified model is for the four genres only. It decodes differently from production: stride 5120 instead of 4914, windows averaged instead of first-window-only, and break penalty 5 instead of 1. `detect/layer_config.py` still loads the production model.
+Cards: [`docs/model_card.md`](docs/model_card.md) and [`docs/dataset_card.md`](docs/dataset_card.md) (general pair, public); [`docs/classified_model_card.md`](docs/classified_model_card.md) and [`docs/classified_dataset_card.md`](docs/classified_dataset_card.md) (classified pair, private). Both pairs are listed in [`docs/huggingface.md`](docs/huggingface.md). The general model was trained on an earlier version of the data than the published one (window counts differ; see its card). It decodes with break penalty 8, stride 4914 and first-window stitching, set in `detect/layer_config.py`. The classified model is for the four genres only and decodes differently: stride 5120 instead of 4914, windows averaged instead of first-window-only, and break penalty 5 instead of 8.
 
 ## Known limits
 
