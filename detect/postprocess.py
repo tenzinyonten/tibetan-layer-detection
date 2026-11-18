@@ -488,10 +488,6 @@ def main(argv=None) -> int:
             continue
 
         layers, errors = predictions["layers"], predictions.get("errors", {})
-        layers, dropped_short = drop_short_spans(layers)
-        if any(dropped_short.values()):
-            print(f"  [note] {book_id}: dropped spans under {MIN_SPAN_CHARS} chars: "
-                  f"{ {n: c for n, c in dropped_short.items() if c} }", file=sys.stderr)
         dropped_quoted = []
         if not args.keep_quoted_tsawa:
             layers, dropped_quoted = split_quoted_tsawa(layers)
@@ -499,6 +495,10 @@ def main(argv=None) -> int:
                 print(f"  [note] {book_id}: dropped {len(dropped_quoted)} tsawa span(s) "
                       f"with >= {QUOTE_COVERAGE_DROP:.0%} predicted-quotation coverage",
                       file=sys.stderr)
+        layers, dropped_short = drop_short_spans(layers)
+        if any(dropped_short.values()):
+            print(f"  [note] {book_id}: dropped spans under {MIN_SPAN_CHARS} chars: "
+                  f"{ {n: c for n, c in dropped_short.items() if c} }", file=sys.stderr)
         text, text_length = preprocessed["text"], preprocessed["char_count"]
         layers, dropped_non_tibetan = drop_non_tibetan_spans(layers, text)
         if any(dropped_non_tibetan.values()):
