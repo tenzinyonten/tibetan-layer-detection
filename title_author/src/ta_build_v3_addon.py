@@ -5,7 +5,13 @@ v3 work kept if: TEXT, typed title and author both found exactly once in the tex
 same rule as fill_spans_auto.py), not a near-duplicate of any gold work (all splits), one copy per duplicate cluster.
 validation and test are copied unchanged from gold_dataset_all. source column = "v3_auto".
 
-    python title_author/src/ta_build_v3_addon.py CLEAN_DIR [--out-dir DIR]
+    python title_author/src/ta_build_v3_addon.py CLEAN_DIR [--base gold_dataset_all] [--single] [--all-groups] [--k 3000]
+        [--max-length 8192] [--stride 5120] [--tokenizer DIR] [--out-dir DIR]
+
+Reads: CLEAN_DIR (the BDRC v3 clean texts), title_author/data/processed/<base>/ (the gold DatasetDict), the annotator spans through
+ta_load_spans (not in this repo), and the mmBERT-base tokenizer (--tokenizer).
+Writes under title_author/data/processed/: <base>_v3/ (or <base>_v3_full/ with --all-groups, or --out-dir) and <out-dir name>_works.csv (one row per added work).
+Use the same --single as for the base dataset.
 """
 import argparse, csv, hashlib, json, os, re, sys, zlib
 from collections import Counter, defaultdict
@@ -36,16 +42,17 @@ def sig(text):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("clean_dir", type=Path)
-    ap.add_argument("--k", type=int, default=3000)
-    ap.add_argument("--max-length", type=int, default=8192)
-    ap.add_argument("--stride", type=int, default=5120)
+    ap.add_argument("clean_dir", type=Path, help="folder of the BDRC v3 clean texts")
+    ap.add_argument("--k", type=int, default=3000, help="characters kept at each end of a work")
+    ap.add_argument("--max-length", type=int, default=8192, help="tokens per window")
+    ap.add_argument("--stride", type=int, default=5120, help="window stride in tokens")
     ap.add_argument("--base", default="gold_dataset_all", help="gold dataset folder (under data/processed) to add v3 to")
     ap.add_argument("--single", action="store_true", help="one sequence per work: top + separator + bottom")
     ap.add_argument("--all-groups", action="store_true",
                     help="also keep title-only and author-only works; tokens where the missing side could be get label -100")
-    ap.add_argument("--out-dir", type=Path, default=None)
-    ap.add_argument("--tokenizer", default=str(Path.home() / ".cache/huggingface/hub/models--jhu-clsp--mmBERT-base/snapshots/c5955035435e2bf121cde7f3c8863ef52ff35d82"))
+    ap.add_argument("--out-dir", type=Path, default=None, help="output folder (default: title_author/data/processed/<base>_v3, or <base>_v3_full with --all-groups)")
+    ap.add_argument("--tokenizer", default=str(Path.home() / ".cache/huggingface/hub/models--jhu-clsp--mmBERT-base/snapshots/c5955035435e2bf121cde7f3c8863ef52ff35d82"),
+                    help="folder of the jhu-clsp/mmBERT-base tokenizer (default: the Hugging Face cache snapshot)")
     a = ap.parse_args()
     a.out_dir = a.out_dir or OUT / (f"{a.base}_v3_full" if a.all_groups else f"{a.base}_v3")
     from datasets import Dataset, DatasetDict, concatenate_datasets, load_from_disk

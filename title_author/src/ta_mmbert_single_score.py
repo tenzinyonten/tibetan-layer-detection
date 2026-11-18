@@ -6,7 +6,10 @@ takes one span per work (title: the FIRST span, author: the LAST span; or the mo
     python3 ta_mmbert_single_score.py FIELD SPLIT PENALTIES [write PENALTY SELECT]
     python3 ta_mmbert_single_score.py author validation 3,6,12,20                  # tune the penalty on validation
     ALLOW_TEST=1 python3 ta_mmbert_single_score.py author test 12 write 12 first_last    # final: ONE penalty chosen on validation, writes test_answers.json
-FIELD = title | author. test needs ALLOW_TEST=1 (final comparison only)."""
+FIELD = title | author. test needs ALLOW_TEST=1 (final comparison only).
+PENALTIES = comma-separated break penalties to try (the models on the Hub use 6). SELECT = first_last | conf (which span to keep; the Hub models use first_last).
+The work texts and gold spans come from the parquet folder TA_PQ (default title_author/data/processed/parquet_export_strat_both_notrans_nous).
+Prints one line per penalty (share of works with IoU >= 0.5). With `write` it saves title_author/data/mmbert_preds/{FIELD}_only/{SPLIT}_answers.json for that penalty."""
 import os, sys, json
 from pathlib import Path
 import numpy as np
