@@ -123,14 +123,13 @@ Either one right: joint model or skill, title 0.881, author 0.837; title-only or
 
 ## Known issues
 
-<details><summary>Show 8 known issues</summary>
+<details><summary>Show 7 known issues</summary>
 
 - `build_ta_gold_dataset.py` and `export_ta_parquet.py` import `ta_load_spans` (and `--split-csv` comes from `ta_restratify.py`); neither is in `src/`, so those two scripts cannot run from a fresh clone. `build_ta_addon.py` also imports `ta_load_spans` and its docstring mentions the absent `fill_spans_auto.py`.
 - `clean_ta_translators.py` and `clean_ta_underscores.py` have the folder names `gold_dataset_all_strat_single_v3_both[_notrans]` and `parquet_export_strat_both[_notrans]` fixed in the code; the flags that produced them are not recorded, so steps 1 to 3 are the documented usage, not a verified reproduction.
 - `score_ta_mmbert.py` and `score_ta_mmbert_single.py` read `*_flat.npz` files made by a converter from the `predict_ta.py` logits; the converter is not in this repo.
 - `rank_ta_rules.py` has the path `/Users/tenzinyonten/layer_detection/title_author/src` hardcoded for import and output; the saved `data/rule_runs/*/results.json` carry the same machine path. Which of `fit_ta_rules.py` and `rank_ta_rules.py` made the shipped author weights is not stated.
 - `src/ta_rule_extract.py` and its two weight files are duplicated in `skills/tibetan-title-author/scripts/` (identical now); change both or they drift apart.
-- The model cards on the Hub and in `docs/hf_cards/` still say "Review-flag cutoffs are in `title_author/README.md`"; there are none here (the `needs_review` flags belong to the skill).
 - `eval_ta_gemini.py` calls itself an untested first version; the Batch API script reuses its scorer.
 - The skill's numbers are Gemini only; `ta.py` auto mode with `ANTHROPIC_API_KEY` uses the unbenchmarked `claude-sonnet-5-5`, and the no-tools second look is not measured. Rule-script figures differ between files: `ta.py` and `SKILL.md` say author about 36% (title about 0.64), the saved test run says title 0.688 and author 0.375 (used above).
 

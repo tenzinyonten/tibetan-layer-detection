@@ -79,7 +79,7 @@ class LayerConfig:
     # so more of their spans surface for review rather than being silently trusted).
 
 
-# All private; weights are in each repo's best/ folder. The two single-entity models know one field
+# The title and author repos are private; weights are in each repo's best/ folder. The two single-entity models know one field
 # each (3 labels O, B, I); the joint model knows both (5 labels). Test, 2,384 works, share correct at IoU >= 0.5:
 # joint (penalty 12) title 0.833 / author 0.711; title-only + author-only (penalty 6) 0.842 / 0.734.
 TITLE_MODEL = "BDRC/Bo-Title-Detection"
