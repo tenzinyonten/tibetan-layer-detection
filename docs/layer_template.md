@@ -46,3 +46,11 @@ Every script is named `<verb>_<layer>_<object>.py` in lowercase snake case, for 
 - **Layer second**: `chapter`, `sabche`, `tsawa`, `yigchung`, or `ta` for title and author. Scripts in `common/` serve every layer, so they have no layer word (`train_layer.py`, `eval_viterbi_iou.py`).
 - `prepare_<layer>_split.py` makes the frozen split, `build_<layer>_dataset.py` builds the dataset, `push_<layer>_dataset.py` uploads it.
 - Not renamed on purpose: Python packages and importable modules (`detect/`, `paths.py`, `tsawa_crf_model.py`) and the shipped skill in `title_author/skills/`, whose file names are used by its `SKILL.md`.
+
+## Flowchart picture
+
+The flowchart is a picture, so GitHub cannot clip its labels. The source is `docs/pipeline.mmd` in the folder (a second chart is `pipeline_2.mmd`) and the README shows `docs/pipeline.png`. After editing a `.mmd` file, render it again:
+
+```bash
+npx -p @mermaid-js/mermaid-cli mmdc -i <folder>/docs/pipeline.mmd -o <folder>/docs/pipeline.png -b white -s 2
+```

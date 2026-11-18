@@ -35,56 +35,11 @@ The general model replaced the earlier one on 2026-11-17 (kept under tag `v1`). 
 
 ## Pipeline
 
-General system (benchmark only):
+![Pipeline flowchart](docs/pipeline.png)
 
-```mermaid
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"]
-    S1 --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
-    S2 --> F2(["Corrected test set"])
-  end
-  subgraph TRAIN["Train"]
-    direction TB
-    T1["Train elsewhere<br/><i>not in this repo</i>"] --> F3(["General model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction TB
-    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F4(["Predictions"])
-    F4 --> E2["Score<br/><i>score_yigchung_benchmark.py</i>"]
-    E2 --> F5(["Benchmark scores"])
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Classified (genre) system:
-
-```mermaid
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"] --> S2["Combine Lotsawa<br/><i>merge_yigchung_lotsawa.py</i>"]
-    S2 --> S3["Build genre sets<br/><i>build_yigchung_genre_datasets.py</i>"]
-    S3 --> S4["Build BIO windows<br/><i>build_yigchung_genre_bio.py</i>"]
-    S4 --> F1(["Classified dataset"])
-    S0["Label genres<br/><i>classify_yigchung_genre.py</i>"] -.-> S3
-    S3 -.-> S5["Propose split<br/><i>stratify_yigchung_genre.py</i>"]
-  end
-  subgraph TRAIN["Train"]
-    direction TB
-    T1["Train model<br/><i>common/train_layer.py</i>"] --> F2(["Classified model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction TB
-    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> E2["Analyze errors<br/><i>analyze_yigchung_predictions.py</i>"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
-
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the corrected 77-book test set, scored once. The general model was trained elsewhere, so only its benchmark steps (fetch, build benchmark, predict, score) are in this repo; the classified system has the full pipeline. The Gemini genre runs label each book's genre (several prompt versions); the optional LLM box stands for zero-shot or other Gemini and Claude analysis; no such results are saved in this repo. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
 
 ## Main pipeline
 

@@ -1,0 +1,32 @@
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    F1(["OpenPecha books"]) --> S1["Download books<br/><i>download_data.py</i>"]
+    S1 --> S2["Review spans<br/><i>review_quotations.py</i>"]
+    S2 --> F2(["Quotation gold"])
+    F2 --> S3["Make split<br/><i>build_quotation_benchmark.py</i>"]
+    S3 --> S4["Build windows<br/><i>build_quotation_windows.py</i>"]
+    S4 --> S5["Relabel to BIOE<br/><i>relabel_quotation_bioe.py</i>"]
+    S5 --> F3(["HF dataset"])
+  end
+  subgraph TRAIN["Train"]
+    direction LR
+    S6["Train model<br/><i>train.py</i>"] --> S7["Upload model<br/><i>upload_model.py</i>"]
+    S7 --> F4(["HF model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction LR
+    V(["Validation split<br/>(for tuning)"]) --> S8["Evaluate model<br/><i>eval_quotation_v3.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> S8["Evaluate model<br/><i>eval_quotation_v3.py</i>"]
+    S8 --> F5(["Model scores"])
+    S8 -.-> S9["Reviewed gold<br/><i>eval_quotation_reviewed.py</i>"]
+  end
+  subgraph BASE["Zero-shot LLM baselines"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) --> Z1["Run Gemini, Claude<br/><i>run_gemini_benchmark.py</i>"]
+    Z1 --> Z2(["LLM scores"])
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL
+  EVAL --> BASE

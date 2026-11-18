@@ -28,41 +28,18 @@ Both are private (read from the Hub, 2026-11-17); a 404 means you need access fr
 
 ## Pipeline
 
-```mermaid
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    F1(["Raw Chapter.yml"]) --> S1["Clean spans<br/><i>clean_chapter_spans.py</i>"]
-    S1 --> F2(["Clean spans CSV"])
-    F2 --> S2["Make split<br/><i>prepare_chapter_split.py</i>"]
-    S2 --> F3(["Frozen split"])
-    F3 --> S3["Build dataset<br/><i>build_chapter_dataset.py</i>"]
-    S3 --> S4["Push dataset<br/><i>push_chapter_dataset.py</i>"]
-    S4 --> F4(["HF dataset"])
-    S2 -.-> L["Check leakage<br/><i>check_chapter_leakage.py</i>"]
-  end
-  subgraph TRAIN["Train"]
-    direction LR
-    S5["Train model<br/><i>common/train_layer.py</i>"] --> S6["Upload model<br/><i>Hugging Face CLI</i>"]
-    S6 --> F5(["HF model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction LR
-    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
-    F6 -. "val only" .-> A["Analyze errors<br/><i>analyze_chapter_errors.py</i>"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+![Pipeline flowchart](docs/pipeline.png)
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
+
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune or to analyze errors (errors are analyzed on validation only). The zero-shot LLM runs (Claude Sonnet 5, Gemini 3.1 Flash Lite) use the same benchmark books; their results are in [results/zeroshot/](results/zeroshot/). The cards are in [docs/](docs/).
 
 ## Main pipeline
 
 | Script | What it does | When to run |
 |---|---|---|
 | [clean_chapter_spans.py](src/clean_chapter_spans.py) | Cleans raw chapter spans and flags bad books. | First; rerun on new annotations. |
-| [prepare_chapter_split.py](src/prepare_chapter_split.py) | Makes the frozen train, validation and test split. | After cleaning; test split is frozen. |
+| [prepare_chapter_split.py](src/prepare_chapter_split.py) | Makes the frozen train, validation and test split. | After cleaning; benchmark is frozen. |
 | [build_chapter_dataset.py](src/build_chapter_dataset.py) | Tokenizes books into BIO windows for mmBERT. | After the split. |
 | [push_chapter_dataset.py](src/push_chapter_dataset.py) | Uploads the dataset and its card to the Hub. | After building the dataset. |
 | [train_layer.py](../common/train_layer.py) | Fine-tunes mmBERT for the Chapter layer. | On a GPU machine. |
@@ -77,7 +54,7 @@ All commands run from the repository root.
 ```bash
 # 1. Clean the spans and flag bad books
 python chapter/src/clean_chapter_spans.py
-# 2. Make the train/validation/test split. Test split is frozen: score it once.
+# 2. Make the train/validation/test split. The benchmark (test split) is frozen: score it once.
 python chapter/src/prepare_chapter_split.py --keep-v3
 # 3. Build the BIO dataset (8,192-token windows)
 python chapter/src/build_chapter_dataset.py
@@ -100,7 +77,7 @@ python common/eval_viterbi_iou.py --model BDRC/Bo-Chapter-Detection --dataset BD
 
 ## Results
 
-Test set. Numbers are copied from the [model card](docs/model_card.md) and the zero-shot READMEs.
+Benchmark (test split). Numbers are copied from the [model card](docs/model_card.md) and the zero-shot READMEs.
 
 | Model | F1 | P | R |
 |---|---|---|---|

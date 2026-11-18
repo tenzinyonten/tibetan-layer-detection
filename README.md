@@ -7,17 +7,9 @@ One token-classification model per layer of a Tibetan pecha (OpenPecha `.opf`): 
 
 ## Pipeline
 
-```mermaid
-flowchart TD
-  L1["Tsawa"] --> C
-  L2["Sabche"] --> C
-  L3["Chapter"] --> C
-  L4["Quotation"] --> C
-  L5["Yigchung"] --> C
-  L6["Title and author"] --> C
-  C["common/<br/><i>train and evaluate</i>"] --> H(["Hugging Face"])
-  H --> D["detect/<br/><i>tibetan-detect</i>"]
-```
+![Pipeline flowchart](docs/pipeline.png)
+
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
 Each layer folder builds its dataset; `common/` trains and scores one model per layer; the models are published and `detect/` runs them on a book.
 

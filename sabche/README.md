@@ -27,33 +27,11 @@ Both are private (read from the Hub, 2026-11-18); a 404 means you need access fr
 
 ## Pipeline
 
-```mermaid
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    F1(["Raw Sabche.yml"]) --> S1["Clean spans<br/><i>clean_sabche_spans.py</i>"]
-    S1 --> F2(["Clean spans CSV"])
-    F2 --> S2["Make split<br/><i>prepare_sabche_split.py</i>"]
-    S2 --> F3(["Frozen split"])
-    F3 --> S3["Build dataset<br/><i>build_sabche_dataset.py</i>"]
-    S3 --> S4["Push dataset<br/><i>Hugging Face CLI</i>"]
-    S4 --> F4(["HF dataset"])
-  end
-  subgraph TRAIN["Train"]
-    direction LR
-    S5["Train model<br/><i>common/train_layer.py</i>"] --> S6["Upload model<br/><i>Hugging Face CLI</i>"]
-    S6 --> F5(["HF model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction LR
-    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
-    F6 -.-> S8["Dump spans<br/><i>common/predict_layer_spans.py</i>"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+![Pipeline flowchart](docs/pipeline.png)
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
+
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune. The zero-shot LLM runs (Claude Sonnet 5, Gemini) use the same 29 benchmark books; results are in [results/zeroshot/](results/zeroshot/). The cards are in [docs/](docs/).
 
 ## Main pipeline
 

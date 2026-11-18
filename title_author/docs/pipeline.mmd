@@ -1,0 +1,33 @@
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    F1(["Annotator spans"]) --> S1["Build gold dataset<br/><i>build_ta_gold_dataset.py</i>"]
+    S1 --> S2["Add v3 works<br/><i>build_ta_v3_addon.py</i>"]
+    S2 --> S3["Export parquet<br/><i>export_ta_parquet.py</i>"]
+    S3 --> S4["Drop translators<br/><i>clean_ta_translators.py</i>"]
+    S4 --> S5["Strip underscore<br/><i>clean_ta_underscores.py</i>"]
+    S5 --> F2(["Final data (_nous)"])
+    F2 --> S6["Push dataset<br/><i>push_ta_dataset.py</i>"]
+    S6 --> F3(["HF datasets"])
+  end
+  subgraph TRAIN["Train"]
+    direction LR
+    T1["Train model<br/><i>common/train_layer.py</i>"] --> T2["Upload model<br/><i>Hugging Face CLI</i>"]
+    T2 --> F4(["HF models"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction LR
+    V(["Validation split<br/>(for tuning)"]) --> E1["Predict logits<br/><i>predict_ta.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> E1["Predict logits<br/><i>predict_ta.py</i>"]
+    E1 --> E2["Flatten logits<br/><i>converter, not in repo</i>"]
+    E2 --> E3["Score model<br/><i>score_ta_mmbert_single.py</i>"]
+  end
+  subgraph BASE["Zero-shot LLM baselines"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) --> Z1["Run Gemini<br/><i>run_ta_gemini_batch.py</i>"]
+    Z1 --> Z2(["LLM scores"])
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL
+  EVAL --> BASE

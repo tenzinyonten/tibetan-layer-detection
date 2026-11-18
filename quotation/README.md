@@ -27,33 +27,11 @@ Read from the Hub with the local login on 2026-11-18. A 404 on the model means y
 
 ## Pipeline
 
-```mermaid
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    F1(["OpenPecha books"]) --> S1["Download books<br/><i>download_data.py</i>"]
-    S1 --> S2["Review spans<br/><i>review_quotations.py</i>"]
-    S2 --> F2(["Quotation gold"])
-    F2 --> S3["Make split<br/><i>build_quotation_benchmark.py</i>"]
-    S3 --> S4["Build windows<br/><i>build_quotation_windows.py</i>"]
-    S4 --> S5["Relabel to BIOE<br/><i>relabel_quotation_bioe.py</i>"]
-    S5 --> F3(["HF dataset"])
-  end
-  subgraph TRAIN["Train"]
-    direction LR
-    S6["Train model<br/><i>train.py</i>"] --> S7["Upload model<br/><i>upload_model.py</i>"]
-    S7 --> F4(["HF model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction LR
-    S8["Evaluate<br/><i>eval_quotation_v3.py</i>"] --> F5(["Scores"])
-    S8 -.-> S9["Reviewed gold<br/><i>eval_quotation_reviewed.py</i>"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+![Pipeline flowchart](docs/pipeline.png)
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Dataset uploads use the `--push` flag of the data scripts.
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
+
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune. The zero-shot LLM runs (Gemini, Claude) use the same 19 benchmark books; their script is in the quotation repository, not here. Dataset uploads use the `--push` flag of the data scripts.
 
 ## Main pipeline
 
