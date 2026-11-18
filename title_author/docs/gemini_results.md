@@ -128,7 +128,7 @@ At default thinking, 3.8-flash used about 2,810 thinking tokens per call (measur
 | Scripts | `title_author/src/ta_gemini_eval.py` (regular calls), `ta_gemini_batch.py` and `ta_batch_driver.sh` (batch), `ta_compare_runs.py` (comparison) |
 
 ## Update 2026-11-11: final GEPA run, unseen test, repair step
-See `overview.md` for the details. Short version:
+Short version:
 - GEPA run (3.8-flash, low thinking, 300 validation works, budget 300 calls, rule feedback on, examples locked): validation 0.713 -> 0.758. Prompt: `data/gemini_prompts/gepa_final_full.md`.
 - First 300 test works, rule layer applied, 3.8-flash: `gepa_final_full` (low thinking) title 0.837, author 0.790, mean 0.813; `final.md` (default thinking) 0.830 / 0.797 / 0.813; `final_noexamples` 0.810 / 0.743 / 0.777; `gepa_v2` 0.830 / 0.757 / 0.793. The final GEPA prompt ties the hand-made one.
 - flash-lite, same 300 works, raw: `gepa_v4_full` 0.657 / 0.663 / 0.660; `final_combined` 0.667 / 0.637 / 0.652; `final.md` 0.670 / 0.643 / 0.657; `gepa_lite_candidate` 0.703 / 0.657 / 0.680. All tie within noise.
@@ -168,3 +168,10 @@ Either model right: title 0.882, author 0.844 (upper bound for a combiner; no co
 The run picked a prompt that was cut off. Candidates 1 and 2 of 3 end in the middle of a sentence and have no Title Extraction Rules and no Author Extraction Rules section; only the starting prompt (candidate 0) was complete. The token penalty (validation score minus 0.004 x tokens/1000) preferred the cut-off candidate because it scored the same 0.662 on 80 works with fewer tokens.
 Everything said earlier in this file or in the skill about a "31% shorter prompt that ties" described the cut-off prompt and is withdrawn. Its re-evaluation scores (new 65.5 / 65.5; old 66.1 / 64.4 / 63.3, flash-lite, failed batches dropped) show only that a prompt WITHOUT the title and author rules scored about like the full one on that model; they say nothing about a complete shorter prompt. Not run on gemini-3.8-flash.
 The cut-off files are kept only on the local machine (`TRUNCATED_*`), not in this repo. Fixes: the skill refuses a prompt that lacks its required sections; `ta_gepa3.py` with `EFFICIENCY=1` rejects candidates that miss a heading of the starting prompt or end inside a code span, and uses the token penalty only as a tie-break between complete prompts.
+
+## Prices and limits (as measured)
+
+- gemini-3.8-flash: standard $0.75 in / $3.75 out per 1M tokens (batch half). `thinkingLevel: "low"` gives about 10 thinking tokens per call and scored as well as the default (about 2,800).
+- gemini-3.5-flash-lite: $0.30 / $2.50 (batch half), no thinking.
+- Measured: 300 works with the final prompt via batch about $0.97 (about Rs 88 at Rs 90 per dollar). A GEPA run (300 metric calls, 300 validation works, live calls) cost about Rs 370.
+- Free API keys cannot create batches or call 3.8-flash. The batch quota allows about one 300-work chunk of the long prompt at a time. GEPA needs `THREADS=3` (8 threads hit the per-minute token limit).

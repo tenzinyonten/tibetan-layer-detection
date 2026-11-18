@@ -81,12 +81,9 @@ python common/predict_layer_spans.py --label-name CHAPTER --model runs/chapter/b
 
 - **Check boundaries**: tests that span edges sit on syllable boundaries; its helpers are imported by the layers' boundary scripts. `python common/check_boundary_snapping.py --audit-csv data/shared/tsawa_audit.csv --raw-opf-dir data/raw_opf --out tsawa/data/processed/boundary_check.csv`
 - **Particle rule**: tests forbidding tsawa labels on closing particles at decode time. `python common/eval_particle_rule.py --model <repo> --dataset <ds> --break-penalty 12.0`
-- **Score by batch**: scores one tsawa model on validation split by old and new batch. `python common/eval_by_batch.py --model <repo> --dataset <ds>`
-- **Match definitions**: scores one CSV under IoU and gold-coverage matching. `python common/span_metrics.py --csv <missed_spans.csv>`, the CSV comes from [show_missed_spans.py](../tsawa/src/analysis/show_missed_spans.py).
-- **Dual-eval training**: [train_layer_dual_eval.py](train_layer_dual_eval.py) is `train_layer.py` plus `--classical-eval` for tsawa dataset v8. Same flags otherwise.
 - **Model files**: [tsawa_feat_model.py](tsawa_feat_model.py) (clause features, `--use-features`) and [tsawa_crf_model.py](tsawa_crf_model.py) (CRF head, `--use-crf`) are imported by the trainers, not run.
 - **Zero-shot libraries**: [gemini_chunks.py](zeroshot/gemini_chunks.py) and [gemini_locate.py](zeroshot/gemini_locate.py) are imported by `run_layer_zeroshot.py`; copied unchanged from the quotation benchmark repo.
-- **Annotation audit**: read-only checks on `data/raw_opf`, run manually when the data changes; they write reports next to the scripts. Run `audit.py`, `missed_verse_scan.py`, `cross_layer_analysis.py`, `prose_check.py`, then `report.py`: `python common/annotation_audit/audit.py`. The other tools: `layer_venn_and_sabche_tiny_gold.py`, `build_emma_handoff.py [--write]`, `make_book_check.py P000078`, `make_sabche_check.py P000078`, `non_tibetan_predictions.py`.
+- **Annotation audit**: read-only checks on `data/raw_opf`, run manually when the data changes; they write reports next to the scripts. Run `audit.py`, `missed_verse_scan.py`, `cross_layer_analysis.py`, `prose_check.py`, then `report.py`: `python common/annotation_audit/audit.py`. The other tools: `layer_venn_and_sabche_tiny_gold.py`, `make_book_check.py P000078`, `make_sabche_check.py P000078`.
 
 ## Which layer uses what
 
@@ -139,11 +136,9 @@ Claude was run in three batches (179 + 180 + 179 windows), about $5 per 180 wind
 
 ## Known issues
 
-<details><summary>Show 3 known issues</summary>
+<details><summary>Show 1 known issue</summary>
 
 - Scripts import each other by bare module name (for example `from eval_particle_rule import ...`), so run or import them with `common/` on the path. `eval_viterbi_iou.py` also needs the repo root on the path to import `detect/`.
-- `span_metrics.py` expects the CSV that `tsawa/src/analysis/show_missed_spans.py` writes; the example paths in its docstring (`scratch/tsawa/analysis/...`) are gitignored and not in the repo.
-- `non_tibetan_predictions.py` reads prediction files from paths outside the repo, so it cannot be re-run from a clean clone.
 
 </details>
 
@@ -158,14 +153,11 @@ common/
 ├── check_boundary_snapping.py     # span-edge diagnostic; helpers imported by tsawa, sabche, chapter cleaning scripts
 ├── build_tsawa_dataset.py         # windowed BIO dataset builder and labelling helpers; imported by every layer builder
 ├── train_layer.py                 # training loop for every layer
-├── train_layer_dual_eval.py       # train_layer.py plus classical validation; no caller found
-├── tsawa_feat_model.py            # mmBERT with clause features; imported by the trainers and eval_by_batch.py
+├── tsawa_feat_model.py            # mmBERT with clause features; imported by the trainers
 ├── tsawa_crf_model.py             # mmBERT with a CRF head; imported by the trainers
 ├── eval_viterbi_iou.py            # Viterbi plus IoU 0.5 scorer; tsawa and chapter scripts read its span dump
 ├── eval_particle_rule.py          # closing-particle decode rule and shared scorer; imported by tsawa eval scripts
-├── eval_by_batch.py               # score split by old and new batch; no caller found
 ├── predict_layer_spans.py         # dump predicted token spans per document; used by yigchung scripts
-├── span_metrics.py                # IoU versus coverage match definitions; no caller found
 ├── zeroshot/
 │   ├── run_layer_zeroshot.py      # Gemini or Anthropic zero-shot runner and scorer
 │   ├── claude_batch.py            # Claude Message Batches runner; scored with run_layer_zeroshot.py
@@ -178,10 +170,8 @@ common/
     ├── layer_venn_and_sabche_tiny_gold.py  # tsawa/commentary breakdown, tiny sabche gold spans
     ├── prose_check.py             # verse or prose for zero-overlap books
     ├── report.py                  # combines the CSVs into audit_report.md
-    ├── build_emma_handoff.py      # re-annotation handoff lists in emma/ (dry run by default)
     ├── make_book_check.py         # one-book HTML page with tsawa spans highlighted
     ├── make_sabche_check.py       # the same for sabche spans
-    ├── non_tibetan_predictions.py # predicted test spans with no Tibetan character
     └── emma/                      # handoff lists (train.txt, eval.txt, test.txt and book lists)
 ```
 

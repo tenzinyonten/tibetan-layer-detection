@@ -136,8 +136,8 @@ The quotation filter drops a predicted Tsawa span when at least 50% of it lies i
 
 All checked in the code on 2026-11-18.
 
-- `build_v7` to `build_v10_dataset.py` and `patch_validation.py` read `tsawa/data/processed/tsawa_audit.csv`, which is not in the repo: the audit moved to `data/shared/tsawa_audit.csv`. Copy the file there before running them.
-- Several scripts read files under `scratch/` that are not in the repo: `prepare_v6.py` (`scratch/tsawa/scripts/`), `build_v7` to `build_v10` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_classical_v3.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `rescore_masked.py` and the three `audit/` studies (saved predictions). The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
+- `build_v10_dataset.py` and `patch_validation.py` read `tsawa/data/processed/tsawa_audit.csv`, which is not in the repo: the audit moved to `data/shared/tsawa_audit.csv`. Copy the file there before running them.
+- Several scripts read files under `scratch/` that are not in the repo: `prepare_v6.py` (`scratch/tsawa/scripts/`), `build_v10_dataset.py` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_classical_v3.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `rescore_masked.py` and the three `audit/` studies (saved predictions). The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
 - `tsawa_spans_merged_reannotated_normalized.csv` is committed and read by the builders, but no script in the repo produces it.
 - `build_tsawa_catalog.py` has a hard-coded `ROOT = Path("/Users/tenzinyonten/layer_detection")`.
 - The analysis and eval scripts default to old models and datasets (`Yontenn/mmbert-tsawa-io-v2`, `formatting-tsawa-v1`, `ds_v5`, `runs/v5_merged/best`); pass `--model` and `--dataset` for the current ones.
@@ -169,14 +169,6 @@ tsawa/
 │   ├── patch_validation.py              # fix 6 validation books, write v11
 │   ├── push_v11_dataset.py              # push v11 to the Hub
 │   ├── build_tsawa_catalog.py           # book catalog xlsx
-│   ├── build_v7_dataset.py              # old dataset v7, no caller, superseded by v10
-│   ├── build_v8_dataset.py              # old dataset v8, no caller, superseded by v10
-│   ├── build_v9_dataset.py              # old dataset v9 (one classical_test), no caller
-│   ├── push_v10_dataset.py              # push v10 to the Hub, no caller
-│   ├── push_v8_dataset.py               # push v8 to the Hub, no caller
-│   ├── push_tsawa_dataset.py            # push the first local dataset, old flow
-│   ├── check_features.py                # f4/f5 feature check on v6, experiment, no caller
-│   ├── count_trailing_particles.py      # trailing citation particles, no caller
 │   ├── analysis/
 │   │   ├── analyze_errors.py            # fragmentation, short spans, exact-match F1
 │   │   ├── show_missed_spans.py         # missed short spans: CONTAINED, OVERLAP, SPLIT, MISSED
