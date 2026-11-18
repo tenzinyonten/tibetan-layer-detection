@@ -10,6 +10,13 @@ Method
   4. Tie-breaks: test books with better labels (annotator-reviewed, reviewed OPF, not borderline), then books the
      previous model (karma689/mmbert-yigchung-v2) never trained on.
 Writes a proposal CSV; the catalog is not changed.
+
+Classified system; not applied, and no current model uses the proposal.
+Usage: python yigchung/src/stratify_genre.py     (no arguments; thresholds are the constants in the script:
+  TARGET 80/10/10, MIN_SPANS 5, MIN_CHARS 20000, DUP_JACCARD 0.2, MAXK 3, BAND 0.05-0.20, MOVE_COST 0.02, ANCHOR)
+Reads:  <local>/genre_training/without_lotsawa/*.parquet and <local>/hub/{train,validation}.parquet.
+Writes: data/processed/genre_split_proposal.csv; prints the span shares per genre, current and proposed, and
+        the books that would move.
 """
 import paths as P
 import csv
