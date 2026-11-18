@@ -6,8 +6,8 @@ Run from the repo root, no flags: ``python tsawa/src/prepare_tsawa_split.py``.
 Split: seed 123, targets 76/12/12 by windows, pechas with fewer than 10 merged spans
 dropped, must-link groups keep reprints of one text together.
 Reads: tsawa/data/processed/tsawa_spans_merged.csv, split_v2_frozen.csv,
-quotation_spans_snapped.csv, data/shared/tsawa_audit.csv, and scratch/tsawa/scripts/
-(not in the repo).
+quotation_spans_snapped.csv and data/shared/tsawa_audit.csv, and the old Tsawa dataset
+(tsawa_dataset_v5_merged, not in the repo). Helper: stratified_split.py.
 Writes: data/shared/split_v3_frozen.csv, tsawa/data/processed/v6_ignore_spans.csv, and two
 reports under scratch/tsawa/analysis/.
 """
@@ -27,10 +27,9 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "scratch" / "tsawa" / "scripts"))
 sys.path.insert(0, str(ROOT / "tsawa" / "src"))
 sys.path.insert(0, str(ROOT / "common"))
-from build_stratified_split import greedy_assign, n_windows_from_tokens  # noqa: E402
+from stratified_split import greedy_assign, n_windows_from_tokens  # noqa: E402
 
 MERGED = ROOT / "tsawa/data/processed/tsawa_spans_merged.csv"
 AUDIT = ROOT / "data/shared/tsawa_audit.csv"

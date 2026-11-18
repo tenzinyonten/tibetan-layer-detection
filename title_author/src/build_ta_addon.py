@@ -2,7 +2,7 @@
 """Build gold_dataset_all_v3 = gold_dataset_all + auto-span works from the BDRC v3 release (TRAIN ONLY).
 
 v3 work kept if: TEXT, typed title and author both found exactly once in the text (title = first hit, author = last hit,
-same rule as fill_spans_auto.py), not a near-duplicate of any gold work (all splits), one copy per duplicate cluster.
+same rule as fill_ta_spans.py), not a near-duplicate of any gold work (all splits), one copy per duplicate cluster.
 validation and test are copied unchanged from gold_dataset_all. source column = "v3_auto".
 
     python title_author/src/build_ta_addon.py CLEAN_DIR [--base gold_dataset_all] [--single] [--all-groups] [--k 3000]

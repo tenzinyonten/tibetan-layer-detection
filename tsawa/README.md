@@ -115,7 +115,7 @@ The quotation filter drops a predicted Tsawa span when at least 50% of it lies i
 All checked in the code on 2026-11-18.
 
 - `build_tsawa_dataset.py` and `patch_tsawa_validation.py` read `tsawa/data/processed/tsawa_audit.csv`, which is not in the repo: the audit moved to `data/shared/tsawa_audit.csv`. Copy the file there before running them.
-- Several scripts read files under `scratch/` that are not in the repo: `prepare_tsawa_split.py` (`scratch/tsawa/scripts/`), `build_tsawa_dataset.py` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_tsawa_classical.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `eval_tsawa_masked.py` and the three `audit/` studies (saved predictions). The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
+- Several scripts read files under `scratch/` that are not in the repo: `prepare_tsawa_split.py` (the old Tsawa dataset `tsawa_dataset_v5_merged`; its helper `stratified_split.py` is now in the repo), `build_tsawa_dataset.py` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_tsawa_classical.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `eval_tsawa_masked.py` and the three `audit/` studies (saved predictions). The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
 - `tsawa_spans_merged_reannotated_normalized.csv` is committed and read by the builders, but no script in the repo produces it.
 - `build_tsawa_catalog.py` has a hard-coded `ROOT = Path("/Users/tenzinyonten/layer_detection")`.
 - The analysis and eval scripts default to old models and datasets (`Yontenn/mmbert-tsawa-io-v2`, `formatting-tsawa-v1`, `ds_v5`, `runs/v5_merged/best`); pass `--model` and `--dataset` for the current ones.
@@ -140,6 +140,7 @@ tsawa/
 │   ├── snap_tsawa_quotation_boundaries.py     # same snapping for Quotation and Citation
 │   ├── check_tsawa_spots.py              # score sampled spans on metre and closers
 │   ├── prepare_tsawa_split.py                    # frozen split split_v3 and ignore spans
+│   ├── stratified_split.py                       # helper: greedy window-balanced split (generator of split_v2); imported by prepare_tsawa_split.py
 │   ├── convert_tsawa_classical.py          # classical commentaries to span tables
 │   ├── prepare_tsawa_classical_split.py          # whole-commentary holdout per root text
 │   ├── clean_tsawa_classical_blank_lines.py  # collapse blank lines, remap spans

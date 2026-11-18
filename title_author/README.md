@@ -81,6 +81,7 @@ Decoding is Viterbi, then one span per work: the title is the first span, the au
 - **Score the joint model** (run 2, 5 labels, penalty 12): `ALLOW_TEST=1 python3 title_author/src/score_ta_mmbert.py test`
 - **Compare two Gemini runs** (paired bootstrap, free): `python title_author/src/compare_ta_runs.py validation "RUN_A_GLOB" "RUN_B_GLOB"`
 - **Gemini on a prompt** (paid, state the cost first): `python title_author/src/eval_ta_gemini.py run PROMPT.md validation 300`; whole splits: `python title_author/src/run_ta_gemini_batch.py submit PROMPT.md SPLIT MODEL`
+- **Find spans by matching** (free): finds the typed title (first hit) and author (last hit) in a work's text; the rule behind the `v3_auto` labels. `python title_author/src/fill_ta_spans.py eval SRC 200` (needs the local annotator JSON folder).
 - **Rule script score** (free): `python title_author/src/ta_rule_extract.py score validation`
 - **Benchmark the skill** (free in rules mode): `python3 title_author/skill_dev/run_ta_skill_bench.py validation 300 rules`
 - **Skill tests** (offline, no key): `python3 title_author/skills/tibetan-title-author/scripts/run_tests.py`
@@ -125,7 +126,7 @@ Either one right: joint model or skill, title 0.881, author 0.837; title-only or
 
 <details><summary>Show 7 known issues</summary>
 
-- `build_ta_gold_dataset.py` and `export_ta_parquet.py` import `ta_load_spans` (and `--split-csv` comes from `ta_restratify.py`); neither is in `src/`, so those two scripts cannot run from a fresh clone. `build_ta_addon.py` also imports `ta_load_spans` and its docstring mentions the absent `fill_spans_auto.py`.
+- `build_ta_gold_dataset.py`, `export_ta_parquet.py` and `build_ta_addon.py` import `ta_load_spans`. It is not in the repo and was never committed; a search of the author's machine found no copy, so these three scripts cannot run from a fresh clone (no other script imports it). From how they use it, it must provide `GOLD` (the folder of annotator JSON files, each with `content` and `segments`), `TRAIN_SOURCES`, `load()` (its first item is a list of rows with `file`, `cid`, `source`, `seg`, `span_start`, `span_end`, `title_span`, `author_span`, `title_text`, `author_text`) and `parse_name`. `--split-csv` comes from `ta_restratify.py`, also absent.
 - `clean_ta_translators.py` and `clean_ta_underscores.py` have the folder names `gold_dataset_all_strat_single_v3_both[_notrans]` and `parquet_export_strat_both[_notrans]` fixed in the code; the flags that produced them are not recorded, so steps 1 to 3 are the documented usage, not a verified reproduction.
 - `score_ta_mmbert.py` and `score_ta_mmbert_single.py` read `*_flat.npz` files made by a converter from the `predict_ta.py` logits; the converter is not in this repo.
 - `rank_ta_rules.py` has the path `/Users/tenzinyonten/layer_detection/title_author/src` hardcoded for import and output; the saved `data/rule_runs/*/results.json` carry the same machine path. Which of `fit_ta_rules.py` and `rank_ta_rules.py` made the shipped author weights is not stated.
@@ -145,6 +146,7 @@ title_author/
 ├── src/
 │   ├── build_ta_gold_dataset.py       # tokenized 5-label BIO dataset from annotator spans
 │   ├── build_ta_addon.py           # adds v3 auto-labelled works (train only)
+│   ├── fill_ta_spans.py            # find the typed title (first hit) and author (last hit) in a work's text
 │   ├── export_ta_parquet.py           # raw-text Parquet export (no caller found)
 │   ├── clean_ta_translators.py          # drops works with a translator author
 │   ├── clean_ta_underscores.py         # removes the _ artifact
