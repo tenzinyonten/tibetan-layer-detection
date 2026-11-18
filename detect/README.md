@@ -142,6 +142,7 @@ detect/
 ├── title_author.py     # title and author: head and tail crop, model or LLM skill
 ├── layer_config.py     # LAYERS: repo, scheme, break penalty, stride, cleanup, threshold, colour
 └── tests/
+    ├── test_drop_quoted_tsawa.py  # tsawa spans covered by quotation are dropped; layers_for_run
     ├── test_non_tibetan.py    # spans with no Tibetan text are dropped
     ├── test_shad_rule.py      # sabche shad rule
     └── test_title_author.py   # title/author, stub tokenizer and LLM

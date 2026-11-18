@@ -96,7 +96,7 @@ python common/eval_viterbi_iou.py --model BDRC/Bo-Chapter-Detection --dataset BD
 
 - **Check leakage**: reports long spans shared with train. `python chapter/src/check_chapter_leakage.py`
 - **Analyze errors**: lists missed and false-positive spans. Validation only, never test. `python chapter/src/analyze_chapter_errors.py --spans scratch/chapter/chapter_val_spans.jsonl --pred-key viterbi_bp4.0 --tag val`
-- **Tests**: `python -m unittest chapter/tests/test_chapter_cleanup.py` tests the Chapter post-processing rules and config. [test_drop_quoted_tsawa.py](tests/test_drop_quoted_tsawa.py) tests tsawa and quotation code, not Chapter.
+- **Tests**: `python -m unittest chapter/tests/test_chapter_cleanup.py` tests the Chapter post-processing rules and config.
 
 ## Results
 
@@ -119,9 +119,8 @@ Results are in [results/zeroshot/](results/zeroshot/).
 
 ## Known issues
 
-<details><summary>Show 4 known issues</summary>
+<details><summary>Show 3 known issues</summary>
 
-- [test_drop_quoted_tsawa.py](tests/test_drop_quoted_tsawa.py) tests `drop_quoted_tsawa` and `layers_for_run` in `detect/`: tsawa and quotation code, not the Chapter layer, although the file sits here. Run it with `python -m unittest chapter/tests/test_drop_quoted_tsawa.py` after changing `detect/postprocess.py` or `detect/infer.py`.
 - `tests/test_chapter_cleanup.py` skips its frozen-dump tests unless `scratch/chapter/chapter_test_spans.jsonl` exists; that file is gitignored and not in the repo.
 - The model repo's `training/test_metrics.json` could not be read here (the repo is private), so the model-card numbers above are copied from the card, not re-checked against it.
 - The Gemini zero-shot run is not independent of the test set (see Results).
@@ -143,8 +142,7 @@ chapter/
 │   ├── push_chapter_dataset.py        # push the dataset to Hugging Face (with the card)
 │   └── analyze_chapter_errors.py      # validation error analysis from a dump-spans file
 ├── tests/
-│   ├── test_chapter_cleanup.py        # Chapter post-processing and config tests
-│   └── test_drop_quoted_tsawa.py      # drop_quoted_tsawa / layers_for_run tests (tsawa and quotation)
+│   └── test_chapter_cleanup.py        # Chapter post-processing and config tests
 ├── data/processed/
 │   ├── chapter_spans_clean.csv        # cleaned span sidecar
 │   ├── chapter_book_verdicts.csv      # keep / exclude per book, with reason
