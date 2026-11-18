@@ -29,8 +29,8 @@ from transformers import AutoTokenizer
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_tsawa_dataset as B  # noqa: E402
-from build_tsawa_v10_dataset import SCHEMA, read_ignore, read_spans  # noqa: E402
+import bio_dataset as B  # noqa: E402
+from build_tsawa_dataset import SCHEMA, read_ignore, read_spans  # noqa: E402
 
 P = ROOT / "tsawa/data/processed"
 V10, V11, V11N = P / "tsawa_dataset_v10", P / "tsawa_dataset_v11", P / "tsawa_dataset_v11_noclassical"

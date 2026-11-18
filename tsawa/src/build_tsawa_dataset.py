@@ -3,7 +3,7 @@
 plus SEPARATE classical_validation / classical_test eval sets (whole-commentary holdout, see prepare_tsawa_classical_split.py).
 Classical docs here are the blank-line-collapsed copies (clean_tsawa_classical_blank_lines.py).
 
-Reuses the labelling / windowing functions of common/build_tsawa_dataset.py (same BIO rule,
+Reuses the labelling / windowing functions of common/bio_dataset.py (same BIO rule,
 same 8192/5120 windows, same mmBERT tokenizer) but does not run its Phase-2 audit totals
 check, which cannot hold once the classical docs are added. No training.
 
@@ -33,7 +33,7 @@ from transformers import AutoTokenizer
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common"))
-import build_tsawa_dataset as B  # noqa: E402
+import bio_dataset as B  # noqa: E402
 
 P = ROOT / "tsawa/data/processed"
 SPLIT = P / "split_v3_frozen_excl_set_aside.csv"

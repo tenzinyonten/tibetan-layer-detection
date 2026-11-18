@@ -17,7 +17,7 @@ from transformers import AutoTokenizer
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common"))
-from build_tsawa_dataset import IGNORE_LABEL, label_tokens, pack_window, sliding_windows, special_token_ids  # noqa: E402
+from bio_dataset import IGNORE_LABEL, label_tokens, pack_window, sliding_windows, special_token_ids  # noqa: E402
 
 LABEL2ID = {"O": 0, "B-TITLE": 1, "I-TITLE": 2, "B-AUTHOR": 3, "I-AUTHOR": 4}   # same as build_ta_gold_dataset.py
 

@@ -1,6 +1,6 @@
 """Token windowing helpers.
 
-Extracted from tenzinyonten/layer_detection's common/build_tsawa_dataset.py
+Extracted from tenzinyonten/layer_detection's common/bio_dataset.py
 (sliding_windows, special_token_ids, unchanged) so this repo does not need
 that file's heavier dependencies (pandas, PyYAML, datasets) just for the two
 functions detect_layers.py actually calls. pack_window_for_inference is new

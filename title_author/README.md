@@ -41,7 +41,7 @@ Squares are steps with the script that runs them; rounded boxes are files. The *
 | Script | What it does | When to run |
 |---|---|---|
 | [build_ta_gold_dataset.py](src/build_ta_gold_dataset.py) | Builds the tokenized 5-label BIO dataset from annotator spans. | First; needs `ta_load_spans` (missing). |
-| [build_ta_v3_addon.py](src/build_ta_v3_addon.py) | Adds auto-labelled BDRC v3 works to train only. | After the gold dataset. |
+| [build_ta_addon.py](src/build_ta_addon.py) | Adds auto-labelled BDRC v3 works to train only. | After the gold dataset. |
 | [export_ta_parquet.py](src/export_ta_parquet.py) | Exports raw text and character-offset spans as Parquet. | After the v3 add-on. |
 | [clean_ta_translators.py](src/clean_ta_translators.py) | Drops works whose gold author is a translator. | After export. |
 | [clean_ta_underscores.py](src/clean_ta_underscores.py) | Removes the `_` artifact and shifts the spans. | After the translator drop. |
@@ -57,7 +57,7 @@ All commands run from the repository root. **The test split is refused unless `A
 ```bash
 # 1-5. Build the data (steps 1 and 3 need ta_load_spans, which is not in this repo)
 python title_author/src/build_ta_gold_dataset.py --all --single --clean --tag strat
-python title_author/src/build_ta_v3_addon.py CLEAN_DIR --base gold_dataset_all --single
+python title_author/src/build_ta_addon.py CLEAN_DIR --base gold_dataset_all --single
 python title_author/src/export_ta_parquet.py CLEAN_DIR
 python title_author/src/clean_ta_translators.py
 python title_author/src/clean_ta_underscores.py
@@ -125,7 +125,7 @@ Either one right: joint model or skill, title 0.881, author 0.837; title-only or
 
 <details><summary>Show 8 known issues</summary>
 
-- `build_ta_gold_dataset.py` and `export_ta_parquet.py` import `ta_load_spans` (and `--split-csv` comes from `ta_restratify.py`); neither is in `src/`, so those two scripts cannot run from a fresh clone. `build_ta_v3_addon.py` also imports `ta_load_spans` and its docstring mentions the absent `fill_spans_auto.py`.
+- `build_ta_gold_dataset.py` and `export_ta_parquet.py` import `ta_load_spans` (and `--split-csv` comes from `ta_restratify.py`); neither is in `src/`, so those two scripts cannot run from a fresh clone. `build_ta_addon.py` also imports `ta_load_spans` and its docstring mentions the absent `fill_spans_auto.py`.
 - `clean_ta_translators.py` and `clean_ta_underscores.py` have the folder names `gold_dataset_all_strat_single_v3_both[_notrans]` and `parquet_export_strat_both[_notrans]` fixed in the code; the flags that produced them are not recorded, so steps 1 to 3 are the documented usage, not a verified reproduction.
 - `score_ta_mmbert.py` and `score_ta_mmbert_single.py` read `*_flat.npz` files made by a converter from the `predict_ta.py` logits; the converter is not in this repo.
 - `rank_ta_rules.py` has the path `/Users/tenzinyonten/layer_detection/title_author/src` hardcoded for import and output; the saved `data/rule_runs/*/results.json` carry the same machine path. Which of `fit_ta_rules.py` and `rank_ta_rules.py` made the shipped author weights is not stated.
@@ -145,7 +145,7 @@ title_author/
 ├── README.md
 ├── src/
 │   ├── build_ta_gold_dataset.py       # tokenized 5-label BIO dataset from annotator spans
-│   ├── build_ta_v3_addon.py           # adds v3 auto-labelled works (train only)
+│   ├── build_ta_addon.py           # adds v3 auto-labelled works (train only)
 │   ├── export_ta_parquet.py           # raw-text Parquet export (no caller found)
 │   ├── clean_ta_translators.py          # drops works with a translator author
 │   ├── clean_ta_underscores.py         # removes the _ artifact
@@ -163,7 +163,7 @@ title_author/
 │   ├── rank_ta_rules.py                # alternative author-weight fit, per-work softmax; hardcoded path
 │   ├── ta_rule_weights.json           # fitted author weights
 │   ├── ta_rule_title_weights.json     # fitted title weights
-│   ├── run_ta_gepa3.py                    # GEPA prompt optimisation (DSPy 3)
+│   ├── run_ta_gepa.py                    # GEPA prompt optimisation (DSPy 3)
 │   ├── run_ta_fix_trial.py                # trial: LLM picks one of 5 name candidates
 │   ├── run_ta_agent_trial.py              # trial: model calls tools to check the author
 │   └── run_ta_second_look_trial.py        # trial: the skill's no-tools second look (no caller found)
@@ -193,6 +193,6 @@ title_author/
     └── rule_runs/                     # saved rule-script runs (train 2000, validation, test)
 ```
 
-GEPA (DSPy `dspy.GEPA`, `src/run_ta_gepa3.py`, settings in its docstring) rewrites the prompt by reading the model's mistakes. The final run (2026-11-11, `gemini-3.8-flash`, 300 validation works, 600 train works, 300 metric calls, examples locked, rule feedback and rule layer on) raised validation 0.713 to 0.758 but tied the hand-made `final.md` on 300 unseen test works (0.813 mean both); GEPA did not beat the hand-made prompt. The skill reads `references/rules.md` and `examples.md`, not `data/gemini_prompts/`, unless `TA_PROMPT` points elsewhere. Gitignored and on disk only: `data/processed/gold_dataset*/`, `data/processed/parquet_export*`, `data/gemini_batches/`, `data/gemini_runs/`, `data/mmbert_preds/`, `data/exports/`.
+GEPA (DSPy `dspy.GEPA`, `src/run_ta_gepa.py`, settings in its docstring) rewrites the prompt by reading the model's mistakes. The final run (2026-11-11, `gemini-3.8-flash`, 300 validation works, 600 train works, 300 metric calls, examples locked, rule feedback and rule layer on) raised validation 0.713 to 0.758 but tied the hand-made `final.md` on 300 unseen test works (0.813 mean both); GEPA did not beat the hand-made prompt. The skill reads `references/rules.md` and `examples.md`, not `data/gemini_prompts/`, unless `TA_PROMPT` points elsewhere. Gitignored and on disk only: `data/processed/gold_dataset*/`, `data/processed/parquet_export*`, `data/gemini_batches/`, `data/gemini_runs/`, `data/mmbert_preds/`, `data/exports/`.
 
 </details>

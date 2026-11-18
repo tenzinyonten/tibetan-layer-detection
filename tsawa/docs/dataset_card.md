@@ -142,11 +142,11 @@ Each document is one commentary interleaved with the root verses it cites. Split
 1. Take the annotator spans for each book (character offsets); normalise span ends to the shad-inside convention (`tsawa_spans_merged_reannotated_normalized.csv`).
 2. Snap span edges to syllable boundaries, merge neighbouring spans separated only by punctuation, drop books with fewer than 10 spans, and mask quotation-like spans out of the loss.
 3. Set aside five interlinear or short-span books (IDAD44BA2, I1637B774, I9FF2B59B, I9CB71958, IB522F095): they are in no split.
-4. Classical commentaries: build one interleaved document per aligned commentary from the WeBuddhist repos (the root verse from the root-text file, then the commentary that follows it, in reading order; the pairing comes from the `![[root#^id]]` transclusion links; outline headings, footnotes and markup removed; one span per run of adjacent root blocks; inline re-quotes of the verse found by fuzzy syllable matching and listed as ignore spans). Output: `interleaved_v3` (25 documents, 6 root texts; script `build_interleaved.py`, not yet saved in the repo, see the list above). Then convert and split: `convert_tsawa_classical_v3.py`, `prepare_tsawa_classical_split.py`.
+4. Classical commentaries: build one interleaved document per aligned commentary from the WeBuddhist repos (the root verse from the root-text file, then the commentary that follows it, in reading order; the pairing comes from the `![[root#^id]]` transclusion links; outline headings, footnotes and markup removed; one span per run of adjacent root blocks; inline re-quotes of the verse found by fuzzy syllable matching and listed as ignore spans). Output: `interleaved_v3` (25 documents, 6 root texts; script `build_interleaved.py`, not yet saved in the repo, see the list above). Then convert and split: `convert_tsawa_classical.py`, `prepare_tsawa_classical_split.py`.
 5. Collapse blank lines in the classical texts (43,660 removed) and remap all offsets: `clean_tsawa_classical_blank_lines.py`.
 6. Split books: frozen book-level split in `split_v3_frozen_excl_set_aside.csv`.
-7. Tokenize, window and label: `build_tsawa_v10_dataset.py` (uses `common/build_tsawa_dataset.py`).
-8. Patch validation labels for the six re-annotated books: `patch_tsawa_validation.py`, then `push_tsawa_v11_dataset.py`.
+7. Tokenize, window and label: `build_tsawa_dataset.py` (uses `common/bio_dataset.py`).
+8. Patch validation labels for the six re-annotated books: `patch_tsawa_validation.py`, then `push_tsawa_dataset.py`.
 
 `build_report_v10.json`, `patch_report_v11.json`, `classical_split.csv` and `collapse_report.json` in the repo describe the exact build.
 

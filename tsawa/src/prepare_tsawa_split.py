@@ -2,7 +2,7 @@
 """Prepare split_v3 + ignore-span list for tsawa dataset v6. Does not rewrite
 existing sidecars, splits, datasets, or YAML.
 
-Run from the repo root, no flags: ``python tsawa/src/prepare_tsawa_v6.py``.
+Run from the repo root, no flags: ``python tsawa/src/prepare_tsawa_split.py``.
 Split: seed 123, targets 76/12/12 by windows, pechas with fewer than 10 merged spans
 dropped, must-link groups keep reprints of one text together.
 Reads: tsawa/data/processed/tsawa_spans_merged.csv, split_v2_frozen.csv,
@@ -291,7 +291,7 @@ def main() -> int:
     header = [
         "# tsawa layer-detection document split v3 — FROZEN",
         f"# generated: {date.today().isoformat()}",
-        "# generator: tsawa/src/prepare_tsawa_v6.py (greedy multi-objective, same as split_v2)",
+        "# generator: tsawa/src/prepare_tsawa_split.py (greedy multi-objective, same as split_v2)",
         f"# seed: {SEED}",
         "# targets: 80/10/10 by WINDOW count (8192 / 5120)",
         "# stratified on: batch, n_windows, tsawa density, pct_short",

@@ -13,7 +13,7 @@ punished there. Everything else is scored exactly as eval_viterbi_iou.py does
 (per window, IoU@0.5, greedy one-to-one).
 
 Token -> character mapping re-tokenizes each base text the way
-common/build_tsawa_dataset.py does (no special tokens, offset mapping) and checks
+common/bio_dataset.py does (no special tokens, offset mapping) and checks
 it against every window's char_start / char_end before using it.
 
 Usage

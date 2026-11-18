@@ -749,7 +749,7 @@ def write_dataset_card(
     lines = [
         "# tsawa binary BIO dataset",
         "",
-        "Built by `common/build_tsawa_dataset.py` from Phase 2 `tsawa_audit.csv`.",
+        "Built by `common/bio_dataset.py` from Phase 2 `tsawa_audit.csv`.",
         "**No model was trained.** Data-rights clearance is still an open question.",
         "",
         "## Source",

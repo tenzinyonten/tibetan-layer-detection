@@ -6,11 +6,11 @@ flowchart TD
     S2 --> S3["Resolve overlaps<br/><i>resolve_tsawa_overlaps.py</i>"]
     S3 --> S4["Merge spans<br/><i>merge_tsawa_spans.py</i>"]
     S4 --> F1(["Merged spans"])
-    F1 --> S5["Make split<br/><i>prepare_tsawa_v6.py</i>"]
-    S5 --> S6["Build dataset<br/><i>build_tsawa_v10_dataset.py</i>"]
-    S7["Add classical<br/><i>convert_tsawa_classical_v3.py</i>"] --> S6
+    F1 --> S5["Make split<br/><i>prepare_tsawa_split.py</i>"]
+    S5 --> S6["Build dataset<br/><i>build_tsawa_dataset.py</i>"]
+    S7["Add classical<br/><i>convert_tsawa_classical.py</i>"] --> S6
     S6 --> S8["Patch validation<br/><i>patch_tsawa_validation.py</i>"]
-    S8 --> S9["Push dataset<br/><i>push_tsawa_v11_dataset.py</i>"]
+    S8 --> S9["Push dataset<br/><i>push_tsawa_dataset.py</i>"]
   end
   subgraph TRAIN["Train"]
     direction LR

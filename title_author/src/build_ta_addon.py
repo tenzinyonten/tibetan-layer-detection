@@ -5,7 +5,7 @@ v3 work kept if: TEXT, typed title and author both found exactly once in the tex
 same rule as fill_spans_auto.py), not a near-duplicate of any gold work (all splits), one copy per duplicate cluster.
 validation and test are copied unchanged from gold_dataset_all. source column = "v3_auto".
 
-    python title_author/src/build_ta_v3_addon.py CLEAN_DIR [--base gold_dataset_all] [--single] [--all-groups] [--k 3000]
+    python title_author/src/build_ta_addon.py CLEAN_DIR [--base gold_dataset_all] [--single] [--all-groups] [--k 3000]
         [--max-length 8192] [--stride 5120] [--tokenizer DIR] [--out-dir DIR]
 
 Reads: CLEAN_DIR (the BDRC v3 clean texts), title_author/data/processed/<base>/ (the gold DatasetDict), the annotator spans through
@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common")); sys.path.insert(0, str(ROOT / "title_author/src"))
-from build_tsawa_dataset import IGNORE_LABEL, label_tokens, pack_window, sliding_windows, special_token_ids  # noqa: E402
+from bio_dataset import IGNORE_LABEL, label_tokens, pack_window, sliding_windows, special_token_ids  # noqa: E402
 from build_ta_gold_dataset import LABEL2ID, ID2LABEL, OUT, norm, regions, resolve_overlap, skip_leading_ws, strip_title_marks, strip_title_formula, tib_letters  # noqa: E402
 from ta_load_spans import GOLD, load  # noqa: E402
 

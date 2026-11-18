@@ -3,7 +3,7 @@ flowchart TD
   subgraph PREP["Prepare data"]
     direction TB
     F1(["Annotator spans"]) --> S1["Build gold dataset<br/><i>build_ta_gold_dataset.py</i>"]
-    S1 --> S2["Add v3 works<br/><i>build_ta_v3_addon.py</i>"]
+    S1 --> S2["Add v3 works<br/><i>build_ta_addon.py</i>"]
     S2 --> S3["Export parquet<br/><i>export_ta_parquet.py</i>"]
     S3 --> S4["Drop translators<br/><i>clean_ta_translators.py</i>"]
     S4 --> S5["Strip underscore<br/><i>clean_ta_underscores.py</i>"]
