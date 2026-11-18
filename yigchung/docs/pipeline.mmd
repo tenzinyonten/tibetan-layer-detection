@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"]
+    S1 --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
+    S2 --> F2(["Corrected test set"])
+  end
+  subgraph TRAIN["Train"]
+    direction TB
+    T1["Train elsewhere<br/><i>not in this repo</i>"] --> F3(["General model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction TB
+    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F4(["Predictions"])
+    F4 --> E2["Score<br/><i>score_yigchung_benchmark.py</i>"]
+    E2 --> F5(["Benchmark scores"])
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL

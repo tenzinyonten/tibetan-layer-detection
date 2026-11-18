@@ -34,35 +34,9 @@ The fallback tokenizer is used when a model's own `tokenizer_config.json` cannot
 
 ## Pipeline
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}}}%%
-flowchart TD
-  subgraph IN["Inputs"]
-    direction LR
-    F1(["Text or OpenPecha"])
-    S0["Run all stages<br/><i>detect_layers.py</i>"]
-  end
-  subgraph PRE["Preprocess"]
-    direction LR
-    S1["Extract text<br/><i>preprocess.py</i>"] --> F2(["Book JSON"])
-  end
-  subgraph INF["Infer"]
-    direction TB
-    W["Make windows<br/><i>windows.py</i>"] --> M["Run models<br/><i>infer.py</i>"]
-    M --> D["Decode spans<br/><i>decode.py</i>"]
-    D --> F3(["Predictions"])
-    T["Title, author<br/><i>title_author.py</i>"] -.-> F3
-  end
-  subgraph POST["Postprocess"]
-    direction LR
-    P1["Clean and flag<br/><i>postprocess.py</i>"] --> F4(["JSON, HTML, opf"])
-  end
-  F1 --> S1
-  S0 -.-> S1
-  F2 --> W
-  F2 -.-> T
-  F3 --> P1
-```
+![Pipeline flowchart](docs/pipeline.png)
+
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
 Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional or on request. Settings per layer are in [layer_config.py](layer_config.py).
 

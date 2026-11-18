@@ -1,0 +1,24 @@
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    F1(["Raw Sabche.yml"]) --> S1["Clean spans<br/><i>clean_sabche_spans.py</i>"]
+    S1 --> F2(["Clean spans CSV"])
+    F2 --> S2["Make split<br/><i>prepare_sabche_split.py</i>"]
+    S2 --> F3(["Frozen split"])
+    F3 --> S3["Build dataset<br/><i>build_sabche_dataset.py</i>"]
+    S3 --> S4["Push dataset<br/><i>Hugging Face CLI</i>"]
+    S4 --> F4(["HF dataset"])
+  end
+  subgraph TRAIN["Train"]
+    direction LR
+    S5["Train model<br/><i>common/train_layer.py</i>"] --> S6["Upload model<br/><i>Hugging Face CLI</i>"]
+    S6 --> F5(["HF model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction LR
+    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
+    F6 -.-> S8["Dump spans<br/><i>common/predict_layer_spans.py</i>"]
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL

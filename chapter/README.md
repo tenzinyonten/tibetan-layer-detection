@@ -28,33 +28,9 @@ Both are private (read from the Hub, 2026-11-17); a 404 means you need access fr
 
 ## Pipeline
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}}}%%
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    F1(["Raw Chapter.yml"]) --> S1["Clean spans<br/><i>clean_chapter_spans.py</i>"]
-    S1 --> F2(["Clean spans CSV"])
-    F2 --> S2["Make split<br/><i>prepare_chapter_split.py</i>"]
-    S2 --> F3(["Frozen split"])
-    F3 --> S3["Build dataset<br/><i>build_chapter_dataset.py</i>"]
-    S3 --> S4["Push dataset<br/><i>push_chapter_dataset.py</i>"]
-    S4 --> F4(["HF dataset"])
-    S2 -.-> L["Check leakage<br/><i>check_chapter_leakage.py</i>"]
-  end
-  subgraph TRAIN["Train"]
-    direction LR
-    S5["Train model<br/><i>common/train_layer.py</i>"] --> S6["Upload model<br/><i>Hugging Face CLI</i>"]
-    S6 --> F5(["HF model"])
-  end
-  subgraph EVAL["Evaluate"]
-    direction LR
-    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
-    F6 -. "val only" .-> A["Analyze errors<br/><i>analyze_chapter_errors.py</i>"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+![Pipeline flowchart](docs/pipeline.png)
+
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
 Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
 

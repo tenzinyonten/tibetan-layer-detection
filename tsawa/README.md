@@ -28,32 +28,9 @@ Visibility read from the Hub on 2026-11-18; a 404 on the dataset means you need 
 
 ## Pipeline
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}}}%%
-flowchart TD
-  subgraph PREP["Prepare data"]
-    direction TB
-    S1["Audit repos<br/><i>audit_tsawa_data.py</i>"] --> S2["Snap boundaries<br/><i>snap_tsawa_boundaries.py</i>"]
-    S2 --> S3["Resolve overlaps<br/><i>resolve_tsawa_overlaps.py</i>"]
-    S3 --> S4["Merge spans<br/><i>merge_tsawa_spans.py</i>"]
-    S4 --> F1(["Merged spans"])
-    F1 --> S5["Make split<br/><i>prepare_tsawa_v6.py</i>"]
-    S5 --> S6["Build dataset<br/><i>build_tsawa_v10_dataset.py</i>"]
-    S7["Add classical<br/><i>convert_tsawa_classical_v3.py</i>"] --> S6
-    S6 --> S8["Patch validation<br/><i>patch_tsawa_validation.py</i>"]
-    S8 --> S9["Push dataset<br/><i>push_tsawa_v11_dataset.py</i>"]
-  end
-  subgraph TRAIN["Train"]
-    direction LR
-    T1["Train model<br/><i>common/train_layer.py</i>"] --> T2["Upload model<br/><i>Hugging Face CLI</i>"]
-  end
-  subgraph EVAL["Evaluate"]
-    direction LR
-    E1["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] -.-> E2["Rescore masked<br/><i>eval_tsawa_masked.py</i>"]
-  end
-  PREP --> TRAIN
-  TRAIN --> EVAL
-```
+![Pipeline flowchart](docs/pipeline.png)
+
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
 Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. "Add classical" stands for three scripts (convert, split, collapse; see Main pipeline). The cards are in [docs/](docs/).
 

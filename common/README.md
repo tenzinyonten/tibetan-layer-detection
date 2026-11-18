@@ -17,32 +17,9 @@ common/
 
 ## Pipeline
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}}}%%
-flowchart TD
-  subgraph FETCH["Fetch"]
-    F0(["ID file"]) --> S1["Fetch books<br/><i>fetch_opf_repos.py</i>"]
-    S1 --> F1(["Raw .opf books"])
-  end
-  subgraph BUILD["Build"]
-    S2["Build dataset<br/><i>build_tsawa_dataset.py</i>"] --> F2(["Token dataset"])
-  end
-  subgraph TRAIN["Train"]
-    S3["Train model<br/><i>train_layer.py</i>"] --> F3(["Trained model"])
-  end
-  subgraph EVAL["Evaluate"]
-    S4["Score model<br/><i>eval_viterbi_iou.py</i>"] --> F4(["Scores"])
-    S5["Dump spans<br/><i>predict_layer_spans.py</i>"] -.-> F5(["Predicted spans"])
-  end
-  subgraph BASE["Baselines"]
-    S7["Claude batches<br/><i>run_claude_batch.py</i>"] -.-> S6["Zero-shot score<br/><i>run_layer_zeroshot.py</i>"]
-  end
-  F1 --> S2
-  F2 --> S3
-  F3 --> S4
-  F3 -.-> S5
-  F1 --> S6
-```
+![Pipeline flowchart](docs/pipeline.png)
+
+<sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
 Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Between Fetch and Build each layer's own `src/` cleans its spans and freezes its split, and its `build_*_dataset.py` calls `build_tsawa_dataset.py`. Baselines read the raw books as gold.
 
