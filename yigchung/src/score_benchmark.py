@@ -5,7 +5,14 @@ and the corrected gold ("after", build_benchmark_after.py).
 Usage: python score_benchmark.py NAME=predictions.json [NAME2=predictions2.json ...]
 Predictions come from common/predict_layer_spans.py (token spans); they are mapped to characters with the
 mmBERT tokenizer and matched one-to-one on IoU >= 0.5 (same rule as the training metric).
-Writes benchmark_scores_by_book.csv and benchmark_scores.md next to the corrected benchmark."""
+Writes benchmark_scores_by_book.csv and benchmark_scores.md next to the corrected benchmark.
+
+Both systems (the general model and the genre model are scored on the same 77 books). NAME is a free label for the
+model; the predictions file needs a "test" split. Books missing from the benchmark are skipped.
+Groups in the tables: the 5 annotator-reviewed BDRC books, the Lotsawa books (47), and the other reviewed books (25).
+Reads:  <local>/hub/test.parquet (before), <local>/benchmark_after/test.parquet (after, from build_benchmark_after.py),
+        the catalog (genre per book) and the predictions files.
+Writes: <local>/benchmark_after/benchmark_scores_by_book.csv and benchmark_scores.md."""
 import paths as P
 import csv
 import json

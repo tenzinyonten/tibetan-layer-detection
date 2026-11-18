@@ -6,7 +6,14 @@ Writes, next to the predictions file:
   <name>_by_book.csv   precision / recall / F1 (IoU@0.5) per book, with category
   <name>_view.html     the documents with gold vs predicted spans coloured
 
-Usage: python analyze_predictions.py predictions_validation.json [with_lotsawa]
+Usage: python yigchung/src/analyze_predictions.py PREDICTIONS.json [NAME]
+  PREDICTIONS.json  output of common/predict_layer_spans.py (token spans per document, splits validation and/or test)
+  NAME              genre set whose parquet holds the gold text and spans (default with_lotsawa)
+Classified system. Matching is greedy one-to-one on character IoU, a match needs IoU >= 0.5 (the training metric);
+a gold span with some overlap but IoU < 0.5 is reported as "boundary", with none as "missed". Token spans are
+converted to characters with the mmBERT tokenizer (the token count must equal the one in the predictions file).
+Reads:  PREDICTIONS.json and <local>/genre_training/NAME/<split>.parquet.
+Writes: the three files above, with the predictions file's name stem; prints P / R / F1 overall and per genre.
 """
 import paths as P
 import html

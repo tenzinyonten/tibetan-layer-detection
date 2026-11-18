@@ -1,5 +1,24 @@
 """Build genre training sets in HF format: without_lotsawa (36 genre books) and with_lotsawa (+26 combined Lotsawa docs).
-Label: category (4 genres). Source data is not modified."""
+Label: category (4 genres). Source data is not modified.
+
+Classified system. Usage: python yigchung/src/build_genre_datasets.py     (no arguments; rerun whenever the
+catalog, span_corrections.csv or span_additions.csv change). Steps, in order:
+  1. keep books whose catalog category is not 'other'; split = catalog genre_split (never the HF split)
+  2. where annotator_spans/<book_id>.json exists, use the annotator's spans instead of the HF spans
+  3. apply span_corrections.csv (drop, or new edges; edges are trimmed of spaces and newlines)
+  4. end a span before an unmatched closing ')' (annotator convention: 605 of 652 edits on 19 books)
+  5. add span_additions.csv spans (stops if one overlaps an existing span)
+  6. add the extra_books/*.json books that are not in the HF set; corrections and additions apply to them too
+  7. head marks (the HM set below) are never inside a span: a mark at a span edge is trimmed (a span that is
+     only a mark is dropped); a mark after a text ending (shad, or the letters ག / ཀ) inside a span splits it
+     in two; a mark inside a sentence is left alone. Pieces shorter than 3 characters are dropped.
+  8. with_lotsawa also gets the combined Lotsawa documents, labelled prayer (an assumption: ~90% of Lotsawa
+     books are prayers by a rough title check)
+Reads:  <local>/hub/*.parquet, <local>/lotsawa_combined.parquet, the catalog, span_corrections.csv,
+        span_additions.csv, <local>/annotator_spans/, <local>/extra_books/.
+Writes: <local>/genre_training/{without_lotsawa,with_lotsawa}/{train,validation,test}.parquet (HF schema plus
+        category, borderline, label_note; span ends inclusive) and <local>/genre_training/headmark_fixes.csv
+        (also kept in data/processed/). Prints the counts and a span-text sanity check (mismatches should be 0)."""
 import paths as P
 import pandas as pd,csv,collections,os
 H=str(P.HUB)+'/'

@@ -1,5 +1,13 @@
 """Combine the 469 short Lotsawa books into ~30k-character documents, within each HF split.
-Spans are shifted to the new offsets (inclusive end, HF convention) and verified. Source data is not modified."""
+Spans are shifted to the new offsets (inclusive end, HF convention) and verified. Source data is not modified.
+
+Classified system. Usage: python yigchung/src/combine_lotsawa.py     (no arguments)
+Rules: only books with source == 'lotsawa'; books are shuffled with seed 7 inside each split (train, validation,
+test) and packed until a document would exceed 30,000 characters (separator: a blank line). Splits never mix.
+Reads:  <local>/hub/{train,validation,test}.parquet (fetch_hub.py).
+Writes: <local>/lotsawa_combined.parquet and lotsawa_combined.jsonl (documents LOTSAWA_COMBINED_<split>_<nnn>),
+        data/processed/lotsawa_combined_manifest.csv (which book went where, at what offset).
+Prints the span-mismatch count (must be 0)."""
 import pandas as pd,json,random,csv,collections
 import paths as P
 H=str(P.HUB)+'/'

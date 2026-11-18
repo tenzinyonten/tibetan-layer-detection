@@ -1,294 +1,223 @@
-# Yigchung layer (ཡིག་ཆུང་)
+# Yigchung (ཡིག་ཆུང་)
 
-Yigchung is the small-print interlinear note written under or beside the main line of a pecha. This folder holds everything for the Yigchung layer, which has **two separate systems**:
+Finds **Yigchung**, the small-print interlinear note written under or beside the main line of a pecha. One token classifier (labels `O`, `B-YIGCHUNG`, `I-YIGCHUNG`), fine-tuned from `jhu-clsp/mmBERT-base`. The folder holds **two separate systems**:
 
-- **General system** (in production): `BDRC/Bo-Yigchung-Detection` (v2), trained on all genres. It was trained elsewhere (from `karma689/mmbert-yigchung-v2`), so this folder holds no training code for it, only its benchmark: the corrected 77-book test set and the scoring script.
-- **Classified (genre) system** (private, experimental): `BDRC/Bo-Yigchung-Classified-Detection`, trained on four genres only (liturgy, prayer, sadhana, songs). Almost every script in `src/` belongs to this system: it builds the genre dataset and analyses the model. The training itself uses `common/train_layer.py`.
+- **General system** (in production): `BDRC/Bo-Yigchung-Detection` (v2, from `karma689/mmbert-yigchung-v2`), trained on all genres **elsewhere**. Only its benchmark lives here: the corrected 77-book test set and the scoring script.
+- **Classified (genre) system** (private, experimental): `BDRC/Bo-Yigchung-Classified-Detection`, for four genres only (liturgy, prayer, sadhana, songs). The data build, the genre labelling and the error analysis live here; training uses `common/train_layer.py`. It is **not a replacement** for the general model (see Results).
 
-The genre model is **not a replacement** for the general model (see [Results](#results)). Inference for the general model lives in `detect/` (`detect/layer_config.py`).
-
-Both systems start from the public dataset [`BDRC/Bo-Yigchung-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (762 books, 601 / 84 / 77), which the code reads at revision `778c059b`.
-
-## Hugging Face
-
-Visibility read from the Hub on 2026-11-17 (the two classified repos answer "not found" without a login, and `HfApi.repo_info` with the owner login reports private).
-
-| System | Model repo | Dataset repo | Visibility | Cards in `docs/` |
-|---|---|---|---|---|
-| General | [`BDRC/Bo-Yigchung-Detection`](https://huggingface.co/BDRC/Bo-Yigchung-Detection) | [`BDRC/Bo-Yigchung-Dataset`](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) | model public, dataset public | [`model_card.md`](docs/model_card.md), [`dataset_card.md`](docs/dataset_card.md) |
-| Classified | `BDRC/Bo-Yigchung-Classified-Detection` | `BDRC/Bo-Yigchung-Classified-Dataset` | model private, dataset private | [`classified_model_card.md`](docs/classified_model_card.md), [`classified_dataset_card.md`](docs/classified_dataset_card.md) |
-
-Both pairs are listed in [`docs/huggingface.md`](docs/huggingface.md).
-
-- The general model was trained on an earlier version of the data than the published one (`karma689/yigchung_detection`, tag `v2.0`, no longer available; window counts differ, see its card). It decodes with break penalty 8, stride 4914 and first-window stitching, set in `detect/layer_config.py`.
-- The classified model is for the four genres only and decodes differently: stride 5120 instead of 4914, windows averaged instead of first-window-only, and break penalty 5 instead of 8.
-
-## Flowchart
-
-Nodes marked "GENERAL" belong to the **general** system; the rest belong to the **classified** system. `common/` scripts are shared with the other layers.
-
-```mermaid
-flowchart TD
-  subgraph IN["Inputs"]
-    D1["BDRC/Bo-Yigchung-Dataset on the Hub"]
-    D2["data/processed tables: catalog, span corrections, span additions"]
-    D3["annotator files in data/local - not public"]
-  end
-  subgraph PREP["Data preparation - classified system"]
-    A1["fetch_hub.py"]
-    A2["combine_lotsawa.py"]
-    A3["run_classify.py with prompts"]
-    A4["stratify_genre.py - proposal only"]
-    A5["build_genre_datasets.py"]
-    A6["build_genre_bio.py"]
-  end
-  subgraph TRAIN["Training - classified system"]
-    T1["common/train_layer.py"]
-  end
-  subgraph EVAL["Evaluation"]
-    E1["common/predict_layer_spans.py"]
-    E2["analyze_predictions.py - classified"]
-    E3["build_benchmark_after.py - GENERAL benchmark"]
-    E4["score_benchmark.py - both models"]
-  end
-  subgraph PUB["Publishing"]
-    P1["BDRC/Bo-Yigchung-Classified-Dataset - private"]
-    P2["BDRC/Bo-Yigchung-Classified-Detection - private"]
-    P3["GENERAL model BDRC/Bo-Yigchung-Detection v2 - public, trained elsewhere"]
-  end
-  D1 --> A1
-  A1 --> A2
-  A1 --> A3
-  D2 --> A3
-  A3 -.-> D2
-  A2 --> A5
-  D2 --> A5
-  D3 --> A5
-  A1 --> A5
-  A5 --> A6
-  A5 -.-> A4
-  D2 -.-> A4
-  A6 --> P1
-  P1 --> T1
-  T1 --> P2
-  T1 --> E1
-  E1 --> E2
-  E1 --> E4
-  A1 --> E3
-  D3 --> E3
-  E3 --> E4
-  P3 -.-> E1
-```
-
-Dashed arrows: `run_classify.py` writes a jsonl file whose labels were then entered into the catalog (the catalog column `label_source` is `gemini_v4` for 217 books and `claude_checked` for 80; no script in this folder does that copy); `stratify_genre.py` only writes a proposal that no current model uses.
-
-## Script reference
-
-All scripts are in `src/` and import `paths.py`. Run them from the repository root. Needs `YIGCHUNG_DATA` only if the local data folder is elsewhere (default `yigchung/data/local`).
-
-### Data preparation (classified system)
-
-| Script | What it does | When to use it | How to run | Reads -> Writes |
-|---|---|---|---|---|
-| `paths.py` | Not a script: every input and output path. `YIGCHUNG_DATA` overrides the local folder. | Imported by all the others. | `export YIGCHUNG_DATA=/path/to/yigchung_local` (optional) | tracked tables in `data/processed/`; local folder `data/local/` |
-| `fetch_hub.py` | Downloads the default config (book text + spans) of the dataset at the pinned revision `778c059b` and copies the three splits. The code names the dataset by its old name `BDRC/yigchung_detection_v2` (renamed to `BDRC/Bo-Yigchung-Dataset`, old name redirects). | First step, once. Also needed by `build_benchmark_after.py` and `score_benchmark.py` (they read `hub/test.parquet`). | `python yigchung/src/fetch_hub.py` | Hub -> `hub/{train,validation,test}.parquet` |
-| `combine_lotsawa.py` | Joins the 469 short Lotsawa House books into 26 documents of about 30,000 characters, within each HF split (shuffled with seed 7), shifts the spans (inclusive end) and verifies them. | After `fetch_hub.py`, before `build_genre_datasets.py`. | `python yigchung/src/combine_lotsawa.py` | `hub/*.parquet` -> `lotsawa_combined.parquet` |
-| `run_classify.py` | Asks Gemini for one genre label per book (liturgy, prayer, sadhana, songs, other) using a prompt from `prompts/`; resumable (skips books already done with http 200), rotates `GEMINI_KEYS` on 429 and drops keys rejected with 401/403, stops after 12 failures in a row. First argument: `0` all books, `N` a stratified sample of 30 (12 reviewed_opf, 12 bdrc, 6 nalanda), or a comma list of book ids. Second argument: output jsonl. Env: `GEMINI_KEYS` (required), `GEMINI_MODEL` (default `gemini-3.1-flash-lite`), `PROMPT_FILE` (default `prompts/prompt_classify_v5b.txt`), `CATALOG`. | Only to (re)label books. Paid API: state the cost first. | `GEMINI_KEYS=k1,k2 python yigchung/src/run_classify.py 0 classify_all_v5.jsonl` | `data/processed/yigchung_catalog.csv` + prompt -> jsonl (`classify_all_v5.jsonl` by default) |
-| `build_genre_datasets.py` | Builds the genre training sets in HF format: `without_lotsawa` (36 genre books) and `with_lotsawa` (plus the 26 combined documents, labelled prayer). Applies the preparation steps below. | After `fetch_hub.py` and `combine_lotsawa.py`, and again whenever the catalog, corrections or additions change. | `python yigchung/src/build_genre_datasets.py` | `hub/`, `lotsawa_combined.parquet`, catalog, `span_corrections.csv`, `span_additions.csv`, `annotator_spans/`, `extra_books/` -> `genre_training/{with,without}_lotsawa/<split>.parquet`, `genre_training/headmark_fixes.csv` |
-| `build_genre_bio.py` | Tokenizes with `jhu-clsp/mmBERT-base`, cuts windows of 8192 tokens with stride 5120, labels tokens `O`, `B-YIGCHUNG`, `I-YIGCHUNG` (parquet spans have an inclusive end, so `end+1` is passed). Uses `common/build_tsawa_dataset.py`. Optional 2nd argument: folder with the parquet files; 3rd: comma list of splits. | After `build_genre_datasets.py`; its output is what gets uploaded as the classified dataset. | `python yigchung/src/build_genre_bio.py with_lotsawa` | `genre_training/<name>/` -> `genre_training/bio_<name>/` (a `DatasetDict`) |
-| `stratify_genre.py` | Proposes a book-level train/validation/test split per genre: drops under-annotated books, keeps near-duplicate books together (50-char shingles), searches the assignment whose span and character shares fall in a band (default 5-20% for validation and for test), tie-breaks towards better labels and books the previous model never saw. Writes a proposal; the catalog is unchanged. | When the split should be redone. Not applied yet. | `python yigchung/src/stratify_genre.py` | `genre_training/`, `hub/`, catalog -> `data/processed/genre_split_proposal.csv` |
-
-Preparation steps applied by `build_genre_datasets.py`, in order, on every rebuild:
-
-1. Keep the books whose `category` in the catalog is not `other`, and give each its `genre_split`.
-2. Where an annotator review exists, use the annotator's spans instead of the HF spans.
-3. Apply `span_corrections.csv`: drops and edge edits.
-4. End a span before an unmatched closing `)`. This is the annotators' convention: 605 of their 652 edits on 19 reviewed books.
-5. Add the spans in `span_additions.csv`. The script stops if an added span overlaps an existing one.
-6. Add the four extra books.
-7. Head marks (༄༅ ༈ ...) open the next text, so they are never part of a span. A mark at a span edge is trimmed. A mark after a text ending (shad, or ག / ཀ) inside a span splits it in two. A mark inside a sentence is left alone.
-8. Write `with_lotsawa/` and `without_lotsawa/` in the HF schema with spans `{id, start, end}` and **inclusive** ends. Extra columns: `category`, `borderline`, `label_note`.
-
-### Training (classified system)
-
-| Script | What it does | When to use it | How to run | Reads -> Writes |
-|---|---|---|---|---|
-| `common/train_layer.py` (shared) | Fine-tunes mmBERT for one layer. | To train the genre model, on a Vast.ai GPU (see `setup_vast.sh` at the repo root). | see [Step by step](#step-by-step-from-raw-data-to-a-published-model) | `bio_with_lotsawa` -> `<output-dir>/best` |
-
-### Evaluation
-
-| Script | System | What it does | When to use it | How to run | Reads -> Writes |
-|---|---|---|---|---|---|
-| `common/predict_layer_spans.py` (shared) | both | Predicts token spans per document; overlapping windows averaged per token, then Viterbi decoding with `--break-penalty`. | Before `analyze_predictions.py` or `score_benchmark.py`. | `python common/predict_layer_spans.py --label-name YIGCHUNG --model <dir> --dataset <repo or path> --splits validation,test --break-penalty 5 --out predictions.json` | model + dataset -> predictions json |
-| `analyze_predictions.py` | classified | Turns the token spans into character spans and compares with gold. | After predicting on validation and test, to see which books and spans fail. | `python yigchung/src/analyze_predictions.py predictions_validation_test.json with_lotsawa` | `predictions*.json`, `genre_training/<name>/` -> next to the predictions file: `<name>_spans.csv` (one row per gold or predicted span: status, offsets, text, IoU, score), `<name>_by_book.csv` (P / R / F1 at IoU 0.5 per book, with category), `<name>_view.html` (gold vs predicted spans coloured) |
-| `build_benchmark_after.py` | general | Builds the corrected ("after") benchmark from the 77-book test split ("before"): (1) the 5 annotator-reviewed BDRC books take the annotator's spans (offsets mapped from the text with ༼༽{} brackets back to the HF text); (2) on the other books, a trailing unmatched `)` is removed and a trailing syllable that starts a new phrase is removed (86% agreement on 101 cases); (3) number-only spans are removed and head marks trimmed or split on every book. Source data is not modified. | Once, or when the annotator files change. | `python yigchung/src/build_benchmark_after.py` | `hub/test.parquet`, `annotator_review/{yaml,zips}/`, `annotator_spans/` -> `benchmark_after/test.parquet`, `changes.csv`, `summary_by_book.csv` |
-| `score_benchmark.py` | both | Scores models on the 77-book benchmark against the original gold ("before") and the corrected gold ("after"): predictions mapped to characters with the mmBERT tokenizer, one-to-one matching at IoU >= 0.5. | To compare the general and genre models on the same books. | `python yigchung/src/score_benchmark.py NAME=predictions.json [NAME2=predictions2.json ...]` | `hub/test.parquet`, `benchmark_after/test.parquet`, predictions -> `benchmark_after/benchmark_scores_by_book.csv`, `benchmark_scores.md` |
-
-How to evaluate the general model: predict with `common/predict_layer_spans.py` on the test split of `BDRC/Bo-Yigchung-Dataset` using the general decoding settings (break penalty 8), then run `score_benchmark.py general=<predictions>`. The numbers in `docs/model_card.md` were produced with `score_benchmark.py` and `build_benchmark_after.py`.
-
-### Experiments and one-off scripts
-
-Nothing in `src/` is a legacy script, but two have no caller: `stratify_genre.py` (no caller found; its output is a proposal that no current model uses) and `run_classify.py` (no script calls it; `docs/classified_dataset_card.md` lists it as step 3 of the dataset, so it is run by hand).
-
-### Prompts (`prompts/`)
-
-Genre-classification prompts for `run_classify.py` (pick one with `PROMPT_FILE`). Each fills the book fields into placeholders (`{book_id}`, `{title_tibetan}`, `{opening_text}`, ...) and asks for one JSON object.
-
-| File | What it is |
-|---|---|
-| `prompt_classify_v4.txt` | Earlier prompt: five categories, decision rules from title and opening text, and `verse_like_pct` as a hint. The catalog column `label_source` is `gemini_v4` for 217 books. |
-| `prompt_classify_v5b.txt` | Default of `run_classify.py`. Also uses a middle passage and the colophon; treats khrid-yig (ཁྲིད་ཡིག) practice manuals as "other" unless they are a formal recitation script; ignores publisher back-matter. |
-| `prompt_classify_v6.txt` | Adds sub-genres for "other". |
-
-## Data
-
-### Tracked tables (`data/processed/`)
-
-| File | What it is |
-|---|---|
-| `yigchung_catalog.csv` | One row per book: genre (`category`), `genre_split`, `borderline`, label source, title and text snippets. The split comes from here. |
-| `span_corrections.csv` | Hand fixes: spans dropped as "not Yigchung" and edited span edges. |
-| `span_additions.csv` | Hand-added spans: section labels and `< >` bracket notes the gold had missed. |
-| `headmark_fixes.csv` | Output log of the head-mark rule, one row per changed span. |
-| `lotsawa_combined_manifest.csv` | Which Lotsawa book went into which combined document, and at what offset. |
-| `genre_split_proposal.csv` | Output of `stratify_genre.py`. A proposal only: not used by the current models. |
-| `genre_bio_with_lotsawa_stats.json` | Window, span and label counts of the BIO set the v3 model was trained on. |
-
-### Local inputs (`data/local/`, gitignored)
-
-| Path | Where it comes from |
-|---|---|
-| `hub/<split>.parquet` | `python yigchung/src/fetch_hub.py` |
-| `lotsawa_combined.parquet` | `python yigchung/src/combine_lotsawa.py` |
-| `annotator_spans/<book_id>.json` | Annotator-reviewed spans for a book that is in the HF set (`B-UT1ER2253_0001`). |
-| `extra_books/<book_id>.json` | Four annotator-reviewed BDRC books that are not in the HF set (`B-UT1ER1130`, `1210`, `1222`, `1596`): text with brackets removed, plus the annotator spans mapped onto it. |
-| `annotator_review/yaml/`, `annotator_review/zips/` | The annotators' layer files and the review OPF zips their offsets refer to. Only `build_benchmark_after.py` needs these. |
-
-The annotator files are not public. Ask the layer owner for them.
-
-### Splits of the classified data (final, with Lotsawa)
-
-| Split | Docs | Spans | Windows |
-|---|---:|---:|---:|
-| train | 49 | 9,306 | 1,388 |
-| validation | 8 | 1,290 | 137 |
-| test | 10 | 1,806 | 229 |
-
-5 of the 67 documents carry annotator-reviewed spans: `B-UT1ER2253_0001` and the four extra books. Together they hold about 28% of the spans.
-
-## Step by step: from raw data to a published model
-
-**General system.** There is nothing to build or train here: the model `BDRC/Bo-Yigchung-Detection` (v2) was trained elsewhere, and the dataset `BDRC/Bo-Yigchung-Dataset` is the published one. What this folder adds is the benchmark (steps 1 and 7 below, then `score_benchmark.py`).
-
-**Classified system** (training runs on Vast.ai; give one command at a time):
-
-```bash
-export YIGCHUNG_DATA=/path/to/yigchung_local     # optional; default yigchung/data/local
-
-# 1. download the text and spans
-python yigchung/src/fetch_hub.py
-# 2. combine the Lotsawa books into documents
-python yigchung/src/combine_lotsawa.py
-# 3. (only to relabel) classify genres with Gemini; the result goes into the catalog
-GEMINI_KEYS=k1,k2 python yigchung/src/run_classify.py 0 classify_all_v5.jsonl
-# 4. build the genre parquet sets (cleaning steps above)
-python yigchung/src/build_genre_datasets.py
-# 5. build the BIO windows for mmBERT
-python yigchung/src/build_genre_bio.py with_lotsawa  # -> $YIGCHUNG_DATA/genre_training/bio_with_lotsawa
-
-# 6. train on Vast (see setup_vast.sh)
-python common/train_layer.py --label-name YIGCHUNG --scheme bio \
-    --dataset BDRC/Bo-Yigchung-Classified-Dataset --epochs 20 --lr 1e-5 \
-    --break-penalty 5 --stitched-eval --skip-test \
-    --run-name yigchung-genre-lotsawa-v3-swap --output-dir /workspace/runs/yigchung_genre_v3
-```
-
-The `--dataset` above is the private BDRC copy of `bio_with_lotsawa`. A local path from `build_genre_bio.py` works too. The other training settings are the `train_layer.py` defaults: batch size 2, gradient accumulation 4, weight decay 0.01, gradient clip 0.3, warmup 6%, bf16, seed 42, inverse-frequency class weights, early stopping with patience 3, and the best checkpoint picked on validation span F1 (IoU >= 0.5, per window). The stitched validation score (whole documents, overlapping windows averaged) is computed once at the end and is the one reported below. All of these are recorded in `results/genre_v*/results.json`.
-
-Publishing: `bio_with_lotsawa` and the trained `best` folder go to the two private repos; no script in this folder uploads them.
-
-**How to evaluate** the classified model:
-
-```bash
-# predict validation + test on the GPU box
-python common/predict_layer_spans.py --label-name YIGCHUNG \
-    --model /workspace/runs/yigchung_genre_v3/best \
-    --dataset BDRC/Bo-Yigchung-Classified-Dataset --splits validation,test \
-    --break-penalty 5 --out /workspace/runs/yigchung_genre_v3/predictions_validation_test.json
-# analyse on the Mac
-python yigchung/src/analyze_predictions.py predictions_validation_test.json with_lotsawa
-# compare with the general model on the 77-book benchmark
-python yigchung/src/build_benchmark_after.py
-python yigchung/src/score_benchmark.py genre_v3=predictions_benchmark.json
-```
-
-(The benchmark test books are windowed from the general dataset; predict them with `predict_layer_spans.py` first. The old results in `results/benchmark/` used the names `karma689_v2` and `genre_v2`.)
-
-## Results
-
-Metric: one-to-one span matching at IoU >= 0.5. Overlapping windows are averaged per token, then Viterbi decoding with break penalty 5.
-
-| Run | Data | Epochs (best epoch) | Validation F1 | Test F1 |
-|---|---|---|---:|---:|
-| genre v1 | `yigchung-genre-bio-lotsawa` | 10 | 0.665 | not scored |
-| genre v2 | `yigchung-genre-bio-lotsawa` | 20 (13, stopped at 16) | 0.737 | 0.768 |
-| **genre v3** | `yigchung-genre-bio-lotsawa-v2` | 20 (17) | **0.737** | **0.786** (P 0.772, R 0.800) |
-
-(The data names are the old Hub names; the classified dataset was moved to `BDRC/Bo-Yigchung-Classified-Dataset`.)
-
-v3 against the general model `BDRC/Bo-Yigchung-Detection` (v2, from `karma689/mmbert-yigchung-v2`) on the same test documents:
-
-| Test set | Spans | general (v2) | genre v3 |
-|---|---:|---:|---:|
-| 8 docs that neither model trained on | 1,663 | 0.62 | **0.81** |
-| all 10 test docs | 1,806 | 0.62 | **0.79** |
-
-Two test documents (`I518A01A8`, `B-UT1ER1399_0001`) were in the general model's training data, which is why the fair comparison leaves them out. Per-book scores are in `results/genre_v3/by_book.csv` and `results/previous_model_karma689_v2/`.
-
-### Benchmark (77 books)
-
-`results/benchmark/benchmark_scores.md` scores models on the `BDRC/Bo-Yigchung-Dataset` test split, against the original gold ("before") and the corrected gold ("after": annotator review for the 5 BDRC books, the annotator patterns and the head-mark rule elsewhere; 4,059 -> 3,793 spans).
-
-| Model | Before | After |
-|---|---:|---:|
-| general, `BDRC/Bo-Yigchung-Detection` (v2) | 0.471 | 0.489 |
-| genre v2 | 0.417 | 0.437 |
-
-The genre model wins on liturgy (0.79 against 0.62) but scores 0.06 on the "other" genres, against 0.31 for the general model. **It is not a replacement for the general model.**
-
-The model's source repo `karma689/mmbert-yigchung-v2` reports a BDRC test F1 of 0.980. Those scores were computed on a version of the text that still had ༼༽ brackets around the notes. On the published text the same 5 books score 0.49.
+- **In:** the public dataset [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (762 books, 601 / 84 / 77), read at pinned revision `778c059b`; hand tables in `data/processed/`; annotator files in `data/local/` (not public).
+- **Out:** the classified dataset and model on Hugging Face, and the benchmark scores in `results/`.
+- **In the whole system:** `detect/` runs the general model ([layer_config.py](../detect/layer_config.py)).
 
 ## Folder layout
 
 ```
 yigchung/
-├── README.md                     # this file
-├── src/
-│   ├── paths.py                  # every input and output path; YIGCHUNG_DATA overrides the local folder
-│   ├── fetch_hub.py              # download the dataset (text + spans) at the pinned revision
-│   ├── combine_lotsawa.py        # 469 short Lotsawa House books -> 26 documents of ~30k chars, within each HF split
-│   ├── run_classify.py           # Gemini genre label per book (prompts in prompts/); needs GEMINI_KEYS
-│   ├── build_genre_datasets.py   # genre books + corrections -> parquet, with and without Lotsawa
-│   ├── build_genre_bio.py        # parquet -> BIO DatasetDict for mmBERT (8192 tokens, stride 5120)
-│   ├── stratify_genre.py         # proposes a book-level split per genre (not applied yet)
-│   ├── analyze_predictions.py    # model predictions -> per-span and per-book tables + an HTML viewer
-│   ├── build_benchmark_after.py  # the 77-book benchmark with the annotator corrections applied (general system)
-│   └── score_benchmark.py        # scores models on the benchmark, before and after the corrections
-├── data/processed/               # small tracked tables (above)
-├── docs/                         # the four Hugging Face cards and huggingface.md
-├── prompts/                      # genre-classification prompts (v4, v5b, v6)
-└── results/
-    ├── benchmark/                # 77-book scores, before and after the corrections
-    ├── genre_v1/, genre_v2/, genre_v3/            # results.json per run (v2 and v3 also by_book.csv)
-    └── previous_model_karma689_v2/                # per-book scores of the general model (validation, test)
+├── src/             scripts: fetch, combine, label, build, score, analyze
+├── prompts/         genre-classification prompts for run_classify.py
+├── data/processed/  tracked tables: catalog, span fixes, split proposal, stats
+├── docs/            the four Hugging Face cards
+└── results/         benchmark scores, genre run results, general-model per-book scores
 ```
+
+## Hugging Face
+
+Visibility read from the Hub with the local login on 2026-11-18; a 404 without a login means the repo is private.
+
+| System | Repo | Visibility |
+|---|---|---|
+| General model | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) ([card](docs/model_card.md)) | public |
+| General dataset | [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) ([card](docs/dataset_card.md)) | public |
+| Classified model | BDRC/Bo-Yigchung-Classified-Detection ([card](docs/classified_model_card.md)) | private |
+| Classified dataset | BDRC/Bo-Yigchung-Classified-Dataset ([card](docs/classified_dataset_card.md)) | private |
+
+The general model replaced the earlier one on 2026-11-17 (kept under tag `v1`). Old names (`BDRC/yigchung_detection_v2`, `Yontenn/mmbert-yigchung-genre-v3`) redirect.
+
+## Pipeline
+
+General system (benchmark only):
+
+```mermaid
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_hub.py</i>"]
+    S1 --> S2["Build benchmark<br/><i>build_benchmark_after.py</i>"]
+    S2 --> F2(["Corrected test set"])
+  end
+  subgraph TRAIN["Train"]
+    direction TB
+    T1["Train elsewhere<br/><i>not in this repo</i>"] --> F3(["General model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction TB
+    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F4(["Predictions"])
+    F4 --> E2["Score<br/><i>score_benchmark.py</i>"]
+    E2 --> F5(["Benchmark scores"])
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL
+```
+
+Classified (genre) system:
+
+```mermaid
+flowchart TD
+  subgraph PREP["Prepare data"]
+    direction TB
+    S1["Fetch dataset<br/><i>fetch_hub.py</i>"] --> S2["Combine Lotsawa<br/><i>combine_lotsawa.py</i>"]
+    S2 --> S3["Build genre sets<br/><i>build_genre_datasets.py</i>"]
+    S3 --> S4["Build BIO windows<br/><i>build_genre_bio.py</i>"]
+    S4 --> F1(["Classified dataset"])
+    S0["Label genres<br/><i>run_classify.py</i>"] -.-> S3
+    S3 -.-> S5["Propose split<br/><i>stratify_genre.py</i>"]
+  end
+  subgraph TRAIN["Train"]
+    direction TB
+    T1["Train model<br/><i>common/train_layer.py</i>"] --> F2(["Classified model"])
+  end
+  subgraph EVAL["Evaluate"]
+    direction TB
+    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> E2["Analyze errors<br/><i>analyze_predictions.py</i>"]
+  end
+  PREP --> TRAIN
+  TRAIN --> EVAL
+```
+
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
+
+## Main pipeline
+
+| Script | What it does | When to run |
+|---|---|---|
+| [fetch_hub.py](src/fetch_hub.py) | Downloads the dataset text and spans at the pinned revision. | Both: first, once |
+| [build_benchmark_after.py](src/build_benchmark_after.py) | Builds the corrected 77-book benchmark from annotator review. | General: once; on new annotator files |
+| [score_benchmark.py](src/score_benchmark.py) | Scores models on the benchmark, before and after correction. | Both: after predicting |
+| [combine_lotsawa.py](src/combine_lotsawa.py) | Joins 469 short Lotsawa books into 26 documents. | Classified: after fetching |
+| [build_genre_datasets.py](src/build_genre_datasets.py) | Builds the genre parquet sets with all span cleaning. | Classified: after combining; rerun on edits |
+| [build_genre_bio.py](src/build_genre_bio.py) | Cuts 8192-token BIO windows for mmBERT. | Classified: after genre sets |
+| [train_layer.py](../common/train_layer.py) | Fine-tunes mmBERT on the classified dataset. | Classified: on a GPU machine |
+| [predict_layer_spans.py](../common/predict_layer_spans.py) | Predicts spans: windows averaged, Viterbi decoding. | Both: before scoring |
+| [analyze_predictions.py](src/analyze_predictions.py) | Tables and an HTML viewer of gold against predicted spans. | Classified: after predicting |
+
+`paths.py` holds every path (`YIGCHUNG_DATA` moves the local folder, default `data/local`). `train_layer.py` and `predict_layer_spans.py` are shared scripts in [common/](../common/).
+
+## How to run
+
+All commands run from the repository root. Training runs on a GPU box (see `setup_vast.sh`).
+
+```bash
+# 1. Both systems: download the text and spans
+python yigchung/src/fetch_hub.py
+# 2. General: build the corrected benchmark (needs the annotator files in data/local)
+python yigchung/src/build_benchmark_after.py
+# 3. General: predict the test books (break penalty 8), then score
+python common/predict_layer_spans.py --label-name YIGCHUNG --model BDRC/Bo-Yigchung-Detection \
+    --dataset BDRC/Bo-Yigchung-Dataset --splits test --break-penalty 8 --out predictions_general.json
+python yigchung/src/score_benchmark.py general=predictions_general.json
+# 4. Classified: combine Lotsawa, build the genre sets, build the BIO windows
+python yigchung/src/combine_lotsawa.py
+python yigchung/src/build_genre_datasets.py
+python yigchung/src/build_genre_bio.py with_lotsawa
+# 5. Classified: upload bio_with_lotsawa (Hugging Face CLI), then train
+python common/train_layer.py --label-name YIGCHUNG --scheme bio \
+    --dataset BDRC/Bo-Yigchung-Classified-Dataset --epochs 20 --lr 1e-5 \
+    --break-penalty 5 --stitched-eval --skip-test \
+    --run-name yigchung-genre-lotsawa-v3-swap --output-dir /workspace/runs/yigchung_genre_v3
+# 6. Classified: predict validation and test, then analyze
+python common/predict_layer_spans.py --label-name YIGCHUNG --model /workspace/runs/yigchung_genre_v3/best \
+    --dataset BDRC/Bo-Yigchung-Classified-Dataset --splits validation,test --break-penalty 5 \
+    --out predictions_validation_test.json
+python yigchung/src/analyze_predictions.py predictions_validation_test.json with_lotsawa
+```
+
+**The 77 benchmark books are windowed from the general dataset: predict them before `score_benchmark.py`.**
+
+## Optional tools
+
+- **Label genres** (paid Gemini API, state the cost first): `GEMINI_KEYS=k1,k2 python yigchung/src/run_classify.py 0 classify_all_v5.jsonl`. Prompt chosen with `PROMPT_FILE`; the labels are copied into `data/processed/yigchung_catalog.csv` separately.
+- **Propose a split**: book-level split per genre, not applied yet. `python yigchung/src/stratify_genre.py`
+
+## Decoding and training settings
+
+General decoding: break penalty 8, stride 4914, first-window stitching (`detect/layer_config.py`). Classified: break penalty 5, stride 5120, averaged windows. The classified run also uses the `train_layer.py` defaults (batch 2, accumulation 4, weight decay 0.01, clip 0.3, warmup 6%, bf16, seed 42, inverse-frequency weights, patience 3, best checkpoint by validation span F1), recorded in `results/genre_v*/results.json`.
+
+## Results
+
+Metric: one-to-one span matching at IoU >= 0.5, Viterbi decoding. Genre runs: windows averaged, break penalty 5, whole-document validation. Data names are the old Hub names (`yigchung-genre-bio-lotsawa`).
+
+| Run | Data | Epochs (best) | Validation F1 | Test F1 |
+|---|---|---|---:|---:|
+| Classified genre v1 | `yigchung-genre-bio-lotsawa` | 10 | 0.665 | not scored |
+| Classified genre v2 | `yigchung-genre-bio-lotsawa` | 20 (13, stopped at 16) | 0.737 | 0.768 |
+| Classified genre v3 (published) | `yigchung-genre-bio-lotsawa-v2` | 20 (17) | 0.737 | 0.786 (P 0.772, R 0.800) |
+
+Same test documents, general model against genre v3 (two documents, `I518A01A8` and `B-UT1ER1399_0001`, were in the general model's training data, so the fair row leaves them out):
+
+| Test set | Spans | General (v2) | Classified genre v3 |
+|---|---:|---:|---:|
+| 8 documents neither model trained on | 1,663 | 0.62 | 0.81 |
+| all 10 test documents | 1,806 | 0.62 | 0.79 |
+
+77-book benchmark (`BDRC/Bo-Yigchung-Dataset` test), original gold ("before") and corrected gold ("after": 4,059 to 3,793 spans):
+
+| Model | Before | After |
+|---|---:|---:|
+| General, `BDRC/Bo-Yigchung-Detection` (v2) | 0.471 | 0.489 |
+| Classified genre v2 | 0.417 | 0.437 |
+
+The genre model wins on liturgy (0.79 against 0.62) but scores 0.06 on the "other" genres against 0.31 for the general model. The source repo `karma689/mmbert-yigchung-v2` reports BDRC test F1 0.980; that was computed on text still carrying ༼༽ brackets, and on the published text the same 5 books score 0.49. Per-book scores: `results/genre_v3/by_book.csv`, `results/previous_model_karma689_v2/`.
 
 ## Known issues
 
-- **Songs can't be measured.** The validation and test songs books have 4 and 1 gold spans.
-- **The test set is small and uneven.** Two books hold 86% of the test spans. A bootstrap over test books puts v2 anywhere from 0.50 to 0.85.
-- **Not all test gold is annotator-reviewed.** Four of the reviewed-OPF test books (`P000030`, `P000228`, `P000249`, `P000268`) are still waiting for annotator review.
-- **The Lotsawa documents are labelled prayer as an assumption.** About 90% of Lotsawa books are prayers by a rough title check.
-- **Old names in code and result files.** `fetch_hub.py` and `paths.py` still name the dataset `BDRC/yigchung_detection_v2` (redirects to `BDRC/Bo-Yigchung-Dataset`), and `results/benchmark/benchmark_scores.md` is headed with that name and calls the general model `karma689_v2`.
-- **The genre-label step is manual.** `run_classify.py` writes a jsonl file; no script copies the labels into the catalog.
-- **No training code for the general model** is in this repository.
+<details><summary>Show 6 known issues</summary>
+
+- **Songs cannot be measured.** The validation and test songs books have 4 and 1 gold spans.
+- **The test set is small and uneven.** Two books (`P000030`, `B-UT1ER2253_0001`) hold 86% of the 1,806 test spans. An earlier bootstrap over test books put v2 anywhere from 0.50 to 0.85 (not reproduced by a file here).
+- **Not all test gold is annotator-reviewed.** Four reviewed-OPF test books (`P000030`, `P000228`, `P000249`, `P000268`) still wait for annotator review.
+- **The Lotsawa documents are labelled prayer as an assumption** (about 90% of Lotsawa books are prayers by a rough title check).
+- **Old names in code and result files.** `fetch_hub.py` and `paths.py` name the dataset `BDRC/yigchung_detection_v2` (redirects to `BDRC/Bo-Yigchung-Dataset`); `results/benchmark/benchmark_scores.md` carries that name and calls the general model `karma689_v2`.
+- **The genre-label step is manual and the general model has no training code here.** `run_classify.py` writes a jsonl; no script copies the labels into the catalog (`label_source` is `gemini_v4` for 217 books, `claude_checked` for 80). The general model was trained elsewhere.
+
+</details>
+
+## All files
+
+<details><summary>Show the full file tree</summary>
+
+```
+yigchung/
+├── README.md
+├── src/
+│   ├── paths.py                  # every input and output path; YIGCHUNG_DATA moves the local folder
+│   ├── fetch_hub.py              # both: dataset text and spans at the pinned revision -> hub/*.parquet
+│   ├── build_benchmark_after.py  # general: 77-book benchmark with annotator corrections
+│   ├── score_benchmark.py        # both: scores models on the benchmark, before and after
+│   ├── combine_lotsawa.py        # classified: 469 Lotsawa books -> 26 documents of ~30k chars
+│   ├── run_classify.py           # classified: Gemini genre label per book (optional, paid)
+│   ├── build_genre_datasets.py   # classified: genre parquet sets with corrections, with and without Lotsawa
+│   ├── build_genre_bio.py        # classified: parquet -> BIO DatasetDict (8192 tokens, stride 5120)
+│   ├── stratify_genre.py         # classified: proposes a split per genre (not applied)
+│   └── analyze_predictions.py    # classified: per-span and per-book tables, HTML viewer
+├── prompts/
+│   ├── prompt_classify_v4.txt    # earlier: five categories, verse_like_pct hint (labels 217 books)
+│   ├── prompt_classify_v5b.txt   # default of run_classify.py: adds middle passage and colophon
+│   └── prompt_classify_v6.txt    # adds sub-genres for "other"
+├── data/processed/
+│   ├── yigchung_catalog.csv      # one row per book: genre, genre_split, borderline, label source, snippets
+│   ├── span_corrections.csv      # spans dropped as "not Yigchung" and edited edges
+│   ├── span_additions.csv        # added spans: section labels and < > bracket notes
+│   ├── headmark_fixes.csv        # log of the head-mark rule, one row per changed span
+│   ├── lotsawa_combined_manifest.csv   # which Lotsawa book is in which document, at what offset
+│   ├── genre_split_proposal.csv  # output of stratify_genre.py; no model uses it
+│   └── genre_bio_with_lotsawa_stats.json   # window, span and label counts of the v3 training set
+├── docs/                         # model_card, dataset_card (general); classified_model_card, classified_dataset_card
+└── results/
+    ├── benchmark/                # benchmark_scores.md, by-book scores, changes, summary
+    ├── genre_v1/, genre_v2/, genre_v3/   # results.json per run (v2, v3 also by_book.csv)
+    └── previous_model_karma689_v2/       # per-book scores of the general model (validation, test)
+```
+
+`data/local/` is gitignored and holds: `hub/<split>.parquet` (fetch_hub.py), `lotsawa_combined.parquet` (combine_lotsawa.py), `genre_training/` (build scripts), `benchmark_after/`, and the annotator files `annotator_spans/<book_id>.json`, `extra_books/<book_id>.json` (four BDRC books not in the HF set) and `annotator_review/{yaml,zips}/`. Splits of the classified data: train 49 documents / 9,306 spans / 1,388 windows, validation 8 / 1,290 / 137, test 10 / 1,806 / 229; 5 of the 67 documents carry annotator-reviewed spans (about 28% of the spans).
+
+</details>

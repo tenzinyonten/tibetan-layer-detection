@@ -3,6 +3,9 @@
 Small tables (catalog, split, hand corrections) are tracked in yigchung/data/processed/.
 Large inputs and built datasets live in yigchung/data/local/ (gitignored). Set YIGCHUNG_DATA
 to use another folder.
+
+Imported by every other script in this folder (classified and general systems); it is not run itself.
+Environment: YIGCHUNG_DATA = folder for local inputs and outputs (default yigchung/data/local).
 """
 import os
 from pathlib import Path
