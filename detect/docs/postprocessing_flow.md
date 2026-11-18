@@ -10,7 +10,7 @@ flowchart LR
     A["Entry point<br/>tibetan-detect or detect()<br/>detect_layers.py"] --> S1
     S1["Stage 1: preprocess.py<br/>read .txt or OpenPecha book<br/>write preprocessed/ID.json"] --> S2
     S2["Stage 2: infer.py<br/>cut text into windows<br/>run each layer model<br/>Viterbi decode and per-layer cleanup<br/>write predictions/ID.json"] --> S3
-    S3["Stage 3: postprocess.py<br/>filter spans, flag for review<br/>write JSON, HTML, .opf"]
+    S3["Stage 3: postprocess/<br/>filter spans, flag for review<br/>write JSON, HTML, .opf"]
     S2 -. "tsawa also runs the quotation model" .-> S3
 ```
 
@@ -18,7 +18,7 @@ Stage 2 runs the quotation model together with tsawa (`layers_for_run` in `infer
 so Stage 3 can drop quoted tsawa. Title and author read only the first and last
 3,000 characters and give one span each.
 
-## 2. Stage 3 step by step (`postprocess.py`, `main()`)
+## 2. Stage 3 step by step (`postprocess/cli.py`, `main()`)
 
 ```mermaid
 flowchart TD
@@ -26,8 +26,8 @@ flowchart TD
     LOAD --> OK{"Stage 1 file found?"}
     OK -- no --> SKIP["warn and skip this book"]
     OK -- yes --> F1
-    F1["1. drop_short_spans<br/>Drop spans under 5 characters<br/>title and author are exempt"]
-    F2["2. split_quoted_tsawa<br/>Drop tsawa inside quotations<br/>tsawa covered 50 percent or more by predicted quotations"]
+    F1["1. split_quoted_tsawa<br/>Drop tsawa inside quotations<br/>tsawa covered 50 percent or more by predicted quotations"]
+    F2["2. drop_short_spans<br/>Drop spans under 5 characters<br/>title and author are exempt"]
     F3["3. drop_non_tibetan_spans<br/>Drop spans with no Tibetan text<br/>English nav text and other scraping junk"]
     F4["4. drop_low_confidence<br/>Drop low-confidence spans<br/>Sabche only, confidence below 0.85"]
     F1 --> F2 --> F3 --> F4
@@ -59,9 +59,9 @@ flowchart TD
 
 | Step | Function | File |
 |---|---|---|
-| Quoted tsawa drop | `split_quoted_tsawa` | `detect/postprocess.py` |
-| Short-span drop | `drop_short_spans` | `detect/postprocess.py` |
-| Non-Tibetan drop | `drop_non_tibetan_spans` | `detect/postprocess.py` |
-| Low-confidence drop | `drop_low_confidence` | `detect/postprocess.py` |
-| Review flags | `needs_review` | `detect/postprocess.py` |
+| Quoted tsawa drop | `split_quoted_tsawa` | `detect/postprocess/filters.py` |
+| Short-span drop | `drop_short_spans` | `detect/postprocess/filters.py` |
+| Non-Tibetan drop | `drop_non_tibetan_spans` | `detect/postprocess/filters.py` |
+| Low-confidence drop | `drop_low_confidence` | `detect/postprocess/filters.py` |
+| Review flags | `needs_review` | `detect/postprocess/review.py` |
 | Layer settings | `LAYERS` | `detect/layer_config.py` |

@@ -1,5 +1,5 @@
 """Per-layer model configuration, shared by detect/infer.py (which layer to
-load and how to decode it) and detect/postprocess.py (HTML legend colors,
+load and how to decode it) and detect/postprocess/ (HTML legend colors,
 .opf layer-name capitalization). Split out of detect_layers.py so neither
 stage has to import the other's internals.
 
@@ -76,7 +76,7 @@ class LayerConfig:
     # looking at the test split's errors, so these numbers are in-sample. Re-check on the validation
     # split when the Sabche model is next run, and set shad_rule=False for sabche if it does not hold.
     extend_to_closing_bracket: bool = False  # Chapter: a ༼ stub under ~10 chars extends to the next ༽
-    default_review_threshold: float = 0.7  # used by postprocess.py's --review-threshold
+    default_review_threshold: float = 0.7  # used by postprocess's --review-threshold
     # when that flag is omitted; passing --review-threshold explicitly overrides every
     # layer alike, same as before this field existed. Chosen per layer by task precision:
     # sabche's model is very precise (0.85, a high bar), chapter fairly precise (0.75),

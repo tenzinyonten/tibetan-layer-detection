@@ -10,7 +10,7 @@ flowchart LR
     A(["🏁 tibetan-detect<br/>press go"]):::start --> S1
     S1["📥 Stage 1: preprocess.py<br/>Welcome, book! Let me read you."]:::stage --> S2
     S2["🧠 Stage 2: infer.py<br/>Cut into windows, ask the 7 models,<br/>Viterbi picks the best path"]:::stage --> S3
-    S3["🧼 Stage 3: postprocess.py<br/>The big clean-up and send-off"]:::stage
+    S3["🧼 Stage 3: postprocess/<br/>The big clean-up and send-off"]:::stage
     S2 -. "🔗 tsawa brings its friend quotation along" .-> S3
     classDef start fill:#ffe08a,stroke:#b8860b,color:#222
     classDef stage fill:#cfe8ff,stroke:#2b6cb0,color:#222
@@ -24,8 +24,8 @@ flowchart TD
     LOAD --> OK{"❓ Did Stage 1 leave a file?"}
     OK -- "no 😬" --> SKIP["⏭️ warn and skip the book"]:::bad
     OK -- "yes 🎉" --> F1
-    F1["✂️ Snip the tiny crumbs, under 5 chars<br/>drop_short_spans"]:::filter
-    F2["🧹 Sweep out tsawa hiding inside quotes<br/>split_quoted_tsawa"]:::filter
+    F1["🧹 Sweep out tsawa hiding inside quotes<br/>split_quoted_tsawa"]:::filter
+    F2["✂️ Snip the tiny crumbs, under 5 chars<br/>drop_short_spans"]:::filter
     F3["🔤 Boot out anything with no Tibetan<br/>drop_non_tibetan_spans"]:::filter
     F4["🎯 Sabche: only the confident ones stay<br/>drop_low_confidence"]:::filter
     F1 --> F2 --> F3 --> F4
@@ -61,8 +61,8 @@ flowchart TD
 
 | Crew member | Function | File |
 |---|---|---|
-| 🧹 | `split_quoted_tsawa` | `detect/postprocess.py` |
-| ✂️ | `drop_short_spans` (title and author are safe) | `detect/postprocess.py` |
-| 🔤 | `drop_non_tibetan_spans` | `detect/postprocess.py` |
-| 🎯 | `drop_low_confidence` (Sabche, 0.85) | `detect/postprocess.py` |
-| 🚩 | `needs_review` | `detect/postprocess.py` |
+| 🧹 | `split_quoted_tsawa` | `detect/postprocess/filters.py` |
+| ✂️ | `drop_short_spans` (title and author are safe) | `detect/postprocess/filters.py` |
+| 🔤 | `drop_non_tibetan_spans` | `detect/postprocess/filters.py` |
+| 🎯 | `drop_low_confidence` (Sabche, 0.85) | `detect/postprocess/filters.py` |
+| 🚩 | `needs_review` | `detect/postprocess/review.py` |

@@ -48,8 +48,9 @@ Console commands are in `pyproject.toml`: `tibetan-preprocess`, `tibetan-infer`,
 |---|---|---|
 | [preprocess.py](preprocess.py) | Stage 1: finds books, writes one JSON each. | First |
 | [infer.py](infer.py) | Stage 2: runs the models, writes spans. | After Stage 1 |
-| [postprocess.py](postprocess.py) | Stage 3: cleans, flags, writes JSON, HTML, `.opf`. | After Stage 2 |
+| [postprocess/](postprocess/) | Stage 3: cleans, flags, writes JSON, HTML, `.opf`. Split into `filters.py`, `review.py`, `json_out.py`, `html_out.py`, `opf_out.py` and `cli.py`. | After Stage 2 |
 | [detect_layers.py](detect_layers.py) | Runs all three stages under one folder. | Instead of the three |
+| [stage_args.py](stage_args.py) | The argument lists `detect_layers.py` and `detect()` pass to Stages 2 and 3. | Used by both entry points |
 | [decode.py](decode.py) | Viterbi decoding, confidence, window merging, cleanup rules. | Used by Stage 2 |
 | [windows.py](windows.py) | Token windows of 8,190 tokens. | Used by Stage 2 |
 | [title_author.py](title_author.py) | Title and author from the first and last 3,000 characters. | Stage 2, if requested |
@@ -109,11 +110,12 @@ detect/
 ├── __init__.py         # detect(): the three stages in one process
 ├── preprocess.py       # Stage 1: text or .opf to preprocessed/<id>.json
 ├── infer.py            # Stage 2: windows, models, decoding, predictions/<id>.json
-├── postprocess.py      # Stage 3: drop short, quoted and non-Tibetan spans; flags; JSON, HTML, .opf
+├── postprocess/        # Stage 3: filters.py, review.py, json_out.py, html_out.py, opf_out.py, cli.py
+├── stage_args.py       # argument lists passed to Stages 2 and 3 by detect_layers.py and detect()
 ├── detect_layers.py    # tibetan-detect: the three stages under one --out
 ├── decode.py           # BIO and BIOE Viterbi, confidence, window votes, cleanup rules
 ├── windows.py          # sliding windows and window packing (copied from common/)
-├── title_author.py     # title and author: head and tail crop, model or LLM skill
+├── title_author.py     # title and author: head and tail crop, trained models
 ├── layer_config.py     # LAYERS: repo, scheme, break penalty, stride, cleanup, threshold, colour
 └── tests/
     ├── test_drop_quoted_tsawa.py  # tsawa spans covered by quotation are dropped; layers_for_run
