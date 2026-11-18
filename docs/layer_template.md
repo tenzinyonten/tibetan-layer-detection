@@ -46,7 +46,7 @@ Every script is named `<verb>_<layer>_<object>.py` in lowercase snake case, for 
 - **Layer second**: `chapter`, `sabche`, `tsawa`, `yigchung`, or `ta` for title and author. Scripts in `common/` serve every layer, so they have no layer word (`train_layer.py`, `eval_viterbi_iou.py`).
 - `prepare_<layer>_split.py` makes the frozen split, `build_<layer>_dataset.py` builds the dataset, `push_<layer>_dataset.py` uploads it.
 - **No version numbers** in script names (no `v6`, `v10`, `3`). Only the final version of a script lives in the repo; the version of the data it makes is written in its docstring and the dataset card, not in the file name.
-- Not renamed on purpose: Python packages and importable modules (`detect/`, `paths.py`, `bio_dataset.py`, `stratified_split.py`, `tsawa_crf_model.py`) and the shipped skill in `title_author/skills/`, whose file names are used by its `SKILL.md`.
+- Not renamed on purpose: Python packages and importable modules (`detect/`, `paths.py`, `bio_dataset.py`, `stratified_split.py`, `ta_load_spans.py`, `tsawa_crf_model.py`) and the shipped skill in `title_author/skills/`, whose file names are used by its `SKILL.md`.
 
 ## Flowchart picture
 
