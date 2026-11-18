@@ -34,7 +34,7 @@ flowchart TD
     S5["Dump spans<br/><i>predict_layer_spans.py</i>"] -.-> F5(["Predicted spans"])
   end
   subgraph BASE["Baselines"]
-    S7["Claude batches<br/><i>claude_batch.py</i>"] -.-> S6["Zero-shot score<br/><i>run_layer_zeroshot.py</i>"]
+    S7["Claude batches<br/><i>run_claude_batch.py</i>"] -.-> S6["Zero-shot score<br/><i>run_layer_zeroshot.py</i>"]
   end
   F1 --> S2
   F2 --> S3
@@ -82,8 +82,8 @@ python common/predict_layer_spans.py --label-name CHAPTER --model runs/chapter/b
 - **Check boundaries**: tests that span edges sit on syllable boundaries; its helpers are imported by the layers' boundary scripts. `python common/check_boundary_snapping.py --audit-csv data/shared/tsawa_audit.csv --raw-opf-dir data/raw_opf --out tsawa/data/processed/boundary_check.csv`
 - **Particle rule**: tests forbidding tsawa labels on closing particles at decode time. `python common/eval_particle_rule.py --model <repo> --dataset <ds> --break-penalty 12.0`
 - **Model files**: [tsawa_feat_model.py](tsawa_feat_model.py) (clause features, `--use-features`) and [tsawa_crf_model.py](tsawa_crf_model.py) (CRF head, `--use-crf`) are imported by the trainers, not run.
-- **Zero-shot libraries**: [gemini_chunks.py](zeroshot/gemini_chunks.py) and [gemini_locate.py](zeroshot/gemini_locate.py) are imported by `run_layer_zeroshot.py`; copied unchanged from the quotation benchmark repo.
-- **Annotation audit**: read-only checks on `data/raw_opf`, run manually when the data changes; they write reports next to the scripts. Run `audit.py`, `missed_verse_scan.py`, `cross_layer_analysis.py`, `prose_check.py`, then `report.py`: `python common/annotation_audit/audit.py`. The other tools: `layer_venn_and_sabche_tiny_gold.py`, `make_book_check.py P000078`, `make_sabche_check.py P000078`.
+- **Zero-shot libraries**: [run_gemini_chunks.py](zeroshot/run_gemini_chunks.py) and [run_gemini_locate.py](zeroshot/run_gemini_locate.py) are imported by `run_layer_zeroshot.py`; copied unchanged from the quotation benchmark repo.
+- **Annotation audit**: read-only checks on `data/raw_opf`, run manually when the data changes; they write reports next to the scripts. Run `audit_annotations.py`, `scan_missed_verses.py`, `analyze_cross_layer.py`, `check_prose.py`, then `build_audit_report.py`: `python common/annotation_audit/audit_annotations.py`. The other tools: `analyze_layer_venn.py`, `build_book_check.py P000078`, `build_sabche_check.py P000078`.
 
 ## Which layer uses what
 
@@ -100,7 +100,7 @@ python common/predict_layer_spans.py --label-name CHAPTER --model runs/chapter/b
 The Gemini and Claude baselines for Sabche and Chapter use two scripts here. Both cut each book into 16,000-character windows overlapping by 2,000, cut at a shad; the model returns span anchors (`head`, `tail`, optional `frame`), the locator turns them into offsets, and spans are scored at IoU 0.5. The prompts are zero-shot drafts built from train and validation books only. Results are in `chapter/results/zeroshot/` and `sabche/results/`.
 
 - `run_layer_zeroshot.py` runs Gemini (default `gemini-3.1-flash-lite`, needs `GEMINI_API_KEY`) or `--provider anthropic`, caches each reply and scores. **With `--locate-only` it makes no API call and only re-scores a finished cache.**
-- `claude_batch.py` runs Claude Sonnet 5 through the Message Batches API (half price). **It sends nothing without `--yes`, which spends money.**
+- `run_claude_batch.py` runs Claude Sonnet 5 through the Message Batches API (half price). **It sends nothing without `--yes`, which spends money.**
 
 ### Chapter baselines: how to run
 
@@ -108,10 +108,10 @@ The prompt is [`chapter/docs/prompts/gemini_chapter_anchors.md`](../chapter/docs
 
 ```bash
 # Claude: plan offline, create the batches, poll, fetch
-python common/zeroshot/claude_batch.py --layer chapter plan --groups 3
-python common/zeroshot/claude_batch.py --layer chapter create --group g1 --books ... [--yes]
-python common/zeroshot/claude_batch.py --layer chapter poll --group g1
-python common/zeroshot/claude_batch.py --layer chapter fetch --group g1
+python common/zeroshot/run_claude_batch.py --layer chapter plan --groups 3
+python common/zeroshot/run_claude_batch.py --layer chapter create --group g1 --books ... [--yes]
+python common/zeroshot/run_claude_batch.py --layer chapter poll --group g1
+python common/zeroshot/run_claude_batch.py --layer chapter fetch --group g1
 # Score the finished cache (no API call)
 python common/zeroshot/run_layer_zeroshot.py --layer chapter --books <ids> --out scratch/chapter/claude/test --locate-only
 ```
@@ -124,10 +124,10 @@ The prompt is [`sabche/docs/prompts/gemini_sabche_anchors.md`](../sabche/docs/pr
 # Gemini: one run per set of books (paid; cached windows cost nothing on a re-run)
 python common/zeroshot/run_layer_zeroshot.py --layer sabche --books <ids> --out <dir>
 # Claude: plan offline, create, poll, fetch (writes scratch/sabche/claude/test and batches.json, gitignored)
-python common/zeroshot/claude_batch.py --layer sabche plan --groups 3
-python common/zeroshot/claude_batch.py --layer sabche create --group g1 --books <ids> [--yes]
-python common/zeroshot/claude_batch.py --layer sabche poll --group g1
-python common/zeroshot/claude_batch.py --layer sabche fetch --group g1
+python common/zeroshot/run_claude_batch.py --layer sabche plan --groups 3
+python common/zeroshot/run_claude_batch.py --layer sabche create --group g1 --books <ids> [--yes]
+python common/zeroshot/run_claude_batch.py --layer sabche poll --group g1
+python common/zeroshot/run_claude_batch.py --layer sabche fetch --group g1
 # Score the Claude replies (no API call)
 python common/zeroshot/run_layer_zeroshot.py --layer sabche --books <ids> --out scratch/sabche/claude/test --locate-only
 ```
@@ -160,18 +160,18 @@ common/
 ├── predict_layer_spans.py         # dump predicted token spans per document; used by yigchung scripts
 ├── zeroshot/
 │   ├── run_layer_zeroshot.py      # Gemini or Anthropic zero-shot runner and scorer
-│   ├── claude_batch.py            # Claude Message Batches runner; scored with run_layer_zeroshot.py
-│   ├── gemini_chunks.py           # library: chunking at shads, gold inclusion check
-│   └── gemini_locate.py           # library: anchor text to book offsets
+│   ├── run_claude_batch.py            # Claude Message Batches runner; scored with run_layer_zeroshot.py
+│   ├── run_gemini_chunks.py           # library: chunking at shads, gold inclusion check
+│   └── run_gemini_locate.py           # library: anchor text to book offsets
 └── annotation_audit/              # no layer imports these; saved CSV and Markdown outputs sit beside them
-    ├── audit.py                   # commentary check, dropped books, short spans, cross-layer overlaps
-    ├── missed_verse_scan.py       # verse-metre runs that no tsawa span touches
-    ├── cross_layer_analysis.py    # layer conflicts, commentary without tsawa verse, offset-shift test
-    ├── layer_venn_and_sabche_tiny_gold.py  # tsawa/commentary breakdown, tiny sabche gold spans
-    ├── prose_check.py             # verse or prose for zero-overlap books
-    ├── report.py                  # combines the CSVs into audit_report.md
-    ├── make_book_check.py         # one-book HTML page with tsawa spans highlighted
-    ├── make_sabche_check.py       # the same for sabche spans
+    ├── audit_annotations.py                   # commentary check, dropped books, short spans, cross-layer overlaps
+    ├── scan_missed_verses.py       # verse-metre runs that no tsawa span touches
+    ├── analyze_cross_layer.py    # layer conflicts, commentary without tsawa verse, offset-shift test
+    ├── analyze_layer_venn.py  # tsawa/commentary breakdown, tiny sabche gold spans
+    ├── check_prose.py             # verse or prose for zero-overlap books
+    ├── build_audit_report.py                  # combines the CSVs into audit_report.md
+    ├── build_book_check.py         # one-book HTML page with tsawa spans highlighted
+    ├── build_sabche_check.py       # the same for sabche spans
     └── emma/                      # handoff lists (train.txt, eval.txt, test.txt and book lists)
 ```
 

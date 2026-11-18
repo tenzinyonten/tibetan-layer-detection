@@ -1,11 +1,11 @@
 # Cross-layer analysis: tsawa, sabche, chapter
 
-Read-only analysis of `data/raw_opf` and the frozen split / cleaned span files. Numbers only. Script: `cross_layer_analysis.py`; detail CSVs: `commentary_no_tsawa_verse.csv`, `cross_layer_conflicts.csv`, `tsawa_offset_shift_test.csv`.
+Read-only analysis of `data/raw_opf` and the frozen split / cleaned span files. Numbers only. Script: `analyze_cross_layer.py`; detail CSVs: `commentary_no_tsawa_verse.csv`, `cross_layer_conflicts.csv`, `tsawa_offset_shift_test.csv`.
 
 ## Analysis 1: books with a Commentary layer and no Tsawa layer
 
 - Books with `Commentary.yml`: 273. With `Tsawa.yml`: 212. Commentary and no Tsawa: **150**. Both: 123. Tsawa and no Commentary: 89.
-- Metre test: same as `missed_verse_scan.py`, a run is 4+ consecutive shad-delimited clauses with the same 7, 9, 11 or 13 syllable count. No tsawa exists in these books, so no text is masked. Runs overlapping a Quotation or Citation span are counted separately (`in Quotation`). `in commentary verse` counts runs that overlap a Commentary span flagged `isverse` (the annotator already marked that text as verse).
+- Metre test: same as `scan_missed_verses.py`, a run is 4+ consecutive shad-delimited clauses with the same 7, 9, 11 or 13 syllable count. No tsawa exists in these books, so no text is masked. Runs overlapping a Quotation or Citation span are counted separately (`in Quotation`). `in commentary verse` counts runs that overlap a Commentary span flagged `isverse` (the annotator already marked that text as verse).
 - Books by unlabelled runs (not in Quotation/Citation): at least 1: 138; at least 20: 61; at least 50: 33; at least 100: 22; none: 12. Total runs 7,707; runs inside Quotation/Citation 2,820.
 - Reference rates, unlabelled runs per 100,000 characters (median over books): these 150 commentary-no-tsawa books **12.1**; 177 books with neither a Commentary nor a Tsawa layer 28.8; tsawa books (runs outside their tsawa spans) 5.8.
 

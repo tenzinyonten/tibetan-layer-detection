@@ -129,7 +129,7 @@ class StripUnderscore(unittest.TestCase):
 
 class Viterbi(unittest.TestCase):
     def test_transition_matrix_matches_the_reference_scorer(self):
-        # the matrix in title_author/src/ta_mmbert_score.py, rebuilt here
+        # the matrix in title_author/src/score_ta_mmbert.py, rebuilt here
         NEG, PEN = -1e9, 12.0
         ref = np.zeros((5, 5))
         for i in range(5):
@@ -141,7 +141,7 @@ class Viterbi(unittest.TestCase):
         np.testing.assert_array_equal(TA.transition_matrix(ID2LABEL, PEN), ref)
 
     def test_single_entity_matrix_matches_the_reference_scorer(self):
-        # ta_mmbert_single_score.py trans_for(), rebuilt here, for a 3-label model
+        # score_ta_mmbert_single.py trans_for(), rebuilt here, for a 3-label model
         NEG, PEN = -1e9, 6.0
         ref = np.zeros((3, 3))
         for i in range(3):

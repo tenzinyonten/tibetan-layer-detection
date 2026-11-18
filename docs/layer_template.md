@@ -37,3 +37,12 @@ Thresholds, flags, defaults, and the files a script reads and writes belong in t
 ## Root README
 
 The root README is shorter: one chart with one node per layer (no script detail), a table of the layers with the Hugging Face model and dataset (visibility read from the Hub) and a link to each folder README, a short quick start, how a layer is built, and links to these docs.
+
+## Script names
+
+Every script is named `<verb>_<layer>_<object>.py` in lowercase snake case, for example `clean_chapter_spans.py` and `check_tsawa_drift.py`.
+
+- **Verb first**, one of: `analyze`, `audit`, `build`, `check`, `classify`, `clean`, `compare`, `convert`, `eval`, `export`, `fetch`, `fit`, `merge`, `patch`, `predict`, `prepare`, `push`, `rank`, `resolve`, `review`, `run`, `scan`, `score`, `snap`, `stratify`, `train`.
+- **Layer second**: `chapter`, `sabche`, `tsawa`, `yigchung`, or `ta` for title and author. Scripts in `common/` serve every layer, so they have no layer word (`train_layer.py`, `eval_viterbi_iou.py`).
+- `prepare_<layer>_split.py` makes the frozen split, `build_<layer>_dataset.py` builds the dataset, `push_<layer>_dataset.py` uploads it.
+- Not renamed on purpose: Python packages and importable modules (`detect/`, `paths.py`, `tsawa_crf_model.py`) and the shipped skill in `title_author/skills/`, whose file names are used by its `SKILL.md`.

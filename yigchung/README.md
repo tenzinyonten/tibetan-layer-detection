@@ -14,7 +14,7 @@ Finds **Yigchung**, the small-print interlinear note written under or beside the
 ```
 yigchung/
 ├── src/             scripts: fetch, combine, label, build, score, analyze
-├── prompts/         genre-classification prompts for run_classify.py
+├── prompts/         genre-classification prompts for classify_yigchung_genre.py
 ├── data/processed/  tracked tables: catalog, span fixes, split proposal, stats
 ├── docs/            the four Hugging Face cards
 └── results/         benchmark scores, genre run results, general-model per-book scores
@@ -41,8 +41,8 @@ General system (benchmark only):
 flowchart TD
   subgraph PREP["Prepare data"]
     direction TB
-    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_hub.py</i>"]
-    S1 --> S2["Build benchmark<br/><i>build_benchmark_after.py</i>"]
+    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"]
+    S1 --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
     S2 --> F2(["Corrected test set"])
   end
   subgraph TRAIN["Train"]
@@ -52,7 +52,7 @@ flowchart TD
   subgraph EVAL["Evaluate"]
     direction TB
     E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F4(["Predictions"])
-    F4 --> E2["Score<br/><i>score_benchmark.py</i>"]
+    F4 --> E2["Score<br/><i>score_yigchung_benchmark.py</i>"]
     E2 --> F5(["Benchmark scores"])
   end
   PREP --> TRAIN
@@ -65,12 +65,12 @@ Classified (genre) system:
 flowchart TD
   subgraph PREP["Prepare data"]
     direction TB
-    S1["Fetch dataset<br/><i>fetch_hub.py</i>"] --> S2["Combine Lotsawa<br/><i>combine_lotsawa.py</i>"]
-    S2 --> S3["Build genre sets<br/><i>build_genre_datasets.py</i>"]
-    S3 --> S4["Build BIO windows<br/><i>build_genre_bio.py</i>"]
+    S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"] --> S2["Combine Lotsawa<br/><i>merge_yigchung_lotsawa.py</i>"]
+    S2 --> S3["Build genre sets<br/><i>build_yigchung_genre_datasets.py</i>"]
+    S3 --> S4["Build BIO windows<br/><i>build_yigchung_genre_bio.py</i>"]
     S4 --> F1(["Classified dataset"])
-    S0["Label genres<br/><i>run_classify.py</i>"] -.-> S3
-    S3 -.-> S5["Propose split<br/><i>stratify_genre.py</i>"]
+    S0["Label genres<br/><i>classify_yigchung_genre.py</i>"] -.-> S3
+    S3 -.-> S5["Propose split<br/><i>stratify_yigchung_genre.py</i>"]
   end
   subgraph TRAIN["Train"]
     direction TB
@@ -78,7 +78,7 @@ flowchart TD
   end
   subgraph EVAL["Evaluate"]
     direction TB
-    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> E2["Analyze errors<br/><i>analyze_predictions.py</i>"]
+    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> E2["Analyze errors<br/><i>analyze_yigchung_predictions.py</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL
@@ -90,15 +90,15 @@ Squares are steps with the script that runs them; rounded boxes are files; dashe
 
 | Script | What it does | When to run |
 |---|---|---|
-| [fetch_hub.py](src/fetch_hub.py) | Downloads the dataset text and spans at the pinned revision. | Both: first, once |
-| [build_benchmark_after.py](src/build_benchmark_after.py) | Builds the corrected 77-book benchmark from annotator review. | General: once; on new annotator files |
-| [score_benchmark.py](src/score_benchmark.py) | Scores models on the benchmark, before and after correction. | Both: after predicting |
-| [combine_lotsawa.py](src/combine_lotsawa.py) | Joins 469 short Lotsawa books into 26 documents. | Classified: after fetching |
-| [build_genre_datasets.py](src/build_genre_datasets.py) | Builds the genre parquet sets with all span cleaning. | Classified: after combining; rerun on edits |
-| [build_genre_bio.py](src/build_genre_bio.py) | Cuts 8192-token BIO windows for mmBERT. | Classified: after genre sets |
+| [fetch_yigchung_hub.py](src/fetch_yigchung_hub.py) | Downloads the dataset text and spans at the pinned revision. | Both: first, once |
+| [build_yigchung_benchmark_after.py](src/build_yigchung_benchmark_after.py) | Builds the corrected 77-book benchmark from annotator review. | General: once; on new annotator files |
+| [score_yigchung_benchmark.py](src/score_yigchung_benchmark.py) | Scores models on the benchmark, before and after correction. | Both: after predicting |
+| [merge_yigchung_lotsawa.py](src/merge_yigchung_lotsawa.py) | Joins 469 short Lotsawa books into 26 documents. | Classified: after fetching |
+| [build_yigchung_genre_datasets.py](src/build_yigchung_genre_datasets.py) | Builds the genre parquet sets with all span cleaning. | Classified: after combining; rerun on edits |
+| [build_yigchung_genre_bio.py](src/build_yigchung_genre_bio.py) | Cuts 8192-token BIO windows for mmBERT. | Classified: after genre sets |
 | [train_layer.py](../common/train_layer.py) | Fine-tunes mmBERT on the classified dataset. | Classified: on a GPU machine |
 | [predict_layer_spans.py](../common/predict_layer_spans.py) | Predicts spans: windows averaged, Viterbi decoding. | Both: before scoring |
-| [analyze_predictions.py](src/analyze_predictions.py) | Tables and an HTML viewer of gold against predicted spans. | Classified: after predicting |
+| [analyze_yigchung_predictions.py](src/analyze_yigchung_predictions.py) | Tables and an HTML viewer of gold against predicted spans. | Classified: after predicting |
 
 `paths.py` holds every path (`YIGCHUNG_DATA` moves the local folder, default `data/local`). `train_layer.py` and `predict_layer_spans.py` are shared scripts in [common/](../common/).
 
@@ -108,17 +108,17 @@ All commands run from the repository root. Training runs on a GPU box (see `setu
 
 ```bash
 # 1. Both systems: download the text and spans
-python yigchung/src/fetch_hub.py
+python yigchung/src/fetch_yigchung_hub.py
 # 2. General: build the corrected benchmark (needs the annotator files in data/local)
-python yigchung/src/build_benchmark_after.py
+python yigchung/src/build_yigchung_benchmark_after.py
 # 3. General: predict the test books (break penalty 8), then score
 python common/predict_layer_spans.py --label-name YIGCHUNG --model BDRC/Bo-Yigchung-Detection \
     --dataset BDRC/Bo-Yigchung-Dataset --splits test --break-penalty 8 --out predictions_general.json
-python yigchung/src/score_benchmark.py general=predictions_general.json
+python yigchung/src/score_yigchung_benchmark.py general=predictions_general.json
 # 4. Classified: combine Lotsawa, build the genre sets, build the BIO windows
-python yigchung/src/combine_lotsawa.py
-python yigchung/src/build_genre_datasets.py
-python yigchung/src/build_genre_bio.py with_lotsawa
+python yigchung/src/merge_yigchung_lotsawa.py
+python yigchung/src/build_yigchung_genre_datasets.py
+python yigchung/src/build_yigchung_genre_bio.py with_lotsawa
 # 5. Classified: upload bio_with_lotsawa (Hugging Face CLI), then train
 python common/train_layer.py --label-name YIGCHUNG --scheme bio \
     --dataset BDRC/Bo-Yigchung-Classified-Dataset --epochs 20 --lr 1e-5 \
@@ -128,15 +128,15 @@ python common/train_layer.py --label-name YIGCHUNG --scheme bio \
 python common/predict_layer_spans.py --label-name YIGCHUNG --model /workspace/runs/yigchung_genre_v3/best \
     --dataset BDRC/Bo-Yigchung-Classified-Dataset --splits validation,test --break-penalty 5 \
     --out predictions_validation_test.json
-python yigchung/src/analyze_predictions.py predictions_validation_test.json with_lotsawa
+python yigchung/src/analyze_yigchung_predictions.py predictions_validation_test.json with_lotsawa
 ```
 
-**The 77 benchmark books are windowed from the general dataset: predict them before `score_benchmark.py`.**
+**The 77 benchmark books are windowed from the general dataset: predict them before `score_yigchung_benchmark.py`.**
 
 ## Optional tools
 
-- **Label genres** (paid Gemini API, state the cost first): `GEMINI_KEYS=k1,k2 python yigchung/src/run_classify.py 0 classify_all_v5.jsonl`. Prompt chosen with `PROMPT_FILE`; the labels are copied into `data/processed/yigchung_catalog.csv` separately.
-- **Propose a split**: book-level split per genre, not applied yet. `python yigchung/src/stratify_genre.py`
+- **Label genres** (paid Gemini API, state the cost first): `GEMINI_KEYS=k1,k2 python yigchung/src/classify_yigchung_genre.py 0 classify_all_v5.jsonl`. Prompt chosen with `PROMPT_FILE`; the labels are copied into `data/processed/yigchung_catalog.csv` separately.
+- **Propose a split**: book-level split per genre, not applied yet. `python yigchung/src/stratify_yigchung_genre.py`
 
 ## Decoding and training settings
 
@@ -176,8 +176,8 @@ The genre model wins on liturgy (0.79 against 0.62) but scores 0.06 on the "othe
 - **The test set is small and uneven.** Two books (`P000030`, `B-UT1ER2253_0001`) hold 86% of the 1,806 test spans. An earlier bootstrap over test books put v2 anywhere from 0.50 to 0.85 (not reproduced by a file here).
 - **Not all test gold is annotator-reviewed.** Four reviewed-OPF test books (`P000030`, `P000228`, `P000249`, `P000268`) still wait for annotator review.
 - **The Lotsawa documents are labelled prayer as an assumption** (about 90% of Lotsawa books are prayers by a rough title check).
-- **Old names in code and result files.** `fetch_hub.py` and `paths.py` name the dataset `BDRC/yigchung_detection_v2` (redirects to `BDRC/Bo-Yigchung-Dataset`); `results/benchmark/benchmark_scores.md` carries that name and calls the general model `karma689_v2`.
-- **The genre-label step is manual and the general model has no training code here.** `run_classify.py` writes a jsonl; no script copies the labels into the catalog (`label_source` is `gemini_v4` for 217 books, `claude_checked` for 80). The general model was trained elsewhere.
+- **Old names in code and result files.** `fetch_yigchung_hub.py` and `paths.py` name the dataset `BDRC/yigchung_detection_v2` (redirects to `BDRC/Bo-Yigchung-Dataset`); `results/benchmark/benchmark_scores.md` carries that name and calls the general model `karma689_v2`.
+- **The genre-label step is manual and the general model has no training code here.** `classify_yigchung_genre.py` writes a jsonl; no script copies the labels into the catalog (`label_source` is `gemini_v4` for 217 books, `claude_checked` for 80). The general model was trained elsewhere.
 
 </details>
 
@@ -190,18 +190,18 @@ yigchung/
 ├── README.md
 ├── src/
 │   ├── paths.py                  # every input and output path; YIGCHUNG_DATA moves the local folder
-│   ├── fetch_hub.py              # both: dataset text and spans at the pinned revision -> hub/*.parquet
-│   ├── build_benchmark_after.py  # general: 77-book benchmark with annotator corrections
-│   ├── score_benchmark.py        # both: scores models on the benchmark, before and after
-│   ├── combine_lotsawa.py        # classified: 469 Lotsawa books -> 26 documents of ~30k chars
-│   ├── run_classify.py           # classified: Gemini genre label per book (optional, paid)
-│   ├── build_genre_datasets.py   # classified: genre parquet sets with corrections, with and without Lotsawa
-│   ├── build_genre_bio.py        # classified: parquet -> BIO DatasetDict (8192 tokens, stride 5120)
-│   ├── stratify_genre.py         # classified: proposes a split per genre (not applied)
-│   └── analyze_predictions.py    # classified: per-span and per-book tables, HTML viewer
+│   ├── fetch_yigchung_hub.py              # both: dataset text and spans at the pinned revision -> hub/*.parquet
+│   ├── build_yigchung_benchmark_after.py  # general: 77-book benchmark with annotator corrections
+│   ├── score_yigchung_benchmark.py        # both: scores models on the benchmark, before and after
+│   ├── merge_yigchung_lotsawa.py        # classified: 469 Lotsawa books -> 26 documents of ~30k chars
+│   ├── classify_yigchung_genre.py           # classified: Gemini genre label per book (optional, paid)
+│   ├── build_yigchung_genre_datasets.py   # classified: genre parquet sets with corrections, with and without Lotsawa
+│   ├── build_yigchung_genre_bio.py        # classified: parquet -> BIO DatasetDict (8192 tokens, stride 5120)
+│   ├── stratify_yigchung_genre.py         # classified: proposes a split per genre (not applied)
+│   └── analyze_yigchung_predictions.py    # classified: per-span and per-book tables, HTML viewer
 ├── prompts/
 │   ├── prompt_classify_v4.txt    # earlier: five categories, verse_like_pct hint (labels 217 books)
-│   ├── prompt_classify_v5b.txt   # default of run_classify.py: adds middle passage and colophon
+│   ├── prompt_classify_v5b.txt   # default of classify_yigchung_genre.py: adds middle passage and colophon
 │   └── prompt_classify_v6.txt    # adds sub-genres for "other"
 ├── data/processed/
 │   ├── yigchung_catalog.csv      # one row per book: genre, genre_split, borderline, label source, snippets
@@ -209,7 +209,7 @@ yigchung/
 │   ├── span_additions.csv        # added spans: section labels and < > bracket notes
 │   ├── headmark_fixes.csv        # log of the head-mark rule, one row per changed span
 │   ├── lotsawa_combined_manifest.csv   # which Lotsawa book is in which document, at what offset
-│   ├── genre_split_proposal.csv  # output of stratify_genre.py; no model uses it
+│   ├── genre_split_proposal.csv  # output of stratify_yigchung_genre.py; no model uses it
 │   └── genre_bio_with_lotsawa_stats.json   # window, span and label counts of the v3 training set
 ├── docs/                         # model_card, dataset_card (general); classified_model_card, classified_dataset_card
 └── results/
@@ -218,6 +218,6 @@ yigchung/
     └── previous_model_karma689_v2/       # per-book scores of the general model (validation, test)
 ```
 
-`data/local/` is gitignored and holds: `hub/<split>.parquet` (fetch_hub.py), `lotsawa_combined.parquet` (combine_lotsawa.py), `genre_training/` (build scripts), `benchmark_after/`, and the annotator files `annotator_spans/<book_id>.json`, `extra_books/<book_id>.json` (four BDRC books not in the HF set) and `annotator_review/{yaml,zips}/`. Splits of the classified data: train 49 documents / 9,306 spans / 1,388 windows, validation 8 / 1,290 / 137, test 10 / 1,806 / 229; 5 of the 67 documents carry annotator-reviewed spans (about 28% of the spans).
+`data/local/` is gitignored and holds: `hub/<split>.parquet` (fetch_yigchung_hub.py), `lotsawa_combined.parquet` (merge_yigchung_lotsawa.py), `genre_training/` (build scripts), `benchmark_after/`, and the annotator files `annotator_spans/<book_id>.json`, `extra_books/<book_id>.json` (four BDRC books not in the HF set) and `annotator_review/{yaml,zips}/`. Splits of the classified data: train 49 documents / 9,306 spans / 1,388 windows, validation 8 / 1,290 / 137, test 10 / 1,806 / 229; 5 of the 67 documents carry annotator-reviewed spans (about 28% of the spans).
 
 </details>

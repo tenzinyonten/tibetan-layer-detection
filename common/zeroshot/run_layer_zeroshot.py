@@ -28,8 +28,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gemini_chunks import make_chunks  # noqa: E402
-from gemini_locate import (  # noqa: E402
+from run_gemini_chunks import make_chunks  # noqa: E402
+from run_gemini_locate import (  # noqa: E402
     canonical_label,
     locate_parsed_quote,
     parse_quote_dump,

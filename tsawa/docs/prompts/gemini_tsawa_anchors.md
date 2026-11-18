@@ -7,7 +7,7 @@ never looked at. Worked examples are copied verbatim from train/val books.
 Output format, windowing and the locator are the ones the quotation benchmark
 froze: 16,000-character windows overlapping by 2,000, cut at a shad, and
 `{spans:[{label, frame, head, tail}]}` anchors mapped back to offsets by
-`gemini_locate.py`.
+`run_gemini_locate.py`.
 
 This is the prompt the validation run of 2026-09-22 used, kept as it ran.
 

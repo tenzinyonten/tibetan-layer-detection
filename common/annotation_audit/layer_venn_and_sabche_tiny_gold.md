@@ -1,6 +1,6 @@
 # Layer breakdown and tiny Sabche gold spans
 
-Read-only. Script: `layer_venn_and_sabche_tiny_gold.py`.
+Read-only. Script: `analyze_layer_venn.py`.
 
 ## Check 1: Tsawa vs Commentary across 539 books
 

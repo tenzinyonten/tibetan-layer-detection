@@ -56,9 +56,9 @@ The model was not trained on exactly this text. It was trained on an earlier ver
 
 ## Results
 
-Scored on the 77 test books of [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (published text, no bracket marks) with `yigchung/src/score_benchmark.py` in [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection). Metric: greedy one-to-one matching of predicted and gold character spans at IoU >= 0.5, predictions trimmed of edge whitespace, micro-averaged over spans.
+Scored on the 77 test books of [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (published text, no bracket marks) with `yigchung/src/score_yigchung_benchmark.py` in [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection). Metric: greedy one-to-one matching of predicted and gold character spans at IoU >= 0.5, predictions trimmed of edge whitespace, micro-averaged over spans.
 
-Two gold versions: the published gold ("published", 4,059 spans), and the same books with annotator corrections ("corrected", 3,793 spans: annotator review of the 5 BDRC books, annotator patterns and a head-mark rule on the others; built by `yigchung/src/build_benchmark_after.py`).
+Two gold versions: the published gold ("published", 4,059 spans), and the same books with annotator corrections ("corrected", 3,793 spans: annotator review of the 5 BDRC books, annotator patterns and a head-mark rule on the others; built by `yigchung/src/build_yigchung_benchmark_after.py`).
 
 | Gold | Gold spans | Precision | Recall | F1 |
 |---|---:|---:|---:|---:|

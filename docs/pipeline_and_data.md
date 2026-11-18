@@ -129,7 +129,7 @@ resolved sidecar drifted from 21,155 / 6 dropped / 21,149 active.
 ## Hugging Face dataset
 
 ```bash
-python tsawa/src/push_v11_dataset.py   # the current push (the first dataset flow is retired)
+python tsawa/src/push_tsawa_v11_dataset.py   # the current push (the first dataset flow is retired)
 ```
 
 ```python

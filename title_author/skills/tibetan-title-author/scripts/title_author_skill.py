@@ -125,7 +125,7 @@ def normalize_input(head, tail="", whole_work=False):
 
 
 def postprocess(ans, head, tail, hybrid=True):
-    """Everything that happens to the model's answer after it is parsed (also used by skill_score.py, so the score is the skill's own score).
+    """Everything that happens to the model's answer after it is parsed (also used by score_ta_skill.py, so the score is the skill's own score).
     Returns (answer, notes)."""
     ans = dict(ans or {k: None for k in FIELDS}); notes = []
     if not usable(ans, "title", head, tail):
