@@ -72,16 +72,16 @@ def load_base(raw_opf: Path, pecha: str) -> str | None:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="Yontenn/mmbert-tsawa-io-v2")
-    ap.add_argument("--dataset", default="Yontenn/formatting-tsawa-v2")
+    ap.add_argument("--model", default="Yontenn/mmbert-tsawa-io-v2", help="model to score with (old default; pass the current one)")
+    ap.add_argument("--dataset", default="Yontenn/formatting-tsawa-v2", help="dataset to rank (old default; pass the current one)")
     ap.add_argument("--spans", default="tsawa/data/processed/tsawa_spans_resolved.csv")
     ap.add_argument("--raw-opf", default="data/raw_opf")
     ap.add_argument("--split", default="train")
     ap.add_argument("--batch-size", type=int, default=2)
     ap.add_argument("--device", default="cpu")
-    ap.add_argument("--top", type=int, default=100)
+    ap.add_argument("--top", type=int, default=100, help="how many ranked spans to print")
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--out", default="scratch/tsawa/analysis/label_errors")
+    ap.add_argument("--out", default="scratch/tsawa/analysis/label_errors", help="output folder: ranked_spans.csv and a text file")
     args = ap.parse_args()
 
     out = Path(args.out)

@@ -73,7 +73,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--spans", default="tsawa/data/processed/tsawa_spans_resolved.csv")
     ap.add_argument("--raw-opf", default="data/raw_opf")
-    ap.add_argument("--examples", type=int, default=8)
+    ap.add_argument("--examples", type=int, default=8, help="examples to print per case")
     args = ap.parse_args()
 
     d = pd.read_csv(args.spans)
