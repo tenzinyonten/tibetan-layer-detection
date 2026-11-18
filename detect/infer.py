@@ -13,6 +13,13 @@ directory) so this package is actually importable once pip-installed
 (site-packages only contains the package's own files, not this repo's
 top-level common/).
 
+Windows hold at most 8,190 content tokens (max length 8,192, CLS + SEP added).
+When tsawa is requested, quotation is added automatically (unless
+--skip-quotation) so Stage 3 can drop quoted tsawa. Title and author are not
+window layers; see title_author.py. Per-layer decoding settings are in
+layer_config.py. Writes <out>/<book_id>.json: {book_id, layers, n_windows, elapsed_s,
+short_spans_removed, errors}.
+
 Checkpointing: a book is skipped if predictions/<book_id>.json already
 exists, so a crashed run resumes where it left off. This checks file
 EXISTENCE only, not which layers that file covers.
@@ -317,7 +324,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--input", type=Path, required=True, help="folder of Stage 1 preprocessed JSONs")
     ap.add_argument("--out", type=Path, required=True, help="folder to write predictions JSONs into")
-    ap.add_argument("--layers", nargs="+", choices=list(LAYERS), default=None)
+    ap.add_argument("--layers", nargs="+", choices=list(LAYERS), default=None,
+                    help="layers to run, e.g. tsawa sabche (or use --all)")
     ap.add_argument("--all", action="store_true", help="run every layer with a model configured")
     ap.add_argument("--skip-quotation", action="store_true",
                     help="do not auto-run the quotation model when tsawa is selected. "

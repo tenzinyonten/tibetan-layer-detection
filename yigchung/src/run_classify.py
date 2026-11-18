@@ -1,3 +1,18 @@
+"""Ask Gemini for one genre label per book: liturgy, prayer, sadhana, songs or other. Paid API: state the cost first.
+
+Classified system; run only to (re)label books. The result is a jsonl file; no script copies the labels into
+data/processed/yigchung_catalog.csv, that is done separately.
+Usage: GEMINI_KEYS=k1,k2 python yigchung/src/run_classify.py [WHICH] [OUT.jsonl]
+  WHICH    0 (default) = every book in the catalog; N (any other number) = a stratified sample of 30 books
+           (12 reviewed_opf, 12 bdrc, 6 nalanda, random seed 5); or a comma list of book ids.
+  OUT      output jsonl (default classify_all_v5.jsonl, in the current folder); appended to, so a rerun
+           resumes: books already saved with http 200 are skipped.
+Environment: GEMINI_KEYS (required, comma list; the next key is used on http 429, a key is dropped on 401/403);
+  GEMINI_MODEL (default gemini-3.1-flash-lite); PROMPT_FILE (default yigchung/prompts/prompt_classify_v5b.txt);
+  CATALOG (default data/processed/yigchung_catalog.csv).
+Retries: up to 9 attempts per call (5xx and network errors wait 3 s); stops after 12 failures in a row.
+Reads:  the catalog and the prompt file. Writes: OUT, one json line per book (book_id, source, http, out, tokens).
+"""
 import paths as P
 import csv,json,os,sys,time,random,urllib.request,urllib.error
 KEYS=[k for k in os.environ.get('GEMINI_KEYS','').split(',') if k]

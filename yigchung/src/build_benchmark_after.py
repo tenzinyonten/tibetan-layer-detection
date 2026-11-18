@@ -9,7 +9,15 @@
   3. Every book: number-only spans removed (user rule, same regex as numbers_cleanup/clean_number_spans.py)
      and head marks (༄༅ ༈ ...) trimmed / split (user rule 2026-11-12, same as build_genre_datasets.py).
 Writes <OUT>/test.parquet (HF schema), <OUT>/changes.csv (one row per changed span), <OUT>/summary_by_book.csv.
-Source data is not modified."""
+Source data is not modified.
+
+General system (its benchmark). Usage: python yigchung/src/build_benchmark_after.py     (no arguments; run once,
+or when the annotator files change). Head marks are the HM set in the script; the trailing-syllable rule and the
+number-only regex are in the code below.
+Reads:  <local>/hub/test.parquet, <local>/annotator_review/yaml/<book>-yigchung*.yaml and
+        <local>/annotator_review/zips/<book>.zip (the review OPF whose offsets the yaml uses), <local>/annotator_spans/.
+Writes: <local>/benchmark_after/{test.parquet,changes.csv,summary_by_book.csv} (results/benchmark/ keeps copies; changes.csv is benchmark_changes.csv there).
+The annotator files are not public; ask the layer owner."""
 import paths as P
 import bisect
 import collections

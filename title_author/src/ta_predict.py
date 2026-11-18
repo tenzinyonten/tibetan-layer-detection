@@ -2,7 +2,14 @@
 """Run the trained model on validation + test and SAVE the raw logits (fp16) per work.
 Run on the GPU box (Vast), then copy the .npz files to the Mac to tune Viterbi / analyse errors.
     python3 ta_predict.py MODEL_DIR OUT_DIR [DATASET]
-    e.g. python3 ta_predict.py ~/work/ta-run2/best ~/work/preds Yontenn/title-author-training"""
+    e.g. python3 ta_predict.py ~/work/ta-run2/best ~/work/preds Yontenn/title-author-training
+
+MODEL_DIR: a trained token-classification model (a folder or a Hub name). OUT_DIR: created if missing. DATASET: a Hub name or a local DatasetDict folder
+(default Yontenn/title-author-training; for a single-entity model pass BDRC/Bo-Title-Dataset or BDRC/Bo-Author-Dataset).
+Writes OUT_DIR/validation_logits.npz and OUT_DIR/test_logits.npz (per work: fp16 logits, input ids, labels, and the metadata columns work_id, cid, source,
+region, region_start, n_tokens_region when present). Prints PRED_DONE at the end. Uses CUDA, else MPS, else CPU; batch size 4.
+The next step flattens these files into data/mmbert_preds/<split>_flat.npz; that converter is not in this repo.
+"""
 import os, sys, time
 from pathlib import Path
 import numpy as np, torch

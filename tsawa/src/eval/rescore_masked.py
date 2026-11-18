@@ -63,10 +63,10 @@ def overlaps(a: tuple[int, int], regions: list[tuple[int, int]]) -> bool:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dump", required=True)
-    ap.add_argument("--pairs", default=str(PAIRS))
+    ap.add_argument("--dump", required=True, help="spans JSONL written by eval_viterbi_iou.py --dump-spans")
+    ap.add_argument("--pairs", default=str(PAIRS), help="CSV of suspect gold spans to mask (named_source_pairs.csv)")
     ap.add_argument("--tokenizer", default="jhu-clsp/mmBERT-base")
-    ap.add_argument("--out", default="")
+    ap.add_argument("--out", default="", help="write the result here (default: stdout)")
     args = ap.parse_args()
 
     rows = [json.loads(l) for l in open(args.dump, encoding="utf-8")]

@@ -14,8 +14,29 @@
 * Remaining groups: greedy, largest first, into the split with the largest
   relative deficit against 83/8.5/8.5 by window count (8192 / 5120).
 
-Writes sabche/data/processed/sabche_split_frozen.csv,
-sabche/data/processed/sabche_excluded_books.csv, scratch/sabche/splits/sabche_split_report.json.
+Constants: ``MATCH_MIN`` 40 characters (shortest span used to detect shared
+headings), ``K`` 6 syllables (match key length), ``LINK_SHARE`` 0.10,
+``MIN_SHARED`` 2, ``MIN_SHARED_ABS`` 10, ``SEED`` 123, window geometry 8190
+content tokens / stride 5120, tokenizer ``jhu-clsp/mmBERT-base``.
+``UNDER_ANNOTATED`` is a hard-coded set of five books (titled-heading recall
+below 0.2) that are excluded.
+
+Flags (see ``--help``): ``--val-frac`` (default 0.085) and ``--test-frac``
+(default 0.085); the train fraction is the rest (0.83). Output paths are
+constants.
+
+Reads:
+    data/shared/tsawa_audit.csv, data/shared/split_v3_frozen.csv,
+    sabche/data/processed/sabche_spans_clean.csv,
+    sabche/data/processed/sabche_book_verdicts.csv, the book base texts, and
+    the mmBERT tokenizer (downloaded from the Hugging Face Hub).
+Writes:
+    sabche/data/processed/sabche_split_frozen.csv,
+    sabche/data/processed/sabche_excluded_books.csv,
+    scratch/sabche/splits/sabche_split_report.json (scratch is gitignored).
+
+The committed ``sabche_split_frozen.csv`` is the published v2 split. Do not
+re-run this script for a model that is already published.
 """
 
 from __future__ import annotations
@@ -82,8 +103,12 @@ def parse_args(argv=None):
     import argparse
 
     p = argparse.ArgumentParser(description="Frozen Sabche document split.")
-    p.add_argument("--val-frac", type=float, default=0.085)
-    p.add_argument("--test-frac", type=float, default=0.085)
+    p.add_argument("--val-frac", type=float, default=0.085,
+                   help="target share of windows for validation (default 0.085); "
+                        "applies to groups with no fixed split only")
+    p.add_argument("--test-frac", type=float, default=0.085,
+                   help="target share of windows for test (default 0.085); train gets the rest "
+                        "(0.83 by default)")
     return p.parse_args(argv)
 
 

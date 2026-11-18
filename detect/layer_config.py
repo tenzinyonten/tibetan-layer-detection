@@ -1,5 +1,5 @@
-"""Per-layer model configuration, shared by common/infer.py (which layer to
-load and how to decode it) and common/postprocess.py (HTML legend colors,
+"""Per-layer model configuration, shared by detect/infer.py (which layer to
+load and how to decode it) and detect/postprocess.py (HTML legend colors,
 .opf layer-name capitalization). Split out of detect_layers.py so neither
 stage has to import the other's internals.
 
@@ -17,6 +17,23 @@ validation); its test F1 is 0.471 on the published 77-book text, well below the
 other four layers, and a caveat saying so is printed whenever it loads. BDRC/Bo-Multilayer-Detection (the old 15-label joint model) is
 deliberately not used for anything here: its own published metrics put
 tsawa/yigchung/quote F1 at about 0.02-0.04.
+
+Decoding settings per layer (values in LAYERS below; "default" cleanup means
+extend_to_tsheg and merge_small_gaps on, the other switches off):
+
+    layer      scheme  break penalty  stride  cleanup differing from default          review threshold
+    tsawa      bio     4.0            5120    default                                  0.5
+    sabche     bio     4.0            5120    extend_to_tsheg off, merge_small_gaps    0.85
+                                              off, repair_fragments on, shad_rule on
+    chapter    bio     4.0            5120    extend_to_tsheg off, merge_small_gaps    0.75
+                                              off, extend_to_closing_bracket on
+    quotation  bioe    0.0            3613    default                                  0.65
+    yigchung   bio     8.0            4914    default; stitch_first_window on          0.5
+    title      ta      6.0            none    extend_to_tsheg off, merge_small_gaps    0.7
+    author     ta      6.0            none    off (kind "head_tail"; same as title)    0.7
+
+The title and author thresholds (0.7) are an untuned placeholder. Every
+stride is the value documented on that model's Hugging Face card.
 """
 
 from __future__ import annotations

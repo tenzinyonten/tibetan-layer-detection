@@ -52,8 +52,8 @@ validation books and every other split are byte-identical to v10. Do not compare
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--repo-id", default="Yontenn/formatting-tsawa-v11")
-    ap.add_argument("--public", action="store_true")
+    ap.add_argument("--repo-id", default="Yontenn/formatting-tsawa-v11", help="target dataset repo on the Hub")
+    ap.add_argument("--public", action="store_true", help="make the repo public (default: private)")
     args = ap.parse_args()
 
     ds = load_from_disk(str(LOCAL))

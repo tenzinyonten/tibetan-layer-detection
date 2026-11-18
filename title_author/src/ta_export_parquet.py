@@ -7,7 +7,12 @@ Works kept: only works that have BOTH a title span and an author span.
 Text kept: first and last ~3,000 characters (same crop rule as the training data; whole work if <= 6,000 chars).
 Spans are character offsets inside text_head / text_tail (see title_region / author_region).
 
-    python title_author/src/ta_export_parquet.py V3_CLEAN_DIR [OUT_DIR]
+    python title_author/src/ta_export_parquet.py V3_CLEAN_DIR [--base gold_dataset_all] [--v3-works gold_dataset_all_v3_works.csv] [--out-dir DIR]
+
+Reads: V3_CLEAN_DIR, title_author/data/processed/<base>/, <v3-works> (the CSV written by ta_build_v3_addon.py), bdrc_metadata.csv, and the annotator
+spans through ta_load_spans (not in this repo, so the script cannot run from a fresh clone).
+Writes: <out-dir>/{train,validation,test}.parquet and works_index.csv (default out-dir: title_author/data/processed/parquet_export).
+Columns include text_head, text_tail, title_region, author_region and the character offsets of the spans.
 """
 import csv, json, sys
 from collections import Counter, defaultdict
@@ -21,8 +26,8 @@ from ta_load_spans import GOLD, TRAIN_SOURCES, load, parse_name  # noqa: E402
 from datasets import load_from_disk  # noqa: E402
 
 import argparse
-ap = argparse.ArgumentParser(); ap.add_argument("v3_dir", type=Path); ap.add_argument("--base", default="gold_dataset_all")
-ap.add_argument("--v3-works", default="gold_dataset_all_v3_works.csv"); ap.add_argument("--out-dir", type=Path, default=None)
+ap = argparse.ArgumentParser(); ap.add_argument("v3_dir", type=Path, help="folder of the BDRC v3 clean texts"); ap.add_argument("--base", default="gold_dataset_all", help="gold dataset folder under data/processed")
+ap.add_argument("--v3-works", default="gold_dataset_all_v3_works.csv", help="works CSV written by ta_build_v3_addon.py"); ap.add_argument("--out-dir", type=Path, default=None, help="output folder (default: data/processed/parquet_export)")
 args = ap.parse_args()
 v3_dir = args.v3_dir; out_dir = args.out_dir or OUT / "parquet_export"
 out_dir.mkdir(parents=True, exist_ok=True)

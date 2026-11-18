@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """Prepare split_v3 + ignore-span list for tsawa dataset v6. Does not rewrite
 existing sidecars, splits, datasets, or YAML.
+
+Run from the repo root, no flags: ``python tsawa/src/prepare_v6.py``.
+Split: seed 123, targets 76/12/12 by windows, pechas with fewer than 10 merged spans
+dropped, must-link groups keep reprints of one text together.
+Reads: tsawa/data/processed/tsawa_spans_merged.csv, split_v2_frozen.csv,
+quotation_spans_snapped.csv, data/shared/tsawa_audit.csv, and scratch/tsawa/scripts/
+(not in the repo).
+Writes: data/shared/split_v3_frozen.csv, tsawa/data/processed/v6_ignore_spans.csv, and two
+reports under scratch/tsawa/analysis/.
 """
 
 from __future__ import annotations

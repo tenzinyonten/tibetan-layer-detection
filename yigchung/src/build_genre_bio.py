@@ -2,7 +2,16 @@
 """Build the Yigchung BIO DatasetDict for mmBERT from the genre training parquet files
 (same windowing/labeling as sabche/src/build_sabche_dataset.py).
 Spans in the parquet have an INCLUSIVE end; label_tokens wants [start, end), so end+1 is passed.
-Usage: python build_genre_bio.py [with_lotsawa|without_lotsawa]"""
+Usage: python build_genre_bio.py [NAME] [PARQUET_DIR] [SPLITS]
+  NAME         with_lotsawa (default) or without_lotsawa
+  PARQUET_DIR  folder holding <split>.parquet (default <local>/genre_training/NAME)
+  SPLITS       comma list (default train,validation,test)
+Fixed settings: tokenizer jhu-clsp/mmBERT-base; windows of 8192 tokens (8190 text tokens plus CLS and SEP);
+stride 5120; labels O=0, B-YIGCHUNG=1, I-YIGCHUNG=2; neighbouring spans must not overlap (asserted).
+Classified system; its output is what is uploaded as BDRC/Bo-Yigchung-Classified-Dataset.
+Reads:  the parquet files from build_genre_datasets.py and the catalog (for a missing category column).
+Writes: <local>/genre_training/bio_NAME/ (a DatasetDict) and bio_NAME_stats.json (windows, docs, label counts,
+        inverse-frequency class weights, spans without a B token)."""
 import sys,json
 import paths as P
 from collections import Counter

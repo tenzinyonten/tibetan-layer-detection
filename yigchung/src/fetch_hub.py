@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Download the default config of BDRC/yigchung_detection_v2 (book text + spans) into paths.HUB
-as train.parquet / validation.parquet / test.parquet."""
+as train.parquet / validation.parquet / test.parquet.
+
+Classified and general systems both start here. The dataset is renamed BDRC/Bo-Yigchung-Dataset (the old name
+redirects); the code keeps the old name and pins revision 778c059b so the genre sets stay reproducible.
+Usage: python yigchung/src/fetch_hub.py     (no arguments)
+Reads:  the Hub (network). Writes: <YIGCHUNG_DATA>/hub/{train,validation,test}.parquet (default yigchung/data/local/hub).
+Needed by combine_lotsawa.py, build_genre_datasets.py, stratify_genre.py, build_benchmark_after.py, score_benchmark.py."""
 import shutil
 
 from huggingface_hub import hf_hub_download
