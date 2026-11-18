@@ -65,12 +65,13 @@ Metric: span precision, recall and F1 at IoU >= 0.5 in token space, greedy one-t
 
 | split | F1 | precision | recall |
 |---|---|---|---|
-| test, 22 benchmark books (3,180 gold spans) | 0.842 | 0.811 | 0.876 |
+| test, 22 benchmark books (3,180 gold spans, counted per window) | 0.842 | 0.811 | 0.876 |
 | test, with the quotation filter (see Usage) | 0.890 | 0.916 | 0.865 |
 | validation (v11 labels) | 0.789 | 0.726 | 0.863 |
 | classical_test (6 commentaries) | 0.959 | 0.941 | 0.978 |
 
 Caveats:
+- The 22 test books hold 1,976 distinct Tsawa spans. Test windows overlap, so a span can sit in two windows; the scorer counts it in each, which gives 3,180 gold spans (3,148 span starts plus 32 windows that begin inside a span). The scores are therefore per window, not per whole book.
 - `classical_test` shares root verses with training commentaries (about 99% of its verses also occur in a train commentary). It measures recall of seen root text, not generalisation. Judge the model on the 22-book test.
 - Argmax decoding is far worse (test F1 0.49). Use Viterbi.
 
@@ -89,7 +90,7 @@ Optional quotation filter: run `BDRC/Bo-Quotation-Detection` on the same text an
 
 ## Limits
 
-- Over-predicts a little: 3,434 predicted spans for 3,180 gold spans at break penalty 4.0.
+- Over-predicts a little: 3,434 predicted spans for 3,180 gold spans (both counted per window) at break penalty 4.0.
 - Quotations from other works are the main error source; the filter above helps but is not part of the model.
 - The classical training data is labelled from the WeBuddhist root-verse links, not by hand, so its labels carry any errors in those links.
 - Interlinear commentaries annotated a word at a time are outside the task (5 such books were set aside from training).
