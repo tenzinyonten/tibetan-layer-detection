@@ -32,14 +32,14 @@ Both are private (read from the Hub, 2026-11-17); a 404 means you need access fr
 
 <sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune or to analyze errors (errors are analyzed on validation only). The zero-shot LLM runs (Claude Sonnet 5, Gemini 3.1 Flash Lite) use the same benchmark books; their results are in [results/zeroshot/](results/zeroshot/). The cards are in [docs/](docs/).
 
 ## Main pipeline
 
 | Script | What it does | When to run |
 |---|---|---|
 | [clean_chapter_spans.py](src/clean_chapter_spans.py) | Cleans raw chapter spans and flags bad books. | First; rerun on new annotations. |
-| [prepare_chapter_split.py](src/prepare_chapter_split.py) | Makes the frozen train, validation and test split. | After cleaning; test split is frozen. |
+| [prepare_chapter_split.py](src/prepare_chapter_split.py) | Makes the frozen train, validation and test split. | After cleaning; benchmark is frozen. |
 | [build_chapter_dataset.py](src/build_chapter_dataset.py) | Tokenizes books into BIO windows for mmBERT. | After the split. |
 | [push_chapter_dataset.py](src/push_chapter_dataset.py) | Uploads the dataset and its card to the Hub. | After building the dataset. |
 | [train_layer.py](../common/train_layer.py) | Fine-tunes mmBERT for the Chapter layer. | On a GPU machine. |
@@ -54,7 +54,7 @@ All commands run from the repository root.
 ```bash
 # 1. Clean the spans and flag bad books
 python chapter/src/clean_chapter_spans.py
-# 2. Make the train/validation/test split. Test split is frozen: score it once.
+# 2. Make the train/validation/test split. The benchmark (test split) is frozen: score it once.
 python chapter/src/prepare_chapter_split.py --keep-v3
 # 3. Build the BIO dataset (8,192-token windows)
 python chapter/src/build_chapter_dataset.py
@@ -77,7 +77,7 @@ python common/eval_viterbi_iou.py --model BDRC/Bo-Chapter-Detection --dataset BD
 
 ## Results
 
-Test set. Numbers are copied from the [model card](docs/model_card.md) and the zero-shot READMEs.
+Benchmark (test split). Numbers are copied from the [model card](docs/model_card.md) and the zero-shot READMEs.
 
 | Model | F1 | P | R |
 |---|---|---|---|

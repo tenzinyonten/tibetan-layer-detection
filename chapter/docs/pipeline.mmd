@@ -18,8 +18,16 @@ flowchart TD
   end
   subgraph EVAL["Evaluate"]
     direction LR
-    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
-    F6 -. "val only" .-> A["Analyze errors<br/><i>analyze_chapter_errors.py</i>"]
+    V(["Validation split<br/>(for tuning)"]) --> S7["Evaluate model<br/><i>common/eval_viterbi_iou.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> S7
+    S7 --> F6(["Model scores"])
+    F6 -. "validation only" .-> A["Analyze errors<br/><i>analyze_chapter_errors.py</i>"]
+  end
+  subgraph BASE["Zero-shot LLM baselines"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) --> S8["Run Claude, Gemini<br/><i>common/zeroshot/run_layer_zeroshot.py</i>"]
+    S8 --> F7(["LLM scores"])
   end
   PREP --> TRAIN
   TRAIN --> EVAL
+  EVAL --> BASE
