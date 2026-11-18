@@ -16,7 +16,7 @@ After snapping, quote-quote overlaps within a document are resolved by
 trimming the later span's start to the earlier span's end (they are the same
 class, so a merge-like trim loses nothing); spans left empty are marked
 ``dropped``. Tsawa precedence is NOT applied here — that happens at label
-time in ``build_tsawa_dataset.py``, which counts the suppressed tokens.
+time in ``bio_dataset.py``, which counts the suppressed tokens.
 
 Usage:
     python tsawa/src/snap_tsawa_quotation_boundaries.py \\

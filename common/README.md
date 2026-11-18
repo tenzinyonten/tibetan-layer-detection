@@ -21,14 +21,14 @@ common/
 
 <sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Between Fetch and Build each layer's own `src/` cleans its spans and freezes its split, and its `build_*_dataset.py` calls `build_tsawa_dataset.py`. Baselines read the raw books as gold.
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Between Fetch and Build each layer's own `src/` cleans its spans and freezes its split, and its `build_*_dataset.py` calls `bio_dataset.py`. Baselines read the raw books as gold.
 
 ## Main pipeline
 
 | Script | What it does | When to run |
 |---|---|---|
 | [fetch_opf_repos.py](fetch_opf_repos.py) | Clones OpenPecha `.opf` repos listed in an ID file. | First, to get the books. |
-| [build_tsawa_dataset.py](build_tsawa_dataset.py) | Builds the windowed BIO token dataset; layer builders import it. | After cleaning spans and the split. |
+| [bio_dataset.py](bio_dataset.py) | Builds the windowed BIO token dataset; layer builders import it. | After cleaning spans and the split. |
 | [train_layer.py](train_layer.py) | Training loop for one layer (`--label-name`). | On a GPU machine. |
 | [eval_viterbi_iou.py](eval_viterbi_iou.py) | Scores a model: Viterbi decoding, IoU 0.5 span F1. | After training; validation first. |
 | [predict_layer_spans.py](predict_layer_spans.py) | Saves every predicted and gold span per document. | To analyze errors later. |
@@ -41,7 +41,7 @@ All commands run from the repository root. Flags, defaults and the files each sc
 # 1. Fetch the books (writes data/raw_opf/<ID>.opf/ and data/raw_opf/_manifest.csv)
 python common/fetch_opf_repos.py --ids-file data/ids/newdata.txt
 # 2. Build the dataset (a layer's own build script usually does this; see its README)
-python common/build_tsawa_dataset.py --split-file <frozen_split.csv> --out-dir <dataset_dir>
+python common/bio_dataset.py --split-file <frozen_split.csv> --out-dir <dataset_dir>
 # 3. Train on a GPU machine; --label-name is TSAWA, SABCHE, CHAPTER, YIGCHUNG or TITLE_AUTHOR
 python common/train_layer.py --label-name CHAPTER --scheme bio --weight-scheme sqrt_inv \
     --epochs 8 --evals-per-epoch 4 --output-dir runs/chapter
@@ -129,7 +129,7 @@ common/
 ├── README.md
 ├── fetch_opf_repos.py             # clone .opf repos from an ID file (called by no code; see docs/pipeline_and_data.md)
 ├── check_boundary_snapping.py     # span-edge diagnostic; helpers imported by tsawa, sabche, chapter cleaning scripts
-├── build_tsawa_dataset.py         # windowed BIO dataset builder and labelling helpers; imported by every layer builder
+├── bio_dataset.py         # windowed BIO dataset builder and labelling helpers; imported by every layer builder
 ├── train_layer.py                 # training loop for every layer
 ├── tsawa_feat_model.py            # mmBERT with clause features; imported by the trainers
 ├── tsawa_crf_model.py             # mmBERT with a CRF head; imported by the trainers

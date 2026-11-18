@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-audit_tsawa_before_v6.py — four data checks before building v6. CPU only.
+audit_tsawa_labels.py — four data checks before building v6. CPU only.
 
   1. UNDER-LABELLED BOOKS  lots of verse outside tsawa, very little tsawa.
                            Unmarked root verse teaches "verse = not tsawa".
@@ -10,7 +10,7 @@ audit_tsawa_before_v6.py — four data checks before building v6. CPU only.
   4. LEAKAGE               val/test tsawa text that appears verbatim in a TRAIN
                            book. Inflates scores through memorisation.
 
-Usage:  python audit_tsawa_before_v6.py > scratch/tsawa/analysis/audit_v6.txt
+Usage:  python audit_tsawa_labels.py > scratch/tsawa/analysis/audit_v6.txt
 """
 
 import glob

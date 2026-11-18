@@ -56,7 +56,7 @@ Label counts (tokens): `B-TITLE` and `I-TITLE` — train 32,074 and 1,197,216, v
 
 **Preparation**, in order (scripts in `title_author/src/` of [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection)):
 
-1. Take the annotator title and author spans (character offsets) for each work. For the `v3_auto` works, the spans come from the BDRC char-level outlines release v3 and are found automatically by string matching: `build_ta_v3_addon.py`. These are in train only.
+1. Take the annotator title and author spans (character offsets) for each work. For the `v3_auto` works, the spans come from the BDRC char-level outlines release v3 and are found automatically by string matching: `build_ta_addon.py`. These are in train only.
 2. Drop works whose gold author contains a translator word (`ལོ་ཙཱ`, `ལོ་ཙྪ`): `clean_ta_translators.py`.
 3. Remove the `_` syllable-separator artifact that some sources have from the text, and shift the spans: `clean_ta_underscores.py`.
 4. Crop each work to its first and last ~3,000 characters, edges moved to a line break; keep the whole work if it is 6,000 characters or fewer: `build_ta_gold_dataset.py`.

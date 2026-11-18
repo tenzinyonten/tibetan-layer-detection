@@ -2,7 +2,7 @@
 """Build the TITLE/AUTHOR BIO DatasetDict from the annotator-span JSONs (no training).
 
 Per work (TEXT segment): keep head [0,K) and tail [L-K,L) of the segment text (whole text if L<=2K).
-Spans come from the provided offsets only. Labels: token-start rule via common/build_tsawa_dataset.label_tokens.
+Spans come from the provided offsets only. Labels: token-start rule via common/bio_dataset.label_tokens.
 Split by group of collection ids (ids linked by shared text / shared title+author are one group).
 
     python title_author/src/build_ta_gold_dataset.py [--all] [--single] [--clean] [--crop chars|paras] [--k 3000]
@@ -21,7 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common")); sys.path.insert(0, str(ROOT / "title_author/src"))
-from build_tsawa_dataset import IGNORE_LABEL, label_tokens, pack_window, sliding_windows, special_token_ids  # noqa: E402
+from bio_dataset import IGNORE_LABEL, label_tokens, pack_window, sliding_windows, special_token_ids  # noqa: E402
 from ta_load_spans import GOLD, TRAIN_SOURCES, load  # noqa: E402
 
 LABEL2ID = {"O": 0, "B-TITLE": 1, "I-TITLE": 2, "B-AUTHOR": 3, "I-AUTHOR": 4}

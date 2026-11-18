@@ -135,6 +135,6 @@ sabche/
     └── zeroshot/                      # Gemini and Claude score summaries (JSON)
 ```
 
-There is no `tests/` folder. Scripts here import shared code from `common/` (`build_tsawa_dataset.py`, `check_boundary_snapping.py`) and read book paths from `data/shared/tsawa_audit.csv`. The zero-shot scripts in `common/zeroshot/` read the cleaned spans, the frozen split and `docs/prompts/gemini_sabche_anchors.md`.
+There is no `tests/` folder. Scripts here import shared code from `common/` (`bio_dataset.py`, `check_boundary_snapping.py`) and read book paths from `data/shared/tsawa_audit.csv`. The zero-shot scripts in `common/zeroshot/` read the cleaned spans, the frozen split and `docs/prompts/gemini_sabche_anchors.md`.
 
 </details>

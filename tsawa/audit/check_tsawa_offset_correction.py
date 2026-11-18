@@ -60,7 +60,7 @@ pd.DataFrame([dict(pecha_id=p, old_start=o[0], old_end=o[1], new_start=n[0], new
 # For these test books nothing is ignored (v6_ignore_spans.csv has no test books), so scored index = book token - token_start.
 import sys
 sys.path.insert(0, "common")
-from build_tsawa_dataset import label_tokens           # the dataset builder's own labelling rule
+from bio_dataset import label_tokens           # the dataset builder's own labelling rule
 from transformers import AutoTokenizer
 tok = AutoTokenizer.from_pretrained("jhu-clsp/mmBERT-base", use_fast=True)
 ign = pd.read_csv("tsawa/data/processed/v6_ignore_spans.csv")

@@ -18,7 +18,7 @@ from collections import Counter
 from pathlib import Path
 import pandas as pd
 sys.path.insert(0,str(P.REPO/'common'))
-from build_tsawa_dataset import IGNORE_LABEL,label_tokens,pack_window,sliding_windows,special_token_ids
+from bio_dataset import IGNORE_LABEL,label_tokens,pack_window,sliding_windows,special_token_ids
 from datasets import Dataset,DatasetDict,Features,Sequence,Value
 from transformers import AutoTokenizer
 NAME=sys.argv[1] if len(sys.argv)>1 else 'with_lotsawa'

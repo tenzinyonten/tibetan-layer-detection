@@ -43,7 +43,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "common"))
-from build_tsawa_dataset import sliding_windows  # noqa: E402
+from bio_dataset import sliding_windows  # noqa: E402
 
 AUDIT = ROOT / "data/shared/tsawa_audit.csv"
 CLEAN = ROOT / "chapter/data/processed/chapter_spans_clean.csv"

@@ -7,7 +7,7 @@ writes predictions/<book_id>.json per book.
 
 Windowing (.windows) and BIO/BIOE Viterbi decoding + confidence (.decode)
 are self-contained, dependency-light copies of the logic in this repo's
-common/build_tsawa_dataset.py and common/eval_viterbi_iou.py -- imported as
+common/bio_dataset.py and common/eval_viterbi_iou.py -- imported as
 package-relative modules here (not via a sys.path hack to a sibling
 directory) so this package is actually importable once pip-installed
 (site-packages only contains the package's own files, not this repo's

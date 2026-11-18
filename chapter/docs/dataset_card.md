@@ -37,7 +37,7 @@ Tibetan Buddhist books, in BIO labels over 8,192-token windows. It trains
 |---|---|
 | tokenizer | `jhu-clsp/mmBERT-base` (fast, with offsets) |
 | labels | `O` = 0, `B-CHAPTER` = 1, `I-CHAPTER` = 2; CLS, SEP and padding = -100 |
-| label rule | token-start rule (`label_tokens` in `common/build_tsawa_dataset.py`) |
+| label rule | token-start rule (`label_tokens` in `common/bio_dataset.py`) |
 | columns | `input_ids`, `attention_mask`, `labels`, `token_start`, `token_end`, `char_start`, `char_end`, `pecha_id`, `source_batch`, `window_index`, `n_tokens_doc`, `coverage_pct` |
 
 **Window geometry.** A window holds 8,192 tokens (8,190 content tokens plus CLS and SEP) and starts

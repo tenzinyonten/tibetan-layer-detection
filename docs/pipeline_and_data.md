@@ -98,13 +98,13 @@ coverage-quartile split (seed 42), kept so older calls do not change.
 
 ```bash
 # v2 — frozen, window-balanced split (current)
-python common/build_tsawa_dataset.py --source combined \
+python common/bio_dataset.py --source combined \
     --split-file tsawa/data/processed/split_v2_frozen.csv \
     --out-dir tsawa/data/processed/tsawa_dataset_v2 \
     --dropped-csv tsawa/data/processed/dropped_spans.csv
 
 # v1 — legacy coverage-quartile split
-python common/build_tsawa_dataset.py --source combined
+python common/bio_dataset.py --source combined
 # rollback to pre-snap YAML offsets: --from-yaml
 ```
 
@@ -129,7 +129,7 @@ resolved sidecar drifted from 21,155 / 6 dropped / 21,149 active.
 ## Hugging Face dataset
 
 ```bash
-python tsawa/src/push_tsawa_v11_dataset.py   # the current push (the first dataset flow is retired)
+python tsawa/src/push_tsawa_dataset.py   # the current push (the first dataset flow is retired)
 ```
 
 ```python

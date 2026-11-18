@@ -43,13 +43,13 @@ Squares are steps with the script that runs them; rounded boxes are files; dashe
 | [resolve_tsawa_overlaps.py](src/resolve_tsawa_overlaps.py) | Fixes overlapping span pairs with three review rules. | After snapping. |
 | [merge_tsawa_spans.py](src/merge_tsawa_spans.py) | Merges consecutive spans separated only by shad or space. | After resolving overlaps. |
 | [snap_tsawa_quotation_boundaries.py](src/snap_tsawa_quotation_boundaries.py) | Snaps Quotation and Citation spans for ignore lists. | Before the split. |
-| [prepare_tsawa_v6.py](src/prepare_tsawa_v6.py) | Builds the frozen book split and the ignore-span list. | Only to rebuild the split. |
-| [convert_tsawa_classical_v3.py](src/convert_tsawa_classical_v3.py) | Converts the 25 classical commentaries to span tables. | Once, before the dataset. |
+| [prepare_tsawa_split.py](src/prepare_tsawa_split.py) | Builds the frozen book split and the ignore-span list. | Only to rebuild the split. |
+| [convert_tsawa_classical.py](src/convert_tsawa_classical.py) | Converts the 25 classical commentaries to span tables. | Once, before the dataset. |
 | [prepare_tsawa_classical_split.py](src/prepare_tsawa_classical_split.py) | Holds out whole commentaries per root text. | After the conversion. |
 | [clean_tsawa_classical_blank_lines.py](src/clean_tsawa_classical_blank_lines.py) | Collapses blank-line runs and remaps spans. | After the classical split. |
-| [build_tsawa_v10_dataset.py](src/build_tsawa_v10_dataset.py) | Tokenizes everything into 8,192-token BIO windows. | After spans and split exist. |
+| [build_tsawa_dataset.py](src/build_tsawa_dataset.py) | Tokenizes everything into 8,192-token BIO windows. | After spans and split exist. |
 | [patch_tsawa_validation.py](src/patch_tsawa_validation.py) | Fixes labels of 6 validation books; writes v11. | After building v10. |
-| [push_tsawa_v11_dataset.py](src/push_tsawa_v11_dataset.py) | Uploads the v11 dataset and a short card. | After patching. |
+| [push_tsawa_dataset.py](src/push_tsawa_dataset.py) | Uploads the v11 dataset and a short card. | After patching. |
 | [train_layer.py](../common/train_layer.py) | Fine-tunes mmBERT for the Tsawa layer. | On a GPU machine. |
 | [eval_viterbi_iou.py](../common/eval_viterbi_iou.py) | Scores a model: Viterbi decoding, span F1 at IoU 0.5. | After training; validation first. |
 
@@ -69,13 +69,13 @@ python tsawa/src/resolve_tsawa_overlaps.py --sidecar tsawa/data/processed/tsawa_
 python tsawa/src/merge_tsawa_spans.py
 python tsawa/src/snap_tsawa_quotation_boundaries.py
 # 3. Frozen split and ignore list (rebuild only if needed)
-python tsawa/src/prepare_tsawa_v6.py
+python tsawa/src/prepare_tsawa_split.py
 # 4. Classical commentaries
-python tsawa/src/convert_tsawa_classical_v3.py && python tsawa/src/prepare_tsawa_classical_split.py && python tsawa/src/clean_tsawa_classical_blank_lines.py
+python tsawa/src/convert_tsawa_classical.py && python tsawa/src/prepare_tsawa_classical_split.py && python tsawa/src/clean_tsawa_classical_blank_lines.py
 # 5. Build the dataset and patch the validation labels (see Known issues: both need extra files)
-python tsawa/src/build_tsawa_v10_dataset.py && python tsawa/src/patch_tsawa_validation.py
+python tsawa/src/build_tsawa_dataset.py && python tsawa/src/patch_tsawa_validation.py
 # 6. Push the dataset (private unless --public)
-python tsawa/src/push_tsawa_v11_dataset.py --repo-id <repo>
+python tsawa/src/push_tsawa_dataset.py --repo-id <repo>
 # 7. Train on a GPU machine (command from the model card)
 python common/train_layer.py --label-name TSAWA --dataset Yontenn/formatting-tsawa-v10 --scheme bio --weight-scheme inv --break-penalty 5.0 --epochs 15 --patience 3 --evals-per-epoch 4 --lr 1e-5 --batch-size 8 --seed 42
 # 8. Upload the model and docs/model_card.md (as README.md) with the Hugging Face CLI
@@ -114,8 +114,8 @@ The quotation filter drops a predicted Tsawa span when at least 50% of it lies i
 
 All checked in the code on 2026-11-18.
 
-- `build_tsawa_v10_dataset.py` and `patch_tsawa_validation.py` read `tsawa/data/processed/tsawa_audit.csv`, which is not in the repo: the audit moved to `data/shared/tsawa_audit.csv`. Copy the file there before running them.
-- Several scripts read files under `scratch/` that are not in the repo: `prepare_tsawa_v6.py` (`scratch/tsawa/scripts/`), `build_tsawa_v10_dataset.py` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_tsawa_classical_v3.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `eval_tsawa_masked.py` and the three `audit/` studies (saved predictions). The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
+- `build_tsawa_dataset.py` and `patch_tsawa_validation.py` read `tsawa/data/processed/tsawa_audit.csv`, which is not in the repo: the audit moved to `data/shared/tsawa_audit.csv`. Copy the file there before running them.
+- Several scripts read files under `scratch/` that are not in the repo: `prepare_tsawa_split.py` (`scratch/tsawa/scripts/`), `build_tsawa_dataset.py` (the patched 22-book test set `scratch/tsawa/analysis/formatting-tsawa-v6_test_patched_full22_final`), `convert_tsawa_classical.py` (`scratch/tsawa/analysis/end_boundary_check.py`), `eval_tsawa_masked.py` and the three `audit/` studies (saved predictions). The classical source docs are in `~/tsawa_commentary_data/`, also outside the repo.
 - `tsawa_spans_merged_reannotated_normalized.csv` is committed and read by the builders, but no script in the repo produces it.
 - `build_tsawa_catalog.py` has a hard-coded `ROOT = Path("/Users/tenzinyonten/layer_detection")`.
 - The analysis and eval scripts default to old models and datasets (`Yontenn/mmbert-tsawa-io-v2`, `formatting-tsawa-v1`, `ds_v5`, `runs/v5_merged/best`); pass `--model` and `--dataset` for the current ones.
@@ -139,13 +139,13 @@ tsawa/
 │   ├── merge_tsawa_spans.py             # merge spans separated only by shad or space
 │   ├── snap_tsawa_quotation_boundaries.py     # same snapping for Quotation and Citation
 │   ├── check_tsawa_spots.py              # score sampled spans on metre and closers
-│   ├── prepare_tsawa_v6.py                    # frozen split split_v3 and ignore spans
-│   ├── convert_tsawa_classical_v3.py          # classical commentaries to span tables
+│   ├── prepare_tsawa_split.py                    # frozen split split_v3 and ignore spans
+│   ├── convert_tsawa_classical.py          # classical commentaries to span tables
 │   ├── prepare_tsawa_classical_split.py          # whole-commentary holdout per root text
 │   ├── clean_tsawa_classical_blank_lines.py  # collapse blank lines, remap spans
-│   ├── build_tsawa_v10_dataset.py             # build the v10 dataset
+│   ├── build_tsawa_dataset.py             # build the v10 dataset
 │   ├── patch_tsawa_validation.py              # fix 6 validation books, write v11
-│   ├── push_tsawa_v11_dataset.py              # push v11 to the Hub
+│   ├── push_tsawa_dataset.py              # push v11 to the Hub
 │   ├── build_tsawa_catalog.py           # book catalog xlsx
 │   ├── analysis/
 │   │   ├── analyze_tsawa_errors.py            # fragmentation, short spans, exact-match F1
@@ -155,7 +155,7 @@ tsawa/
 │   │   ├── analyze_tsawa_segmentation.py         # HTML of old vs new batch segmentation
 │   │   └── analyze_tsawa_new_gaps.py             # HTML of gaps between new-batch spans
 │   ├── checks/
-│   │   ├── audit_tsawa_before_v6.py           # four data checks before a build
+│   │   ├── audit_tsawa_labels.py           # four data checks before a build
 │   │   └── check_tsawa_label_errors.py         # rank gold spans by model P(TSAWA)
 │   └── eval/
 │       ├── eval_tsawa_masked.py            # re-score with doubtful gold masked

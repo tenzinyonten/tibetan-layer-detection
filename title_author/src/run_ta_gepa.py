@@ -2,9 +2,9 @@
 """GEPA (DSPy 3) on the title/author prompt. The Gemini key comes only from the environment (GEMINI_API_KEY).
 Run with ~/dspy-env/bin/python.
 
-    run_ta_gepa3.py run START_PROMPT.md N_TRAIN N_VAL BUDGET   # optimise; writes title_author/data/gemini_prompts/$OUT_NAME
-    run_ta_gepa3.py eval PROMPT.md SPLIT N                      # score a prompt with the same settings (no optimisation)
-    run_ta_gepa3.py demo RUN_FOLDER N                           # print the GEPA feedback for N author mistakes of an existing validation run (no API call)
+    run_ta_gepa.py run START_PROMPT.md N_TRAIN N_VAL BUDGET   # optimise; writes title_author/data/gemini_prompts/$OUT_NAME
+    run_ta_gepa.py eval PROMPT.md SPLIT N                      # score a prompt with the same settings (no optimisation)
+    run_ta_gepa.py demo RUN_FOLDER N                           # print the GEPA feedback for N author mistakes of an existing validation run (no API call)
 
 Settings (environment variables):
   BATCH=4 CROP=2000     BATCH works per call; CROP keeps the first and last CROP characters
