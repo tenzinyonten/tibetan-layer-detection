@@ -149,6 +149,10 @@ Cleaned test set, 2,384 works; share of works with IoU >= 0.5 against the gold s
 
 Per-model test F1 from the cards (one span per work): Bo-Title-Detection 0.845 (P 0.848, R 0.842); Bo-Author-Detection 0.738 (P 0.742, R 0.734). The mix is the best measured: in `detect/`, `--title-system model --author-system skill`. About 11% of gold authors differ from the author a reader would name (stanza writer, compiler, copyist, requester), so every number has a ceiling. Gemini details and paired ranges: [docs/gemini_results.md](docs/gemini_results.md); run 2 on an earlier 2,389-work test set: [docs/run2_results.md](docs/run2_results.md).
 
+Paired 95% ranges: two single models minus joint, mean +0.017 (+0.007 to +0.026); author-only minus joint, author +0.023 (+0.009 to +0.038); title-only minus joint, title +0.010 (−0.002 to +0.021); mix minus the skill, mean +0.028 (+0.020 to +0.036); mix minus the two single models, mean +0.011 (+0.002 to +0.019).
+
+Either one right: joint model or skill, title 0.881, author 0.837; title-only or skill, title 0.892; author-only or skill, author 0.838.
+
 ## Known issues
 
 <details><summary>Show 9 known issues</summary>

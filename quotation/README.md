@@ -89,7 +89,7 @@ python script/build_quotation_benchmark.py
 python script/build_quotation_windows.py --config script/quotation_w8192_s4751.yaml
 # 5. Relabel to BIOE and push (config windowed_w8192_s4579_bioe, tag w2.0)
 python script/relabel_quotation_bioe.py --push
-# 6. Train on a GPU (Vast.ai: bash script/setup_vast_train_env.sh first). Steps 3 to 5 can be skipped: train.py uses the published windows.
+# 6. Train on a 24 GB GPU (Vast.ai: bash script/setup_vast_train_env.sh first). Steps 3 to 5 can be skipped: train.py uses the published windows.
 cd experiments/mmbert_quotation_v3
 python train.py --prepare-only && python train.py --smoke && python train.py
 cd ../..
@@ -130,6 +130,8 @@ Encoder: test set (19 books), IoU@0.5, Viterbi decode chosen on validation and f
 | gemini-3.1-flash-lite, zero-shot | 0.696 | 0.595 | 0.838 |
 | gemini-3.5-flash-lite, zero-shot | 0.649 | 0.530 | 0.839 |
 | claude-sonnet-5 (250k units), zero-shot | 0.454 | 0.714 | 0.333 |
+
+`gemini-3.8-flash` is also a benchmark choice (`run`); the source README says it is not scored yet.
 
 ## Known issues
 

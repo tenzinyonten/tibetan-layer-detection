@@ -1,6 +1,6 @@
 # OpenPecha data and the Tsawa pipeline
 
-Moved here from the root README. It covers the `.opf` layout, the data batches, and the original Tsawa-centred pipeline (fetch, audit, build). Some steps describe older Tsawa dataset versions (for example `formatting-tsawa-v1`); the current names are in `tsawa/docs/huggingface.md`.
+Moved here from the root README. It covers the `.opf` layout, the data batches, and the original Tsawa-centred pipeline (fetch, audit, build). Some steps describe older Tsawa dataset versions (for example `formatting-tsawa-v1`); the current names are in `tsawa/README.md`.
 
 ## OpenPecha `.opf` layout (what we fetch)
 
