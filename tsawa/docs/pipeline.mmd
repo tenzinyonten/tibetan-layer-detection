@@ -22,5 +22,11 @@ flowchart TD
     B(["Benchmark<br/>(frozen test split)"]) --> E1["Evaluate model<br/><i>common/eval_viterbi_iou.py</i>"]
     E1 -.-> E2["Rescore masked<br/><i>eval_tsawa_masked.py</i>"]
   end
+  subgraph BASE["Zero-shot LLM baseline (optional)"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) -.-> Z1["Run Claude, Gemini<br/><i>common/zeroshot/run_layer_zeroshot.py</i>"]
+    Z1 -.-> Z2(["LLM scores"])
+  end
   PREP --> TRAIN
   TRAIN --> EVAL
+  EVAL --> BASE

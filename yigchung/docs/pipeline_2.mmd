@@ -6,7 +6,7 @@ flowchart TD
     S2 --> S3["Build genre sets<br/><i>build_yigchung_genre_datasets.py</i>"]
     S3 --> S4["Build BIO windows<br/><i>build_yigchung_genre_bio.py</i>"]
     S4 --> F1(["Classified dataset"])
-    S0["Label genres<br/><i>classify_yigchung_genre.py</i>"] -.-> S3
+    S0["Gemini genre runs<br/><i>classify_yigchung_genre.py</i>"] -.-> S3
     S3 -.-> S5["Propose split<br/><i>stratify_yigchung_genre.py</i>"]
   end
   subgraph TRAIN["Train"]

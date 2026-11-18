@@ -47,7 +47,7 @@ Classified (genre) system:
 
 <sub>Chart source: [pipeline_2.mmd](docs/pipeline_2.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the corrected 77-book test set, scored once. Gemini is used here only to label genres, not as a baseline. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the corrected 77-book test set, scored once. The Gemini runs shown in the second chart label each book's genre (several prompt versions); no Gemini span-detection results are saved in this repo. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
 
 ## Main pipeline
 

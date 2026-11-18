@@ -32,7 +32,7 @@ Visibility read from the Hub on 2026-11-18; a 404 on the dataset means you need 
 
 <sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune. No zero-shot LLM results exist for Tsawa; only the prompt is in `docs/prompts/`. "Add classical" stands for three scripts (convert, split, collapse; see Main pipeline). The cards are in [docs/](docs/).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune. The zero-shot LLM box is optional: the prompt is in `docs/prompts/` and the shared script runs it with `--layer tsawa`, but no Tsawa LLM results are saved in this repo. "Add classical" stands for three scripts (convert, split, collapse; see Main pipeline). The cards are in [docs/](docs/).
 
 ## Main pipeline
 
