@@ -19,7 +19,7 @@ Metric: span-level IoU >= 0.5, micro-averaged over all gold spans in the split
 
 The 1.3-point gap comes from a single run per model, so treat the two as roughly equal.
 
-Claude was run with `common/zeroshot/claude_batch.py` in three batches
+Claude was run with `common/zeroshot/run_claude_batch.py` in three batches
 (179 + 180 + 179 windows, about $5 per 180 windows at batch pricing).
 
 ## Validation split (Gemini only, incomplete)

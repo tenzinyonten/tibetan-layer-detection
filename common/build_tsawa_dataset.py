@@ -1039,7 +1039,7 @@ def main(argv: list[str] | None = None) -> int:
         print("5-label build: O / B-TSAWA / I-TSAWA / B-QUOTE / I-QUOTE (TSAWA wins overlaps)")
         quote_note = (
             f"- Quotation labels from `{qpath}` (merged `Quotation.yml` old batch + "
-            f"`Citation.yml` new batch, snapped by `tsawa/src/snap_quotation_boundaries.py`).\n"
+            f"`Citation.yml` new batch, snapped by `tsawa/src/snap_tsawa_quotation_boundaries.py`).\n"
             f"- **{n_q_active:,}** quotation spans over **{len(quote_by_repo)}** books; "
             f"{n_q_drop} sidecar rows dropped as quote-quote overlap stubs.\n"
             "- **Precedence: TSAWA wins.** Where a quotation span overlaps a tsawa span "

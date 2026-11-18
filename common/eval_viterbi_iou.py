@@ -24,6 +24,12 @@ Usage
     # find the best break_penalty on validation
     python eval_viterbi_iou.py --model ... --sweep
 
+Reads a model (local path or Hub repo) and a dataset split (default validation; the
+test split is frozen, score it once). Writes the metrics JSON to --out and, with
+--dump-spans, a per-window JSONL of gold and predicted spans in book-token coordinates
+(the layer folders' error-analysis scripts read that file). Defaults: break penalty 2.0
+(use the value of the layer's model card, for example 4.0), batch size 4, cuda if available.
+
 Works on BIO models (3 labels). For an IO model (2 labels) Viterbi has almost
 nothing to constrain — there are no illegal transitions — so the script says
 so and falls back to argmax.
@@ -128,20 +134,23 @@ def dump_spans(path, meta, kept_pos, gold_all, preds):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True)
-    ap.add_argument("--dataset", default="Yontenn/formatting-tsawa-v6")
-    ap.add_argument("--split", default="validation")
+    ap.add_argument("--model", required=True, help="local path or Hugging Face repo of the token classifier")
+    ap.add_argument("--dataset", default="Yontenn/formatting-tsawa-v6",
+                    help="local dataset dir or Hub repo (default is the tsawa v6 data; pass your layer's dataset)")
+    ap.add_argument("--split", default="validation", help="split to score (default validation; score test once at the end)")
     ap.add_argument("--break-penalty", type=float, default=2.0,
                     help="team default is 2.0")
     ap.add_argument("--sweep", action="store_true",
                     help="try several break penalties and report each")
-    ap.add_argument("--batch-size", type=int, default=4)
-    ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--out", default="scratch/tsawa/results/tsawa_viterbi_eval.json")
+    ap.add_argument("--batch-size", type=int, default=4, help="windows per batch (default 4)")
+    ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu",
+                    help="default: cuda if available, else cpu")
+    ap.add_argument("--limit", type=int, default=0, help="score only the first N windows (0 = all)")
+    ap.add_argument("--out", default="scratch/tsawa/results/tsawa_viterbi_eval.json",
+                    help="metrics JSON to write (default: scratch/tsawa/results/tsawa_viterbi_eval.json)")
     ap.add_argument("--dump-spans", default="",
                     help="also write per-window gold/pred spans as JSONL, in "
-                         "book-token coordinates (see rescore_masked.py)")
+                         "book-token coordinates (see eval_tsawa_masked.py)")
     args = ap.parse_args()
 
     ds = (load_from_disk(args.dataset) if Path(args.dataset).exists()

@@ -76,7 +76,7 @@ tok = AutoTokenizer.from_pretrained("BDRC/Bo-Author-Detection")
 model = AutoModelForTokenClassification.from_pretrained("BDRC/Bo-Author-Detection", subfolder="best")
 ```
 
-Decode with Viterbi rather than argmax (only legal BIO transitions, penalty 6 for a span exit), then keep the last span. The full pipeline, with the cropping and decoding, is `detect/` and `title_author/src/ta_predict.py` in [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection).
+Decode with Viterbi rather than argmax (only legal BIO transitions, penalty 6 for a span exit), then keep the last span. The full pipeline, with the cropping and decoding, is `detect/` and `title_author/src/predict_ta.py` in [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection).
 
 ## Limits
 

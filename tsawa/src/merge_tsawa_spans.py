@@ -36,20 +36,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Merge punctuation-separated tsawa spans.")
     p.add_argument(
         "--resolved",
+        help="resolved spans CSV (input)",
         type=Path,
         default=Path("tsawa/data/processed/tsawa_spans_resolved.csv"),
     )
     p.add_argument(
         "--audit-csv",
+        help="per-repo audit CSV (input)",
         type=Path,
         default=Path("data/shared/tsawa_audit.csv"),
     )
     p.add_argument(
         "--out",
+        help="merged spans CSV (output)",
         type=Path,
         default=Path("tsawa/data/processed/tsawa_spans_merged.csv"),
     )
-    p.add_argument("--tokenizer", default=TOKENIZER)
+    p.add_argument("--tokenizer", default=TOKENIZER, help="tokenizer used to count tokens in the report")
     return p.parse_args(argv)
 
 

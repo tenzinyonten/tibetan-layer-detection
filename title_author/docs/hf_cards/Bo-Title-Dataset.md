@@ -56,10 +56,10 @@ Label counts (tokens): `B-TITLE` and `I-TITLE` — train 32,074 and 1,197,216, v
 
 **Preparation**, in order (scripts in `title_author/src/` of [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection)):
 
-1. Take the annotator title and author spans (character offsets) for each work. For the `v3_auto` works, the spans come from the BDRC char-level outlines release v3 and are found automatically by string matching: `ta_build_v3_addon.py`. These are in train only.
-2. Drop works whose gold author contains a translator word (`ལོ་ཙཱ`, `ལོ་ཙྪ`): `ta_drop_translator.py`.
-3. Remove the `_` syllable-separator artifact that some sources have from the text, and shift the spans: `ta_strip_underscore.py`.
-4. Crop each work to its first and last ~3,000 characters, edges moved to a line break; keep the whole work if it is 6,000 characters or fewer: `ta_build_gold_dataset.py`.
+1. Take the annotator title and author spans (character offsets) for each work. For the `v3_auto` works, the spans come from the BDRC char-level outlines release v3 and are found automatically by string matching: `build_ta_v3_addon.py`. These are in train only.
+2. Drop works whose gold author contains a translator word (`ལོ་ཙཱ`, `ལོ་ཙྪ`): `clean_ta_translators.py`.
+3. Remove the `_` syllable-separator artifact that some sources have from the text, and shift the spans: `clean_ta_underscores.py`.
+4. Crop each work to its first and last ~3,000 characters, edges moved to a line break; keep the whole work if it is 6,000 characters or fewer: `build_ta_gold_dataset.py`.
 5. Remove copies of the same work (same typed title and author, same first 300 characters, or a near-identical text start; the higher-ranked source is kept) and split about 80/10/10 by collection group (see Splits).
 6. Tokenize with `jhu-clsp/mmBERT-base` and label with the token-start rule (B on the token where a span starts, I on the following tokens).
 7. For this title-only version: relabel the author `O` (not masked), keeping the same rows and splits as the joint data.

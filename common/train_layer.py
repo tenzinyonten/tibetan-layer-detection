@@ -47,6 +47,15 @@ Usage
     python common/train_layer.py --scheme multi --dataset ds_v4 \\
         --weight-scheme inv --skip-test --output-dir runs/v4_multi
     python common/train_layer.py --label-name SABCHE --scheme bio --output-dir runs/sabche
+
+Defaults (see --help): base model jhu-clsp/mmBERT-base, lr 1e-5, 10 epochs, batch 8,
+grad-accum 1, weight decay 0.01, grad clip 0.3, warmup 6%, patience 3 (in epochs),
+seed 42, bf16, gradient checkpointing, break penalty 5.0 for the evaluation.
+--dataset defaults to the layer's dataset in DEFAULT_DATASETS; --output-dir to runs/<layer>.
+Reads the dataset (local dir or Hub repo, HF_TOKEN if private). Writes checkpoints,
+`best/` (the model with the best validation F1) and `results.json` (arguments and
+validation/test metrics) under --output-dir. The test split is scored at the end unless
+--skip-test is given: score it once, on the final run.
 """
 
 from __future__ import annotations
@@ -374,21 +383,30 @@ def main():
     ap.add_argument("--dataset", default=None,
                     help="local dir or Hugging Face repo; default: the layer's dataset on the Hub "
                          "(see DEFAULT_DATASETS; needs HF_TOKEN if private)")
-    ap.add_argument("--base-model", default="jhu-clsp/mmBERT-base")
+    ap.add_argument("--base-model", default="jhu-clsp/mmBERT-base",
+                    help="encoder to fine-tune (default: jhu-clsp/mmBERT-base)")
     ap.add_argument("--output-dir", default=None, help="default: runs/<layer>")
-    ap.add_argument("--scheme", default="bio", choices=list(SCHEMES))
+    ap.add_argument("--scheme", default="bio", choices=list(SCHEMES),
+                    help="label scheme: io, bio (default: O, B-X, I-X), bioe; multi only for two-entity layers")
     ap.add_argument("--weight-scheme", default="inv",
-                    choices=["none", "inv", "sqrt_inv", "manual"])
-    ap.add_argument("--manual-weights", default=None)
-    ap.add_argument("--break-penalty", type=float, default=5.0)
-    ap.add_argument("--lr", type=float, default=1e-5)
-    ap.add_argument("--epochs", type=float, default=10)
-    ap.add_argument("--batch-size", type=int, default=8)
-    ap.add_argument("--grad-accum", type=int, default=1)
-    ap.add_argument("--weight-decay", type=float, default=0.01)
-    ap.add_argument("--grad-clip", type=float, default=0.3)
-    ap.add_argument("--warmup-ratio", type=float, default=0.06)
-    ap.add_argument("--patience", type=int, default=3)
+                    choices=["none", "inv", "sqrt_inv", "manual"],
+                    help="class weights in the loss: none, inverse frequency (inv, default), "
+                         "square root of it (sqrt_inv), or --manual-weights")
+    ap.add_argument("--manual-weights", default=None,
+                    help="comma-separated weights, one per label, used with --weight-scheme manual")
+    ap.add_argument("--break-penalty", type=float, default=5.0,
+                    help="Viterbi cost for ending a span, used in the evaluation (default 5.0)")
+    ap.add_argument("--lr", type=float, default=1e-5, help="learning rate (default 1e-5)")
+    ap.add_argument("--epochs", type=float, default=10,
+                    help="maximum epochs; early stopping may end sooner (default 10)")
+    ap.add_argument("--batch-size", type=int, default=8, help="per-device batch size in windows (default 8)")
+    ap.add_argument("--grad-accum", type=int, default=1, help="gradient accumulation steps (default 1)")
+    ap.add_argument("--weight-decay", type=float, default=0.01, help="weight decay (default 0.01)")
+    ap.add_argument("--grad-clip", type=float, default=0.3, help="max gradient norm (default 0.3)")
+    ap.add_argument("--warmup-ratio", type=float, default=0.06,
+                    help="share of steps used for learning-rate warmup (default 0.06)")
+    ap.add_argument("--patience", type=int, default=3,
+                    help="early-stopping patience in epochs (multiplied by --evals-per-epoch; default 3)")
     ap.add_argument(
         "--evals-per-epoch",
         type=int,
@@ -396,13 +414,15 @@ def main():
         help="When > 1, evaluate/save every steps_per_epoch // evals_per_epoch "
         "steps and multiply --patience by this so patience stays in epochs.",
     )
-    ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--run-name", default=None)
-    ap.add_argument("--no-bf16", action="store_true")
-    ap.add_argument("--no-grad-checkpointing", action="store_true")
-    ap.add_argument("--resume", action="store_true")
-    ap.add_argument("--skip-test", action="store_true")
-    ap.add_argument("--smoke-test", action="store_true")
+    ap.add_argument("--seed", type=int, default=42, help="random seed (default 42)")
+    ap.add_argument("--run-name", default=None,
+                    help="run name for the logs (default: <layer>-<scheme>-<weight-scheme>)")
+    ap.add_argument("--no-bf16", action="store_true", help="train in fp32 instead of bf16")
+    ap.add_argument("--no-grad-checkpointing", action="store_true",
+                    help="turn off gradient checkpointing (uses more memory)")
+    ap.add_argument("--resume", action="store_true", help="resume from the last checkpoint in --output-dir")
+    ap.add_argument("--skip-test", action="store_true", help="do not score the test split (keeps it unseen)")
+    ap.add_argument("--smoke-test", action="store_true", help="tiny quick run to check the setup; not a real training")
     ap.add_argument(
         "--stitched-eval",
         action="store_true",

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-run_tsawa_zeroshot.py — zero-shot TSAWA extraction with Gemini, scored against
-the v6 gold spans.
+run_layer_zeroshot.py — zero-shot span extraction with Gemini (or Anthropic) for one
+layer (--layer tsawa, quotation, sabche or chapter; default tsawa), scored against that
+layer's gold spans. Paid unless --locate-only. Default model gemini-3.1-flash-lite.
 
 Same shape as the quotation benchmark: 16,000-character windows overlapping by
 2,000 and cut at a shad, anchors (head/tail) back from the model, the quotation
@@ -27,8 +28,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gemini_chunks import make_chunks  # noqa: E402
-from gemini_locate import (  # noqa: E402
+from run_gemini_chunks import make_chunks  # noqa: E402
+from run_gemini_locate import (  # noqa: E402
     canonical_label,
     locate_parsed_quote,
     parse_quote_dump,
@@ -299,18 +300,22 @@ def score(gold: list[tuple[int, int]], pred: list[tuple[int, int]], thr: float =
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--books", nargs="+", required=True)
-    ap.add_argument("--out", default="scratch/tsawa/zeroshot")
-    ap.add_argument("--prompt", default=str(PROMPT))
-    ap.add_argument("--model", default="gemini-3.1-flash-lite")
-    ap.add_argument("--provider", choices=["gemini", "anthropic"], default="gemini")
+    ap.add_argument("--books", nargs="+", required=True,
+                    help="book (pecha) IDs to run, for example the test books of the layer")
+    ap.add_argument("--out", default="scratch/tsawa/zeroshot",
+                    help="folder for the per-window reply cache and the score summary")
+    ap.add_argument("--prompt", default=str(PROMPT),
+                    help="prompt file (default: the layer's own prompt, for example docs/prompts/gemini_<layer>_anchors.md)")
+    ap.add_argument("--model", default="gemini-3.1-flash-lite", help="model name (default gemini-3.1-flash-lite)")
+    ap.add_argument("--provider", choices=["gemini", "anthropic"], default="gemini",
+                    help="API to call (gemini needs GEMINI_API_KEY)")
     ap.add_argument("--layer", choices=["tsawa", "quotation", "sabche", "chapter"], default="tsawa",
                     help="which gold layer to score against; also the label "
                          "the model is expected to return")
-    ap.add_argument("--window", type=int, default=16000)
-    ap.add_argument("--overlap", type=int, default=2000)
-    ap.add_argument("--temperature", type=float, default=1.0)
-    ap.add_argument("--rpm", type=float, default=15.0)
+    ap.add_argument("--window", type=int, default=16000, help="window length in characters (default 16000)")
+    ap.add_argument("--overlap", type=int, default=2000, help="overlap between windows in characters (default 2000)")
+    ap.add_argument("--temperature", type=float, default=1.0, help="sampling temperature (default 1.0)")
+    ap.add_argument("--rpm", type=float, default=15.0, help="requests per minute limit (default 15)")
     ap.add_argument("--max-windows", type=int, default=0,
                     help="per book; 0 means all")
     ap.add_argument("--stop-after", type=int, default=0,

@@ -201,7 +201,7 @@ _AUTHOR_W = None
 
 
 def title_features(text, start, span, region, kind, stop_i, n_stop):
-    """Readable features of one title candidate. Weights from ta_rule_fit.py title."""
+    """Readable features of one title candidate. Weights from fit_ta_rules.py title."""
     before = text[max(0, start - 40): start]
     after = text[start + len(span): start + len(span) + 28]
     f = {"bias": 1.0, "region_tail": float(region == "tail"),
@@ -466,7 +466,7 @@ def before_cue(text, name, m):
 
 
 def cand_features(text, m, name, region, whole):
-    """Readable features of one author candidate. The weights come from ta_rule_fit.py."""
+    """Readable features of one author candidate. The weights come from fit_ta_rules.py."""
     right = text[m.end(): m.end() + 160]
     f = {"bias": 1.0, "glued": float(m.group(1) is None and m.group("gen") is None and m.group("named") is None), "gen": float(m.group("gen") is not None), "named": float(m.group("named") is not None), "nas": float(m.group(1) == "ནས"),
          "region_tail": float(region == "tail"), "whole": float(bool(whole))}

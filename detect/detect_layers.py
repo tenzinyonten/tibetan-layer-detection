@@ -20,6 +20,10 @@ Usage
     tibetan-detect --text data/raw_opf/P000201.opf/P000201.opf/base/v001.txt \\
         --all --json --opf --out results/
 
+Limits: there is no --skip-quotation here (tibetan-infer has it): selecting tsawa
+always also runs the quotation model, so Stage 3 can drop quoted tsawa.
+The three stages hold the real options; see tibetan-infer --help for the rest.
+
 Under --out, this creates:
     <out>/preprocessed/   Stage 1 output
     <out>/predictions/    Stage 2 output
@@ -40,10 +44,11 @@ def parse_args(argv=None) -> argparse.Namespace:
     src = ap.add_mutually_exclusive_group(required=True)
     src.add_argument("--text", type=Path, help="a single text file")
     src.add_argument("--dir", type=Path, help="a folder of .txt files or OpenPecha book folders")
-    ap.add_argument("--layers", nargs="+", choices=list(LAYERS), default=None)
+    ap.add_argument("--layers", nargs="+", choices=list(LAYERS), default=None,
+                    help="layers to run, e.g. tsawa sabche (or use --all)")
     ap.add_argument("--all", action="store_true", help="run every layer with a model configured")
-    ap.add_argument("--json", action="store_true")
-    ap.add_argument("--html", action="store_true")
+    ap.add_argument("--json", action="store_true", help="write <book_id>.json (spans, confidence, review_needed) under <out>/output/")
+    ap.add_argument("--html", action="store_true", help="write <book_id>.html, the text with coloured spans, under <out>/output/")
     ap.add_argument("--opf", action="store_true",
                     help="also write predictions as OpenPecha layer YAML under "
                          "layers/predicted/ (never layers/v001/)")
@@ -63,7 +68,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap.add_argument("--review-threshold", type=float, default=None,
                     help="flag a span review_needed below this confidence, for every layer. "
                          "Default: each layer's own threshold (see layer_config.py)")
-    ap.add_argument("--out", type=Path, default=Path("results"))
+    ap.add_argument("--out", type=Path, default=Path("results"),
+                    help="root folder; holds preprocessed/, predictions/ and output/ (default: results)")
     ap.add_argument("--device", default=None, help="default: cuda if available, else cpu")
     ap.add_argument("--stride", type=int, default=None,
                     help="override every selected layer's window stride; default keeps "
