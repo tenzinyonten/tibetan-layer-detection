@@ -24,6 +24,7 @@ from pathlib import Path
 from . import infer as _infer
 from . import postprocess as _postprocess
 from . import preprocess as _preprocess
+from . import stage_args as _args
 from .layer_config import LAYERS
 
 __all__ = ["detect", "LAYERS"]
@@ -100,31 +101,17 @@ def detect(path, layers="all", *, out_dir=None, device=None, review_threshold: f
         pre_dir, pred_dir, stage3_dir = base / "preprocessed", base / "predictions", base / "output"
 
         _preprocess.main(["--input", str(path), "--out", str(pre_dir)])
-        infer_argv = ["--input", str(pre_dir), "--out", str(pred_dir),
-                     "--layers", *layer_names, "--device", device]
         # detect() already lists layers; infer still auto-adds quotation when
         # tsawa is requested so unannotated books get a model quote mask.
-        if stride is not None:
-            infer_argv += ["--stride", str(stride)]
-        if dual_window:
-            infer_argv += ["--dual-window"]
-        infer_argv += ["--author-span", author_span]
-        for flag, val in (("--title-model", title_model), ("--author-model", author_model)):
-            if val:
-                infer_argv += [flag, str(val)]
+        infer_argv = _args.infer_args(pre_dir, pred_dir, layers=layer_names, device=device, stride=stride,
+                                      dual_window=dual_window, author_span=author_span,
+                                      title_model=title_model, author_model=author_model)
         _infer.main(infer_argv)
 
-        post_argv = ["--input", str(pred_dir), "--source", str(pre_dir), "--out", str(stage3_dir), "--json"]
-        if review_threshold is not None:
-            post_argv += ["--review-threshold", str(review_threshold)]
-        if title_author_review_threshold is not None:
-            post_argv += ["--title-author-review-threshold", str(title_author_review_threshold)]
-        if title_author_opf:
-            post_argv.append("--title-author-opf")
-        if write_html:
-            post_argv.append("--html")
-        if write_opf:
-            post_argv.append("--opf")
+        post_argv = _args.postprocess_args(
+            pred_dir, pre_dir, stage3_dir, review_threshold=review_threshold,
+            title_author_review_threshold=title_author_review_threshold,
+            title_author_opf=title_author_opf, json=True, html=write_html, opf=write_opf)
         _postprocess.main(post_argv)
 
         book_files = [fp for fp in sorted(stage3_dir.glob("*.json"))
