@@ -9,14 +9,14 @@ One token-classification model per layer of a Tibetan pecha (OpenPecha `.opf`): 
 
 ```mermaid
 flowchart TD
-  L1["Tsawa"] --> C
-  L2["Sabche"] --> C
-  L3["Chapter"] --> C
-  L4["Quotation"] --> C
-  L5["Yigchung"] --> C
-  L6["Title and author"] --> C
-  C["common/<br/><i>train and evaluate</i>"] --> H(["Hugging Face"])
-  H --> D["detect/<br/><i>tibetan-detect</i>"]
+  L1["Tsawa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"] --> C
+  L2["Sabche&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"] --> C
+  L3["Chapter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"] --> C
+  L4["Quotation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"] --> C
+  L5["Yigchung&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"] --> C
+  L6["Title and author&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"] --> C
+  C["common/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>train and evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> H(["Hugging Face&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+  H --> D["detect/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>tibetan-detect&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
 ```
 
 Each layer folder builds its dataset; `common/` trains and scores one model per layer; the models are published and `detect/` runs them on a book.

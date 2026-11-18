@@ -39,21 +39,21 @@ General system (benchmark only):
 
 ```mermaid
 flowchart TD
-  subgraph PREP["Prepare data"]
+  subgraph PREP["Prepare data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"]
-    S1 --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
-    S2 --> F2(["Corrected test set"])
+    F1(["BDRC dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]) --> S1["Fetch dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>fetch_yigchung_hub.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S1 --> S2["Build benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_yigchung_benchmark_after.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S2 --> F2(["Corrected test set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph TRAIN["Train"]
+  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    T1["Train elsewhere<br/><i>not in this repo</i>"] --> F3(["General model"])
+    T1["Train elsewhere&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>not in this repo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F3(["General model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph EVAL["Evaluate"]
+  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F4(["Predictions"])
-    F4 --> E2["Score<br/><i>score_yigchung_benchmark.py</i>"]
-    E2 --> F5(["Benchmark scores"])
+    E1["Predict&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/predict_layer_spans.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F4(["Predictions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    F4 --> E2["Score&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>score_yigchung_benchmark.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    E2 --> F5(["Benchmark scores&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
   PREP --> TRAIN
   TRAIN --> EVAL
@@ -63,22 +63,22 @@ Classified (genre) system:
 
 ```mermaid
 flowchart TD
-  subgraph PREP["Prepare data"]
+  subgraph PREP["Prepare data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"] --> S2["Combine Lotsawa<br/><i>merge_yigchung_lotsawa.py</i>"]
-    S2 --> S3["Build genre sets<br/><i>build_yigchung_genre_datasets.py</i>"]
-    S3 --> S4["Build BIO windows<br/><i>build_yigchung_genre_bio.py</i>"]
-    S4 --> F1(["Classified dataset"])
-    S0["Label genres<br/><i>classify_yigchung_genre.py</i>"] -.-> S3
-    S3 -.-> S5["Propose split<br/><i>stratify_yigchung_genre.py</i>"]
+    S1["Fetch dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>fetch_yigchung_hub.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> S2["Combine Lotsawa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>merge_yigchung_lotsawa.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S2 --> S3["Build genre sets&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_yigchung_genre_datasets.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S3 --> S4["Build BIO windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_yigchung_genre_bio.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S4 --> F1(["Classified dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    S0["Label genres&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>classify_yigchung_genre.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] -.-> S3
+    S3 -.-> S5["Propose split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>stratify_yigchung_genre.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
-  subgraph TRAIN["Train"]
+  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    T1["Train model<br/><i>common/train_layer.py</i>"] --> F2(["Classified model"])
+    T1["Train model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/train_layer.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F2(["Classified model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph EVAL["Evaluate"]
+  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> E2["Analyze errors<br/><i>analyze_yigchung_predictions.py</i>"]
+    E1["Predict&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/predict_layer_spans.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> E2["Analyze errors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>analyze_yigchung_predictions.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL

@@ -32,26 +32,26 @@ All four are private (read from the Hub, 2026-11-18); a 404 means you need acces
 
 ```mermaid
 flowchart TD
-  subgraph PREP["Prepare data"]
+  subgraph PREP["Prepare data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    F1(["Annotator spans"]) --> S1["Build gold dataset<br/><i>build_ta_gold_dataset.py</i>"]
-    S1 --> S2["Add v3 works<br/><i>build_ta_v3_addon.py</i>"]
-    S2 --> S3["Export parquet<br/><i>export_ta_parquet.py</i>"]
-    S3 --> S4["Drop translators<br/><i>clean_ta_translators.py</i>"]
-    S4 --> S5["Strip underscore<br/><i>clean_ta_underscores.py</i>"]
-    S5 --> F2(["Final data (_nous)"])
-    F2 --> S6["Push dataset<br/><i>push_ta_dataset.py</i>"]
-    S6 --> F3(["HF datasets"])
+    F1(["Annotator spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]) --> S1["Build gold dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_ta_gold_dataset.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S1 --> S2["Add v3 works&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_ta_v3_addon.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S2 --> S3["Export parquet&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>export_ta_parquet.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S3 --> S4["Drop translators&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>clean_ta_translators.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S4 --> S5["Strip underscore&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>clean_ta_underscores.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S5 --> F2(["Final data (_nous)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    F2 --> S6["Push dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>push_ta_dataset.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S6 --> F3(["HF datasets&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph TRAIN["Train"]
+  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction LR
-    T1["Train model<br/><i>common/train_layer.py</i>"] --> T2["Upload model<br/><i>Hugging Face CLI</i>"]
-    T2 --> F4(["HF models"])
+    T1["Train model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/train_layer.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> T2["Upload model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>Hugging Face CLI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    T2 --> F4(["HF models&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph EVAL["Evaluate"]
+  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction LR
-    E1["Predict logits<br/><i>predict_ta.py</i>"] --> E2["Flatten logits<br/><i>converter, not in repo</i>"]
-    E2 --> E3["Score model<br/><i>score_ta_mmbert_single.py</i>"]
+    E1["Predict logits&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>predict_ta.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> E2["Flatten logits&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>converter, not in repo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    E2 --> E3["Score model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>score_ta_mmbert_single.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL
@@ -114,14 +114,14 @@ Decoding is Viterbi, then one span per work: the title is the first span, the au
 
 ```mermaid
 flowchart TD
-  K1(["Text file"]) --> K2["Cut text<br/><i>ta.py</i>"]
-  K2 --> K3["Model answer<br/><i>title_author_skill.py</i>"]
-  K2 -.-> K4["Rule guess<br/><i>ta_rule_extract.py</i>"]
-  K3 --> K5["Repair<br/><i>title_author_skill.py</i>"]
+  K1(["Text file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]) --> K2["Cut text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>ta.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+  K2 --> K3["Model answer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>title_author_skill.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+  K2 -.-> K4["Rule guess&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>ta_rule_extract.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+  K3 --> K5["Repair&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>title_author_skill.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   K4 -.-> K5
-  K5 --> K6["Flags<br/><i>title_author_fix.py</i>"]
-  K6 --> K8(["Answer JSON"])
-  K6 -.-> K7["Second look<br/><i>title_author_skill.py</i>"]
+  K5 --> K6["Flags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>title_author_fix.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+  K6 --> K8(["Answer JSON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+  K6 -.-> K7["Second look&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>title_author_skill.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   K7 -.-> K8
 ```
 

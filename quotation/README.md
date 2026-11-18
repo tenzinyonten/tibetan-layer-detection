@@ -29,25 +29,25 @@ Read from the Hub with the local login on 2026-11-18. A 404 on the model means y
 
 ```mermaid
 flowchart TD
-  subgraph PREP["Prepare data"]
+  subgraph PREP["Prepare data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    F1(["OpenPecha books"]) --> S1["Download books<br/><i>download_data.py</i>"]
-    S1 --> S2["Review spans<br/><i>review_quotations.py</i>"]
-    S2 --> F2(["Quotation gold"])
-    F2 --> S3["Make split<br/><i>build_quotation_benchmark.py</i>"]
-    S3 --> S4["Build windows<br/><i>build_quotation_windows.py</i>"]
-    S4 --> S5["Relabel to BIOE<br/><i>relabel_quotation_bioe.py</i>"]
-    S5 --> F3(["HF dataset"])
+    F1(["OpenPecha books&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]) --> S1["Download books&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>download_data.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S1 --> S2["Review spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>review_quotations.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S2 --> F2(["Quotation gold&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    F2 --> S3["Make split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_quotation_benchmark.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S3 --> S4["Build windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_quotation_windows.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S4 --> S5["Relabel to BIOE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>relabel_quotation_bioe.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S5 --> F3(["HF dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph TRAIN["Train"]
+  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction LR
-    S6["Train model<br/><i>train.py</i>"] --> S7["Upload model<br/><i>upload_model.py</i>"]
-    S7 --> F4(["HF model"])
+    S6["Train model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>train.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> S7["Upload model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>upload_model.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S7 --> F4(["HF model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
   end
-  subgraph EVAL["Evaluate"]
+  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction LR
-    S8["Evaluate<br/><i>eval_quotation_v3.py</i>"] --> F5(["Scores"])
-    S8 -.-> S9["Reviewed gold<br/><i>eval_quotation_reviewed.py</i>"]
+    S8["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>eval_quotation_v3.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F5(["Scores&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    S8 -.-> S9["Reviewed gold&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>eval_quotation_reviewed.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL

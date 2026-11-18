@@ -30,25 +30,25 @@ Visibility read from the Hub on 2026-11-18; a 404 on the dataset means you need 
 
 ```mermaid
 flowchart TD
-  subgraph PREP["Prepare data"]
+  subgraph PREP["Prepare data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction TB
-    S1["Audit repos<br/><i>audit_tsawa_data.py</i>"] --> S2["Snap boundaries<br/><i>snap_tsawa_boundaries.py</i>"]
-    S2 --> S3["Resolve overlaps<br/><i>resolve_tsawa_overlaps.py</i>"]
-    S3 --> S4["Merge spans<br/><i>merge_tsawa_spans.py</i>"]
-    S4 --> F1(["Merged spans"])
-    F1 --> S5["Make split<br/><i>prepare_tsawa_v6.py</i>"]
-    S5 --> S6["Build dataset<br/><i>build_tsawa_v10_dataset.py</i>"]
-    S7["Add classical<br/><i>convert_tsawa_classical_v3.py</i>"] --> S6
-    S6 --> S8["Patch validation<br/><i>patch_tsawa_validation.py</i>"]
-    S8 --> S9["Push dataset<br/><i>push_tsawa_v11_dataset.py</i>"]
+    S1["Audit repos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>audit_tsawa_data.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> S2["Snap boundaries&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>snap_tsawa_boundaries.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S2 --> S3["Resolve overlaps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>resolve_tsawa_overlaps.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S3 --> S4["Merge spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>merge_tsawa_spans.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S4 --> F1(["Merged spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    F1 --> S5["Make split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>prepare_tsawa_v6.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S5 --> S6["Build dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_tsawa_v10_dataset.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S7["Add classical&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>convert_tsawa_classical_v3.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> S6
+    S6 --> S8["Patch validation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>patch_tsawa_validation.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S8 --> S9["Push dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>push_tsawa_v11_dataset.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
-  subgraph TRAIN["Train"]
+  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction LR
-    T1["Train model<br/><i>common/train_layer.py</i>"] --> T2["Upload model<br/><i>Hugging Face CLI</i>"]
+    T1["Train model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/train_layer.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> T2["Upload model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>Hugging Face CLI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
-  subgraph EVAL["Evaluate"]
+  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
     direction LR
-    E1["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] -.-> E2["Rescore masked<br/><i>eval_tsawa_masked.py</i>"]
+    E1["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/eval_viterbi_iou.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] -.-> E2["Rescore masked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>eval_tsawa_masked.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL
