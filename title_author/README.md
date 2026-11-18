@@ -40,7 +40,7 @@ Squares are steps with the script that runs them; rounded boxes are files. The *
 
 | Script | What it does | When to run |
 |---|---|---|
-| [build_ta_gold_dataset.py](src/build_ta_gold_dataset.py) | Builds the tokenized 5-label BIO dataset from annotator spans. | First; needs `ta_load_spans` (missing). |
+| [build_ta_gold_dataset.py](src/build_ta_gold_dataset.py) | Builds the tokenized 5-label BIO dataset from annotator spans. | First; needs the annotator JSON folder. |
 | [build_ta_addon.py](src/build_ta_addon.py) | Adds auto-labelled BDRC v3 works to train only. | After the gold dataset. |
 | [export_ta_parquet.py](src/export_ta_parquet.py) | Exports raw text and character-offset spans as Parquet. | After the v3 add-on. |
 | [clean_ta_translators.py](src/clean_ta_translators.py) | Drops works whose gold author is a translator. | After export. |
@@ -55,7 +55,7 @@ Squares are steps with the script that runs them; rounded boxes are files. The *
 All commands run from the repository root. **The test split is refused unless `ALLOW_TEST=1` is set: use it once, for the final score.**
 
 ```bash
-# 1-5. Build the data (steps 1 and 3 need ta_load_spans, which is not in this repo)
+# 1-5. Build the data (steps 1 and 3 read the annotator JSONs through ta_load_spans; set TA_GOLD_DIR to their folder)
 python title_author/src/build_ta_gold_dataset.py --all --single --clean --tag strat
 python title_author/src/build_ta_addon.py CLEAN_DIR --base gold_dataset_all --single
 python title_author/src/export_ta_parquet.py CLEAN_DIR
@@ -126,7 +126,7 @@ Either one right: joint model or skill, title 0.881, author 0.837; title-only or
 
 <details><summary>Show 7 known issues</summary>
 
-- `build_ta_gold_dataset.py`, `export_ta_parquet.py` and `build_ta_addon.py` import `ta_load_spans`. It is not in the repo and was never committed; a search of the author's machine found no copy, so these three scripts cannot run from a fresh clone (no other script imports it). From how they use it, it must provide `GOLD` (the folder of annotator JSON files, each with `content` and `segments`), `TRAIN_SOURCES`, `load()` (its first item is a list of rows with `file`, `cid`, `source`, `seg`, `span_start`, `span_end`, `title_span`, `author_span`, `title_text`, `author_text`) and `parse_name`. `--split-csv` comes from `ta_restratify.py`, also absent.
+- The annotator JSON folder (`json_files_title_author_spans_2026-10-29`, one JSON per volume with `content` and `segments`) is not in the repo; `ta_load_spans.py` reads it (set `TA_GOLD_DIR` to its path). `ta_load_spans.py` itself was never committed: it was restored on 2026-11-18 from the session command that first wrote it, and tested only on a small made-up folder, not on the real data. `--split-csv` comes from `ta_restratify.py`, which is still not in `src/`.
 - `clean_ta_translators.py` and `clean_ta_underscores.py` have the folder names `gold_dataset_all_strat_single_v3_both[_notrans]` and `parquet_export_strat_both[_notrans]` fixed in the code; the flags that produced them are not recorded, so steps 1 to 3 are the documented usage, not a verified reproduction.
 - `score_ta_mmbert.py` and `score_ta_mmbert_single.py` read `*_flat.npz` files made by a converter from the `predict_ta.py` logits; the converter is not in this repo.
 - `rank_ta_rules.py` has the path `/Users/tenzinyonten/layer_detection/title_author/src` hardcoded for import and output; the saved `data/rule_runs/*/results.json` carry the same machine path. Which of `fit_ta_rules.py` and `rank_ta_rules.py` made the shipped author weights is not stated.
@@ -146,6 +146,7 @@ title_author/
 ├── src/
 │   ├── build_ta_gold_dataset.py       # tokenized 5-label BIO dataset from annotator spans
 │   ├── build_ta_addon.py           # adds v3 auto-labelled works (train only)
+│   ├── ta_load_spans.py            # helper: reads the annotator JSONs, one row per work (imported by three scripts)
 │   ├── fill_ta_spans.py            # find the typed title (first hit) and author (last hit) in a work's text
 │   ├── export_ta_parquet.py           # raw-text Parquet export (no caller found)
 │   ├── clean_ta_translators.py          # drops works with a translator author
