@@ -35,19 +35,11 @@ The general model replaced the earlier one on 2026-11-17 (kept under tag `v1`). 
 
 ## Pipeline
 
-General system (benchmark only):
-
 ![Pipeline flowchart](docs/pipeline.png)
 
 <sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Classified (genre) system:
-
-![Pipeline flowchart](docs/pipeline_2.png)
-
-<sub>Chart source: [pipeline_2.mmd](docs/pipeline_2.mmd)</sub>
-
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the corrected 77-book test set, scored once. The Gemini runs shown in the second chart label each book's genre (several prompt versions); the optional LLM box stands for zero-shot or other Gemini and Claude analysis; no such results are saved in this repo. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the corrected 77-book test set, scored once. The general model was trained elsewhere, so only its benchmark steps (fetch, build benchmark, predict, score) are in this repo; the classified system has the full pipeline. The Gemini genre runs label each book's genre (several prompt versions); the optional LLM box stands for zero-shot or other Gemini and Claude analysis; no such results are saved in this repo. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
 
 ## Main pipeline
 

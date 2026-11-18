@@ -2,19 +2,25 @@
 flowchart TD
   subgraph PREP["Prepare data"]
     direction TB
-    F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"]
-    S1 --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
-    S2 --> F2(["Benchmark<br/>(corrected test set)"])
+    S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"] --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
+    S2 --> F1(["Benchmark<br/>(corrected test set)"])
+    S1 --> S3["Combine Lotsawa<br/><i>merge_yigchung_lotsawa.py</i>"]
+    S3 --> S4["Build genre sets<br/><i>build_yigchung_genre_datasets.py</i>"]
+    G["Gemini genre runs<br/><i>classify_yigchung_genre.py</i>"] -.-> S4
+    S4 --> S5["Build BIO windows<br/><i>build_yigchung_genre_bio.py</i>"]
+    S5 --> F2(["Classified dataset"])
+    S4 -.-> S6["Propose split<br/><i>stratify_yigchung_genre.py</i>"]
   end
   subgraph TRAIN["Train"]
-    direction TB
-    T1["Train elsewhere<br/><i>not in this repo</i>"] --> F3(["General model"])
+    direction LR
+    T1["Train classified<br/><i>common/train_layer.py</i>"] --> F3(["Classified model"])
+    T2["Train general<br/><i>elsewhere, not in repo</i>"] --> F4(["General model"])
   end
   subgraph EVAL["Evaluate"]
-    direction TB
-    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F4(["Predictions"])
-    F4 --> E2["Score<br/><i>score_yigchung_benchmark.py</i>"]
-    E2 --> F5(["Benchmark scores"])
+    direction LR
+    E1["Predict<br/><i>common/predict_layer_spans.py</i>"] --> F5(["Predictions"])
+    F5 --> E2["Score on benchmark<br/><i>score_yigchung_benchmark.py</i>"]
+    F5 -.-> E3["Analyze errors<br/><i>analyze_yigchung_predictions.py</i>"]
   end
   subgraph BASE["Zero-shot and other LLM runs (optional)"]
     direction LR
