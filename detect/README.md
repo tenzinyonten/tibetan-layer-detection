@@ -71,9 +71,8 @@ tibetan-detect --dir books/ --layers tsawa sabche --json --out results/
 tibetan-preprocess --input data/raw_opf/ --out preprocessed/
 tibetan-infer --input preprocessed/ --out predictions/ --all --device cuda
 tibetan-postprocess --input predictions/ --source preprocessed/ --out output/ --json --html --opf
-# 4. Title from the model, author from the paid LLM skill (about Rs 0.29 per work)
-tibetan-infer --input preprocessed/ --out predictions/ --layers title author \
-    --title-system model --author-system skill
+# 4. A whole book: take the first author span (the title page), and write title and author to .opf
+tibetan-detect --text book.txt --all --json --opf --title-author-opf --author-span first --out results/
 ```
 
 **The infer checkpoint only checks that `predictions/<id>.json` exists: after adding a layer, use a new `--out`.**
@@ -86,7 +85,7 @@ tibetan-infer --input preprocessed/ --out predictions/ --layers title author \
 
 ## Title and author
 
-Not window layers: one forward pass over the first and last 3,000 characters gives one title (first span) and one author (last span). `--title-author-system model|skill|both` (or `--title-system`, `--author-system`) chooses the system per field; the skill is paid and needs `GEMINI_API_KEY` or `ANTHROPIC_API_KEY`. Test share correct (2,384 works): title model 0.842; author model 0.734, skill 0.756. Details are in the docstrings of [title_author.py](title_author.py) and [layer_config.py](layer_config.py), which also holds the per-layer decoding table.
+Not window layers: one forward pass over the first and last 3,000 characters gives one title (first span) and one author (last span). Both come from the trained models only (`--title-model` and `--author-model` choose other models). `--author-span first|last` picks which author span to keep: `last` (the default) suits a single work, `first` suits a whole book whose authors are on the title page. `--title-author-opf` with `--opf` writes `BookTitle.yml` and `Author.yml`. The paid LLM skill is no longer an option here; it stays under `title_author/` as research. Test share correct (2,384 works): title model 0.842, author model 0.734. Details are in the docstrings of [title_author.py](title_author.py) and [layer_config.py](layer_config.py), which also holds the per-layer decoding table.
 
 ## Known issues
 
