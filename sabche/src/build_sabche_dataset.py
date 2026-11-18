@@ -5,8 +5,25 @@ Reuses the tsawa builder's labeling / windowing (``label_tokens``,
 ``sliding_windows``, ``pack_window``) with a Sabche label map. Inputs are the
 cleaned sidecar and the frozen Sabche split; nothing is re-cleaned here.
 
+Labels: ``O`` 0, ``B-SABCHE`` 1, ``I-SABCHE`` 2; special and padding
+positions get the ignore label. Windows are ``--max-length`` tokens (default
+8192, so 8190 content tokens) with stride ``--stride`` (default 5120).
+Spans marked ``dropped`` in the sidecar, and books not in the split file, are
+skipped. The script stops if a split book has no active span or if two spans of
+a book overlap. Class weights (inverse frequency, train only) are written to
+the stats file, not used here. ``source_batch`` is ``old`` for ids starting
+with ``P``, else ``new``.
+
+Reads:
+    --audit-csv (data/shared/tsawa_audit.csv; ``base_path`` of each book),
+    --sidecar (sabche_spans_clean.csv), --split-file (sabche_split_frozen.csv),
+    and the tokenizer ``--tokenizer`` (downloaded from the Hub).
+Writes:
+    --out-dir (Arrow DatasetDict with train / validation / test, gitignored)
+    and --stats-json (windows, documents, label counts, class weights).
+
 Usage:
-    python sabche/src/build_sabche_dataset.py
+    python sabche/src/build_sabche_dataset.py [--limit N]
 """
 
 from __future__ import annotations
@@ -35,15 +52,26 @@ SPLIT_NAMES = {"train": "train", "val": "validation", "test": "test"}
 
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--audit-csv", type=Path, default=ROOT / "data/shared/tsawa_audit.csv")
-    p.add_argument("--sidecar", type=Path, default=ROOT / "sabche/data/processed/sabche_spans_clean.csv")
-    p.add_argument("--split-file", type=Path, default=ROOT / "sabche/data/processed/sabche_split_frozen.csv")
-    p.add_argument("--tokenizer", default="jhu-clsp/mmBERT-base")
-    p.add_argument("--max-length", type=int, default=8192)
-    p.add_argument("--stride", type=int, default=5120)
-    p.add_argument("--out-dir", type=Path, default=ROOT / "sabche/data/processed/sabche_dataset")
-    p.add_argument("--stats-json", type=Path, default=ROOT / "sabche/data/processed/sabche_dataset_stats.json")
-    p.add_argument("--limit", type=int, default=None, help="debug: first N documents only")
+    p.add_argument("--audit-csv", type=Path, default=ROOT / "data/shared/tsawa_audit.csv",
+                   help="book table with base_path (default data/shared/tsawa_audit.csv)")
+    p.add_argument("--sidecar", type=Path, default=ROOT / "sabche/data/processed/sabche_spans_clean.csv",
+                   help="cleaned span table; rows with dropped=True are skipped "
+                        "(default sabche/data/processed/sabche_spans_clean.csv)")
+    p.add_argument("--split-file", type=Path, default=ROOT / "sabche/data/processed/sabche_split_frozen.csv",
+                   help="frozen split: pecha_id,split with train/val/test "
+                        "(default sabche/data/processed/sabche_split_frozen.csv)")
+    p.add_argument("--tokenizer", default="jhu-clsp/mmBERT-base",
+                   help="fast tokenizer with offset mapping (default jhu-clsp/mmBERT-base)")
+    p.add_argument("--max-length", type=int, default=8192,
+                   help="tokens per window including CLS and SEP (default 8192)")
+    p.add_argument("--stride", type=int, default=5120,
+                   help="window step in content tokens (default 5120)")
+    p.add_argument("--out-dir", type=Path, default=ROOT / "sabche/data/processed/sabche_dataset",
+                   help="where the Arrow dataset is saved (default sabche/data/processed/sabche_dataset)")
+    p.add_argument("--stats-json", type=Path, default=ROOT / "sabche/data/processed/sabche_dataset_stats.json",
+                   help="window, document, label counts and class weights "
+                        "(default sabche/data/processed/sabche_dataset_stats.json)")
+    p.add_argument("--limit", type=int, default=None, help="debug: use only the first N documents (sorted by id); default all")
     return p.parse_args(argv)
 
 

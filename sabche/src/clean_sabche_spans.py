@@ -21,6 +21,30 @@ Steps, per book with a non-empty Sabche layer:
 Adjacent spans are **not** merged: in this layer they are separate outline
 headings, one per line.
 
+Thresholds (module constants): ``SWITCH_COST`` 3.0, ``MIN_GAIN`` 0.20,
+``MIN_HEADING`` 0.60, ``EXCLUDE_BELOW`` 0.30, ``MAX_WALK`` 3 characters,
+``WINDOW`` 50,000 characters (anchor search range around a span). A
+heading-like span has an ordinal word near its start, ``ནི`` near its end, a
+numbered opening, or sits alone on a line. Books are only re-aligned when the
+raw heading-like rate is below ``MIN_HEADING``. After re-alignment, a span that
+was snapped but is still not heading-like is dropped
+(reason ``realigned_span_unverified``); every span of an excluded book is
+dropped (reason ``book_excluded_unrecoverable_offsets``). Where snapping makes
+two neighbours overlap, the earlier span is trimmed (action ``trim_overlap``).
+
+Flags: none. All paths are constants in this file.
+
+Reads:
+    data/shared/tsawa_audit.csv (book list; ``opf_root`` and ``base_path``),
+    each book's ``<opf_root>/layers/v001/Sabche.yml`` and its base text;
+    ``common/check_boundary_snapping.py`` (``BOUNDARY_CHARS``).
+Writes:
+    sabche/data/processed/sabche_spans_clean.csv (one row per span: raw and
+    final start/end, action, dropped, reason) and
+    sabche/data/processed/sabche_book_verdicts.csv (per book: raw and final
+    heading-like rate, realigned, offset segments, verdict keep / realigned /
+    exclude).
+
 Usage:
     python sabche/src/clean_sabche_spans.py
 """
