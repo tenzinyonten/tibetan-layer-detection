@@ -101,10 +101,12 @@ Test split, 22 benchmark books. Numbers are copied from the [model card](docs/mo
 
 | Split | F1 | P | R |
 |---|---|---|---|
-| Test, 22 benchmark books (3,180 gold spans) | 0.842 | 0.811 | 0.876 |
+| Test, 22 benchmark books (3,180 gold spans, per window) | 0.842 | 0.811 | 0.876 |
 | Test, with the quotation filter | 0.890 | 0.916 | 0.865 |
 | Validation (v11 labels) | 0.789 | 0.726 | 0.863 |
 | classical_test (6 commentaries) | 0.959 | 0.941 | 0.978 |
+
+The 22 test books hold 1,976 distinct spans; overlapping windows count a span in each window, which gives the 3,180, so these scores are per window, not per whole book and not comparable with whole-book scores.
 
 The quotation filter drops a predicted Tsawa span when at least 50% of it lies inside spans predicted by `BDRC/Bo-Quotation-Detection`; it was tested only on this test set. `classical_test` shares root verses with training commentaries (about 99% of its verses also occur in a train commentary), so it measures recall of seen root text, not generalisation. Stricter overlap is weaker: F1 0.814 at IoU 0.9, 0.637 at exact match.
 
