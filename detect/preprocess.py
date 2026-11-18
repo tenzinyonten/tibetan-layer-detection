@@ -18,6 +18,11 @@ P000201.opf/P000201.opf/base/v001.txt -> P000201), stripping a trailing
 ".opf", and warns rather than guessing when that grandparent doesn't look
 like a real OpenPecha id.
 
+Reads : UTF-8 text (falls back to errors="replace" with a warning; empty or
+unreadable files are skipped).
+Writes: <out>/<book_id>.json = {book_id, source_path, text, char_count,
+encoding, errors}.
+
 Usage (as an installed console script)
 ---------------------------------------
     tibetan-preprocess --input book.txt --out preprocessed/
@@ -101,7 +106,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--input", type=Path, required=True,
                     help=".txt file, OpenPecha book folder, or a folder of either")
-    ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--out", type=Path, required=True,
+                    help="folder to write one <book_id>.json per book into (created if missing)")
     return ap.parse_args(argv)
 
 
