@@ -5,7 +5,15 @@ Per work (TEXT segment): keep head [0,K) and tail [L-K,L) of the segment text (w
 Spans come from the provided offsets only. Labels: token-start rule via common/build_tsawa_dataset.label_tokens.
 Split by group of collection ids (ids linked by shared text / shared title+author are one group).
 
-    python title_author/src/ta_build_gold_dataset.py [--limit N]
+    python title_author/src/ta_build_gold_dataset.py [--all] [--single] [--clean] [--crop chars|paras] [--k 3000]
+        [--max-length 8192] [--stride 5120] [--seed 42] [--split-csv CSV] [--tag TAG] [--tokenizer DIR] [--out-dir DIR] [--limit N]
+    The documented first step is: --all --single --clean --tag strat.
+
+Reads: the annotator span JSONs through ta_load_spans (not in this repo, so the script cannot run from a fresh clone), the mmBERT-base
+tokenizer (default: the Hugging Face cache snapshot, override with --tokenizer), and, with --split-csv, a per-work split file.
+Writes under title_author/data/processed/: the DatasetDict gold_dataset[_all][_TAG]/ (or --out-dir) and the sidecar CSVs
+gold_*_*.csv (spans sidecar, frozen split, and the lists of works dropped by cleaning, held-out overlap and duplicates).
+Labels: O, B-TITLE, I-TITLE, B-AUTHOR, I-AUTHOR. Window geometry: max length 8,192 tokens, stride 5,120 (--single packs head + separator + tail into one sequence).
 """
 import argparse, csv, hashlib, json, random, re, sys, zlib
 from collections import Counter, defaultdict
@@ -343,9 +351,9 @@ def main():
     ap.add_argument("--k", type=int, default=3000, help="chars kept at each end when --crop chars")
     ap.add_argument("--crop", choices=["chars", "paras"], default="chars",
                     help="chars: first/last K chars snapped to a line; paras: first 2 / last 2 blank-line paragraphs")
-    ap.add_argument("--max-length", type=int, default=8192)
-    ap.add_argument("--stride", type=int, default=5120)
-    ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--max-length", type=int, default=8192, help="tokens per window")
+    ap.add_argument("--stride", type=int, default=5120, help="window stride in tokens")
+    ap.add_argument("--seed", type=int, default=42, help="seed of the group-level split")
     ap.add_argument("--all", action="store_true",
                     help="include the OCR sources; clean split stays frozen, OCR gets train/validation_ocr/test_ocr")
     ap.add_argument("--split-csv", type=Path, default=None,
@@ -354,8 +362,9 @@ def main():
     ap.add_argument("--clean", action="store_true", help="drop junk-span works and strip the leading opening mark from titles")
     ap.add_argument("--tag", default="", help="suffix for output names, e.g. strat -> gold_dataset_all_strat, gold_all_strat_*.csv")
     ap.add_argument("--limit", type=int, default=None, help="debug: first N files")
-    ap.add_argument("--tokenizer", default=str(Path.home() / ".cache/huggingface/hub/models--jhu-clsp--mmBERT-base/snapshots/c5955035435e2bf121cde7f3c8863ef52ff35d82"))
-    ap.add_argument("--out-dir", type=Path, default=None)
+    ap.add_argument("--tokenizer", default=str(Path.home() / ".cache/huggingface/hub/models--jhu-clsp--mmBERT-base/snapshots/c5955035435e2bf121cde7f3c8863ef52ff35d82"),
+                    help="folder of the jhu-clsp/mmBERT-base tokenizer (default: the Hugging Face cache snapshot)")
+    ap.add_argument("--out-dir", type=Path, default=None, help="output DatasetDict folder (default: title_author/data/processed/gold_dataset[_all][_TAG])")
     a = ap.parse_args()
     a.out_dir = a.out_dir or OUT / (("gold_dataset_all" if a.all else "gold_dataset") + (f"_{a.tag}" if a.tag else ""))
     from datasets import Dataset, DatasetDict, Features, Sequence, Value

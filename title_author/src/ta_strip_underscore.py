@@ -1,7 +1,14 @@
 """Remove the '_' characters (a syllable-separator artifact of some sources) from the text, and shift the spans.
 
 Only '_' is removed. Reads the *_notrans copies, writes *_notrans_nous copies. Only works with a '_' are re-tokenized
-(same code path as ta_build_gold_dataset.py); a self-check re-tokenizes untouched works and compares them with the old rows."""
+(same code path as ta_build_gold_dataset.py); a self-check re-tokenizes untouched works and compares them with the old rows.
+
+    python title_author/src/ta_strip_underscore.py        (no arguments: the folder names are fixed in the script)
+
+Under title_author/data/processed/: reads parquet_export_strat_both_notrans/ and gold_dataset_all_strat_single_v3_both_notrans/ (from ta_drop_translator.py);
+writes parquet_export_strat_both_notrans_nous/ and gold_dataset_all_strat_single_v3_both_notrans_nous/. The _nous datasets are the final data pushed to the Hub.
+Uses the mmBERT-base tokenizer from the Hugging Face cache snapshot (path fixed in the script).
+"""
 import random, sys
 from pathlib import Path
 import pandas as pd

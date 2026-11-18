@@ -1,4 +1,11 @@
-"""Drop works whose gold author span contains ལོ་ཙཱ or ལོ་ཙྪ (translator word). Writes new copies; the inputs are not changed."""
+"""Drop works whose gold author span contains a translator word (ལོ་ཙཱ, ལོ་ཙྪ, ལོཙཱ, ལོཙྪ, ལོ་ཙ་བ). Writes new copies; the inputs are not changed.
+
+    python title_author/src/ta_drop_translator.py        (no arguments: the folder names are fixed in the script)
+
+Reads, under title_author/data/processed/: gold_dataset_all_strat_single_v3_both/ (tokenized) and parquet_export_strat_both/ (raw text).
+Writes: the same two folders with the suffix _notrans, and translator_dropped.csv (split, work_id, author of every dropped work).
+Next step: ta_strip_underscore.py.
+"""
 import re, shutil, json
 from pathlib import Path
 import pandas as pd
