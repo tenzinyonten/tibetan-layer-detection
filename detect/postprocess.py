@@ -23,6 +23,16 @@ pyyaml is a required dependency of this package (see pyproject.toml), so,
 unlike an earlier standalone version of this tool where PyYAML was made an
 optional lazy import, it is imported normally here at module level.
 
+Cleaning applied before writing (all stated in the output): drop spans under
+MIN_SPAN_CHARS (5) characters; drop tsawa spans covered at least
+QUOTE_COVERAGE_DROP (0.5) by predicted quotation spans (turn off with
+--keep-quoted-tsawa); drop spans with no Tibetan character. A span is flagged
+review_needed when its confidence is under the layer's threshold
+(--review-threshold, else layer_config.py).
+Reads : <input>/<id>.json (Stage 2) and <source>/<id>.json (Stage 1).
+Writes: <out>/<id>.json, <id>.html and the .opf layers on request,
+        <out>/_batch_summary.json and <out>/run_<timestamp>.json.
+
 Usage (as an installed console script)
 ---------------------------------------
     tibetan-postprocess --input predictions/ --source preprocessed/ \\
@@ -398,9 +408,12 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--input", type=Path, required=True, help="folder of Stage 2 predictions JSONs")
     ap.add_argument("--source", type=Path, required=True, help="folder of Stage 1 preprocessed JSONs")
-    ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--json", action="store_true")
-    ap.add_argument("--html", action="store_true")
+    ap.add_argument("--out", type=Path, required=True,
+                    help="folder for the final files, _batch_summary.json and the run log (created if missing)")
+    ap.add_argument("--json", action="store_true",
+                    help="write <book_id>.json: spans, confidence, review_needed and the dropped-span counts")
+    ap.add_argument("--html", action="store_true",
+                    help="write <book_id>.html: the text with coloured spans and a legend")
     ap.add_argument("--opf", action="store_true",
                     help="also write predictions as OpenPecha layer YAML under "
                          "layers/v001/ for plain .txt input, or layers/predicted/ for a real "
