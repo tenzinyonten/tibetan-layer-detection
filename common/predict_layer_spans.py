@@ -11,6 +11,10 @@ Usage (on the GPU machine):
         --model /workspace/runs/yigchung_genre_lotsawa/best \
         --dataset Yontenn/yigchung-genre-bio-lotsawa --splits validation \
         --out /workspace/runs/yigchung_genre_lotsawa/predictions_validation.json
+
+Reads a trained model and a dataset (local dir or Hub repo). --splits is a comma list
+(default validation); --break-penalty defaults to 5.0 (use the layer's model-card value).
+Writes one predictions JSON to --out: per document, the predicted and gold token spans.
 """
 from __future__ import annotations
 
@@ -30,12 +34,13 @@ import train_layer as tl  # noqa: E402
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--label-name", default="YIGCHUNG")
-    ap.add_argument("--model", required=True)
-    ap.add_argument("--dataset", required=True)
+    ap.add_argument("--label-name", default="YIGCHUNG",
+                    help="layer entity name, e.g. TSAWA, SABCHE, CHAPTER (default YIGCHUNG)")
+    ap.add_argument("--model", required=True, help="local path or Hub repo of the trained model")
+    ap.add_argument("--dataset", required=True, help="local dataset dir or Hub repo")
     ap.add_argument("--splits", default="validation", help="comma list, e.g. validation or validation,test")
     ap.add_argument("--break-penalty", type=float, default=5.0)
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out", required=True, help="file to write the predictions JSON to")
     args = ap.parse_args()
 
     tl.configure_label(args.label_name)
