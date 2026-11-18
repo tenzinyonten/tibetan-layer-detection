@@ -18,8 +18,16 @@ flowchart TD
   end
   subgraph EVAL["Evaluate"]
     direction LR
-    E1["Predict logits<br/><i>predict_ta.py</i>"] --> E2["Flatten logits<br/><i>converter, not in repo</i>"]
+    V(["Validation split<br/>(for tuning)"]) --> E1["Predict logits<br/><i>predict_ta.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> E1["Predict logits<br/><i>predict_ta.py</i>"]
+    E1 --> E2["Flatten logits<br/><i>converter, not in repo</i>"]
     E2 --> E3["Score model<br/><i>score_ta_mmbert_single.py</i>"]
+  end
+  subgraph BASE["Zero-shot LLM baselines"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) --> Z1["Run Gemini<br/><i>run_ta_gemini_batch.py</i>"]
+    Z1 --> Z2(["LLM scores"])
   end
   PREP --> TRAIN
   TRAIN --> EVAL
+  EVAL --> BASE

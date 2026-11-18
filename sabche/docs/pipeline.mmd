@@ -17,8 +17,16 @@ flowchart TD
   end
   subgraph EVAL["Evaluate"]
     direction LR
-    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
+    V(["Validation split<br/>(for tuning)"]) --> S7["Evaluate model<br/><i>common/eval_viterbi_iou.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> S7["Evaluate model<br/><i>common/eval_viterbi_iou.py</i>"]
+    S7 --> F6(["Model scores"])
     F6 -.-> S8["Dump spans<br/><i>common/predict_layer_spans.py</i>"]
+  end
+  subgraph BASE["Zero-shot LLM baselines"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) --> Z1["Run Claude, Gemini<br/><i>common/zeroshot/run_layer_zeroshot.py</i>"]
+    Z1 --> Z2(["LLM scores"])
   end
   PREP --> TRAIN
   TRAIN --> EVAL
+  EVAL --> BASE

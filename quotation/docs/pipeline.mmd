@@ -17,8 +17,16 @@ flowchart TD
   end
   subgraph EVAL["Evaluate"]
     direction LR
-    S8["Evaluate<br/><i>eval_quotation_v3.py</i>"] --> F5(["Scores"])
+    V(["Validation split<br/>(for tuning)"]) --> S8["Evaluate model<br/><i>eval_quotation_v3.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> S8["Evaluate model<br/><i>eval_quotation_v3.py</i>"]
+    S8 --> F5(["Model scores"])
     S8 -.-> S9["Reviewed gold<br/><i>eval_quotation_reviewed.py</i>"]
+  end
+  subgraph BASE["Zero-shot LLM baselines"]
+    direction LR
+    B2(["Benchmark<br/>(same books)"]) --> Z1["Run Gemini, Claude<br/><i>run_gemini_benchmark.py</i>"]
+    Z1 --> Z2(["LLM scores"])
   end
   PREP --> TRAIN
   TRAIN --> EVAL
+  EVAL --> BASE

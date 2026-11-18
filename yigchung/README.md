@@ -47,7 +47,7 @@ Classified (genre) system:
 
 <sub>Chart source: [pipeline_2.mmd](docs/pipeline_2.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the corrected 77-book test set, scored once. Gemini is used here only to label genres, not as a baseline. Uploading the dataset and the model is done with the Hugging Face CLI (no script here).
 
 ## Main pipeline
 

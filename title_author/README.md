@@ -34,7 +34,7 @@ All four are private (read from the Hub, 2026-11-18); a 404 means you need acces
 
 <sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files. The skill has its own chart under [Skill](#skill).
+Squares are steps with the script that runs them; rounded boxes are files. The **benchmark** is the frozen test split: it is scored once and never used to tune. The Gemini runs are scored on the same test set. The skill has its own chart under [Skill](#skill).
 
 ## Main pipeline
 

@@ -31,7 +31,7 @@ Both are private (read from the Hub, 2026-11-18); a 404 means you need access fr
 
 <sub>Chart source: [pipeline.mmd](docs/pipeline.mmd)</sub>
 
-Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The cards are in [docs/](docs/).
+Squares are steps with the script that runs them; rounded boxes are files; dashed arrows are optional steps. The **benchmark** is the frozen test split: it is scored once and never used to tune. The zero-shot LLM runs (Claude Sonnet 5, Gemini) use the same 29 benchmark books; results are in [results/zeroshot/](results/zeroshot/). The cards are in [docs/](docs/).
 
 ## Main pipeline
 

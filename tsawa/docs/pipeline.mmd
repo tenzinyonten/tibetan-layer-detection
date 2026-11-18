@@ -18,7 +18,9 @@ flowchart TD
   end
   subgraph EVAL["Evaluate"]
     direction LR
-    E1["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] -.-> E2["Rescore masked<br/><i>eval_tsawa_masked.py</i>"]
+    V(["Validation split<br/>(for tuning)"]) --> E1["Evaluate model<br/><i>common/eval_viterbi_iou.py</i>"]
+    B(["Benchmark<br/>(frozen test split)"]) --> E1["Evaluate model<br/><i>common/eval_viterbi_iou.py</i>"]
+    E1 -.-> E2["Rescore masked<br/><i>eval_tsawa_masked.py</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL

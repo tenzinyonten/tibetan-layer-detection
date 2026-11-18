@@ -4,7 +4,7 @@ flowchart TD
     direction TB
     F1(["BDRC dataset"]) --> S1["Fetch dataset<br/><i>fetch_yigchung_hub.py</i>"]
     S1 --> S2["Build benchmark<br/><i>build_yigchung_benchmark_after.py</i>"]
-    S2 --> F2(["Corrected test set"])
+    S2 --> F2(["Benchmark<br/>(corrected test set)"])
   end
   subgraph TRAIN["Train"]
     direction TB
