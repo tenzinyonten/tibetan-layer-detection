@@ -1,3 +1,9 @@
+"""Combine the audit CSVs into audit_report.md and list under-annotated tsawa books.
+
+Run last, after audit.py, missed_verse_scan.py, cross_layer_analysis.py and prose_check.py, from the repo root.
+Reads the CSVs in common/annotation_audit/. Writes under_annotated_tsawa_books.csv (5 or fewer tsawa spans and
+50 or more strict verse runs no layer covers) and audit_report.md in the same folder.
+"""
 import pandas as pd
 OUT = "common/annotation_audit"
 tc = pd.read_csv(f"{OUT}/tsawa_commentary_check.csv")
