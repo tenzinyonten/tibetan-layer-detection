@@ -79,7 +79,7 @@ Decode with Viterbi rather than argmax (only legal BIO transitions, penalty 6 fo
 ## Limits
 
 - One title per work; other mentions of the title are unlabelled, and gold span edges vary between annotators, so IoU 0.5 has a ceiling.
-- The model is overconfident: a token probability is not an accuracy. Review-flag cutoffs are in `title_author/README.md`.
+- The model is overconfident: a token probability is not an accuracy. The pipeline flags a span for review when its confidence is below a default cutoff of 0.7; that cutoff is an untuned placeholder (`detect/layer_config.py`).
 - Trained on single works, not whole books. On whole books use `detect/`.
 
 ## Acknowledgements

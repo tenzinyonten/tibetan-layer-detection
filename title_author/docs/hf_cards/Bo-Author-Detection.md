@@ -81,7 +81,7 @@ Decode with Viterbi rather than argmax (only legal BIO transitions, penalty 6 fo
 ## Limits
 
 - One author per work; second authors and other mentions are unlabelled. The gold span may or may not include the cue word (`མཛད་པ་པོ།`) and honorifics, so IoU 0.5 is partly a label-convention question.
-- The model is overconfident: a token probability is not an accuracy. Review-flag cutoffs are in `title_author/README.md`.
+- The model is overconfident: a token probability is not an accuracy. The pipeline flags a span for review when its confidence is below a default cutoff of 0.7; that cutoff is an untuned placeholder (`detect/layer_config.py`).
 - Trained on single works. On whole OpenPecha books the author is on the title page and "last span" is the wrong rule; see the `--author-span` setting in `detect/`.
 
 ## Acknowledgements

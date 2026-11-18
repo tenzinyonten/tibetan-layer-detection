@@ -103,6 +103,8 @@ def parse_args(argv=None):
     import argparse
 
     p = argparse.ArgumentParser(description="Frozen Sabche document split.")
+    p.add_argument("--version", default="v2",
+                   help="label written in the split file header (default v2, the shipped split)")
     p.add_argument("--val-frac", type=float, default=0.085,
                    help="target share of windows for validation (default 0.085); "
                         "applies to groups with no fixed split only")
