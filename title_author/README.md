@@ -155,7 +155,7 @@ Either one right: joint model or skill, title 0.881, author 0.837; title-only or
 
 ## Known issues
 
-<details><summary>Show 9 known issues</summary>
+<details><summary>Show 8 known issues</summary>
 
 - `ta_build_gold_dataset.py` and `ta_export_parquet.py` import `ta_load_spans` (and `--split-csv` comes from `ta_restratify.py`); neither is in `src/`, so those two scripts cannot run from a fresh clone. `ta_build_v3_addon.py` also imports `ta_load_spans` and its docstring mentions the absent `fill_spans_auto.py`.
 - `ta_drop_translator.py` and `ta_strip_underscore.py` have the folder names `gold_dataset_all_strat_single_v3_both[_notrans]` and `parquet_export_strat_both[_notrans]` fixed in the code; the flags that produced them are not recorded, so steps 1 to 3 are the documented usage, not a verified reproduction.
@@ -163,7 +163,6 @@ Either one right: joint model or skill, title 0.881, author 0.837; title-only or
 - `ta_rule_rank.py` has the path `/Users/tenzinyonten/layer_detection/title_author/src` hardcoded for import and output; the saved `data/rule_runs/*/results.json` carry the same machine path. Which of `ta_rule_fit.py` and `ta_rule_rank.py` made the shipped author weights is not stated.
 - `src/ta_rule_extract.py` and its two weight files are duplicated in `skills/tibetan-title-author/scripts/` (identical now); change both or they drift apart.
 - The model cards on the Hub and in `docs/hf_cards/` still say "Review-flag cutoffs are in `title_author/README.md`"; there are none here (the `needs_review` flags belong to the skill).
-- `docs/overview.md` and `docs/handoff_for_cursor.md` still call the skill folder `skill/`, and the handoff lists absolute paths under `/Users/tenzinyonten/layer_detection`.
 - `ta_gemini_eval.py` calls itself an untested first version; the Batch API script reuses its scorer.
 - The skill's numbers are Gemini only; `ta.py` auto mode with `ANTHROPIC_API_KEY` uses the unbenchmarked `claude-sonnet-5-5`, and the no-tools second look is not measured. Rule-script figures differ between files: `ta.py` and `SKILL.md` say author about 36% (title about 0.64), the saved test run says title 0.688 and author 0.375 (used above).
 
@@ -199,10 +198,7 @@ title_author/
 │   ├── ta_gepa3.py                    # GEPA prompt optimisation (DSPy 3)
 │   ├── ta_fix_trial.py                # trial: LLM picks one of 5 name candidates
 │   ├── ta_agent_trial.py              # trial: model calls tools to check the author
-│   ├── ta_search_trial.py             # trial: Google Search grounding, paid (no caller found)
-│   ├── ta_second_look_trial.py        # trial: the skill's no-tools second look (no caller found)
-│   ├── ta_vote_trial.py               # trial: voting and two-model judge (no caller found)
-│   └── ta_retrieval_trial.py          # trial: nearest labelled windows as examples (no caller found)
+│   └── ta_second_look_trial.py        # trial: the skill's no-tools second look (no caller found)
 ├── skills/tibetan-title-author/
 │   ├── SKILL.md                       # skill description, agent route, rules
 │   ├── scripts/
@@ -220,7 +216,7 @@ title_author/
 │   ├── bench.py                       # benchmarks the skill on a split
 │   ├── skill_score.py                 # accuracy minus a token penalty, for GEPA
 │   └── precut_coverage.py             # does a shorter cut still hold the gold? (no caller found)
-├── docs/                              # overview, gemini_results, run2_results, dataset_card, handoff_for_cursor (old, stale paths)
+├── docs/                              # gemini_results, run2_results, dataset_card
 │   ├── hf_cards/                      # cards of the four BDRC repos
 │   └── model_cards/                   # card of the run 2 model
 └── data/
