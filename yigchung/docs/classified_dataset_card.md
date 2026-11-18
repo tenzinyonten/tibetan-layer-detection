@@ -51,11 +51,11 @@ Documents by genre:
 
 The 41 classified books come from the 762-book release [BDRC/yigchung_detection_v2](https://huggingface.co/datasets/BDRC/yigchung_detection_v2) and four further BDRC books that are not in it. The 469 short Lotsawa House books are joined into 26 documents. Steps, in order, with the script for each (all in `yigchung/src/` of the [layer repository](https://github.com/tenzinyonten/tibetan-layer-detection/tree/main/yigchung)):
 
-1. Download the text and spans: `fetch_hub.py`.
-2. Combine the Lotsawa books into documents of about 30,000 characters, within each split: `combine_lotsawa.py`.
-3. Classify each book by genre with Gemini: `run_classify.py`. Books of the genre "other" are dropped: `build_genre_datasets.py`.
-4. Clean the spans (annotator spans where a review exists, hand corrections and additions, spans end before an unmatched `)`, head marks never inside a span): `build_genre_datasets.py`.
-5. Tokenize with `jhu-clsp/mmBERT-base`, cut windows, and label tokens as BIO: `build_genre_bio.py`.
+1. Download the text and spans: `fetch_yigchung_hub.py`.
+2. Combine the Lotsawa books into documents of about 30,000 characters, within each split: `merge_yigchung_lotsawa.py`.
+3. Classify each book by genre with Gemini: `classify_yigchung_genre.py`. Books of the genre "other" are dropped: `build_yigchung_genre_datasets.py`.
+4. Clean the spans (annotator spans where a review exists, hand corrections and additions, spans end before an unmatched `)`, head marks never inside a span): `build_yigchung_genre_datasets.py`.
+5. Tokenize with `jhu-clsp/mmBERT-base`, cut windows, and label tokens as BIO: `build_yigchung_genre_bio.py`.
 
 ## Annotation
 

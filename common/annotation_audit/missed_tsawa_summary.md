@@ -1,13 +1,13 @@
 # Where tsawa may be missing: unlabelled verse by book
 
-Scan of all 212 books with a Tsawa layer (`missed_verse_scan.py`; per-book numbers in `missed_tsawa_by_book.csv`). A **run** is 4 or more consecutive shad-delimited clauses that all have the same 7, 9, 11 or 13 syllable count (an isometric stanza) and do not touch any tsawa span. Runs that overlap a Quotation or Citation span are counted separately and left out of the main numbers, because verse quoted from another work is not tsawa.
+Scan of all 212 books with a Tsawa layer (`scan_missed_verses.py`; per-book numbers in `missed_tsawa_by_book.csv`). A **run** is 4 or more consecutive shad-delimited clauses that all have the same 7, 9, 11 or 13 syllable count (an isometric stanza) and do not touch any tsawa span. Runs that overlap a Quotation or Citation span are counted separately and left out of the main numbers, because verse quoted from another work is not tsawa.
 
 ## What this does and does not show
 
 - Totals: 20,107 runs in 212 books (median 46 per book; 8 books have none). By split: dropped 8,888, test 2,027, train 8,140, val 1,052.
 - I read 9 random runs from 3 of the top books (`P000218`, `P000275`, `I2FCD4B1D`): all 9 are real verse, not noise. Several are introduced by a source marker (`བཤེས་སྤྲིངས་སུ།` 'in the Letter to a Friend', `སྡོམ་འབྱུང་ལས།` 'from the Sdom 'byung'), so they are quoted verse.
 - So a run is verse that nobody labelled as tsawa. It may be (a) missed tsawa, (b) a quotation from another text that was not marked Quotation, or (c) the author's own verse. The annotator decides which. Use the counts to choose where to look first, not as a count of errors.
-- To read a book's runs in context: `python common/annotation_audit/make_book_check.py <book id>` writes an HTML page with the tsawa spans highlighted and every run underlined in blue (the page uses the looser definition, any mix of the four metres, so it shows slightly more runs).
+- To read a book's runs in context: `python common/annotation_audit/build_book_check.py <book id>` writes an HTML page with the tsawa spans highlighted and every run underlined in blue (the page uses the looser definition, any mix of the four metres, so it shows slightly more runs).
 
 ## 1. Dropped books: add tsawa from scratch (44 books with at least 20 unlabelled runs)
 

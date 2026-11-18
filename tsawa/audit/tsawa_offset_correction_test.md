@@ -1,6 +1,6 @@
 # Tsawa test labels: offset correction test
 
-Exploratory. Read-only. Script: `tsawa_offset_correction_test.py`; corrected spans (variant A) for the suspect books: `tsawa_offset_corrected_spans.csv`.
+Exploratory. Read-only. Script: `check_tsawa_offset_correction.py`; corrected spans (variant A) for the suspect books: `tsawa_offset_corrected_spans.csv`.
 
 ## Method
 

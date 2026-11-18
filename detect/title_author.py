@@ -18,7 +18,7 @@ model, 12 for the joint one, both picked on validation), keeps one span per fiel
 author = last span) and maps the token spans straight to character offsets in
 the full text, so every span is an exact substring of the input.
 
-The crop copies title_author/src/ta_build_gold_dataset.py (regions(), with its
+The crop copies title_author/src/build_ta_gold_dataset.py (regions(), with its
 snap_forward / snap_backward). One difference is unavoidable: training also
 moved a crop edge that would have cut a gold span; at inference there is no
 gold, so the edge stays where the snap puts it.
@@ -105,7 +105,7 @@ def build_sequence(text: str, tok, k: int = 3000, strip_underscore: bool = False
     """The one training-format sequence for this work.
     strip_underscore: the single-entity models were trained on text with the
     "_" characters removed (a syllable-separator artifact of some sources;
-    ta_strip_underscore.py), so they are removed from each cropped region before
+    clean_ta_underscores.py), so they are removed from each cropped region before
     tokenizing. Token offsets are still returned in the ORIGINAL text, so a span
     is an exact substring of the input (it may contain a "_" inside).
     Returns {"input_ids": [...], "real": positions of real (non-special)
@@ -154,7 +154,7 @@ def transition_matrix(id2label: dict[int, str], break_penalty: float) -> np.ndar
     """m[i, j] = cost of moving from label i to label j. I-X may only follow B-X
     or I-X; every way of leaving a span (B/I -> anything but I of the same
     entity) costs `break_penalty`. For the 5-label model this is exactly the
-    matrix in title_author/src/ta_mmbert_score.py."""
+    matrix in title_author/src/score_ta_mmbert.py."""
     parts = _label_parts(id2label)
     n = len(parts)
     m = np.zeros((n, n))

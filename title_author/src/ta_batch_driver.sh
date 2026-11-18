@@ -10,12 +10,12 @@
 #   e.g. title_author/src/ta_batch_driver.sh title_author/data/gemini_prompts/archive/gepa_v2.md test gemini-3.8-flash 2384 600
 #
 # For each chunk: submit, wait until the job is done, collect and score it. When all chunks are done, merge them with
-#   python title_author/src/ta_gemini_batch.py combine NAME TAG1 TAG2 ...
+#   python title_author/src/run_ta_gemini_batch.py combine NAME TAG1 TAG2 ...
 set -u
 cd "$(dirname "$0")/../.." || exit 1
 PROMPT=$1; SPLIT=$2; MODEL=$3; TOTAL=$4; CHUNK=${5:-600}; NSAMP=${NSAMP:-0}
 LBL=$([ "$NSAMP" = "0" ] && echo all || echo "$NSAMP")
-B="python3 title_author/src/ta_gemini_batch.py"
+B="python3 title_author/src/run_ta_gemini_batch.py"
 STEM=$(basename "$PROMPT" .md)
 TH=""; [ -n "${THINK_LEVEL:-}" ] && TH="_think-$THINK_LEVEL"
 for ((A = 0; A < TOTAL; A += CHUNK)); do

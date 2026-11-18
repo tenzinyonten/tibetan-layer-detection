@@ -99,7 +99,7 @@ Same works for both. Gemini used `title_author/data/gemini_prompts/final.md` wit
 | **Gemini 3.8 flash, `gepa_v2.md`, low thinking, batch (cleaned test)** | 0.849 | 0.788 | 0.817 | 0.730 | 0.688 | 0.708 |
 | Rule-based script | 0.688 | 0.688 | 0.688 | 0.375 | 0.375 | 0.375 |
 
-Rule-based script (`title_author/src/ta_rule_extract.py`): plain Python, no model and no Gemini. Weights are fitted on train only (`ta_rule_fit.py` for title, `ta_rule_rank.py` for author). It was scored on the cleaned test set (2,384 works, no translator works, no underscores), so the works differ slightly from the 2,389 above; precision equals recall because it always returns one span. On validation (2,494 works) it scores title 0.619, author 0.411. Its author ceiling is 0.75: for about a quarter of works none of its candidates matches the gold span.
+Rule-based script (`title_author/src/ta_rule_extract.py`): plain Python, no model and no Gemini. Weights are fitted on train only (`fit_ta_rules.py` for title, `rank_ta_rules.py` for author). It was scored on the cleaned test set (2,384 works, no translator works, no underscores), so the works differ slightly from the 2,389 above; precision equals recall because it always returns one span. On validation (2,494 works) it scores title 0.619, author 0.411. Its author ceiling is 0.75: for about a quarter of works none of its candidates matches the gold span.
 
 GEPA (automatic prompt rewriting) was run twice with a small budget and gave no reliable gain, so it is not in this table.
 

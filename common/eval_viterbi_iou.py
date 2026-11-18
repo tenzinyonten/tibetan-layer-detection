@@ -150,7 +150,7 @@ def main():
                     help="metrics JSON to write (default: scratch/tsawa/results/tsawa_viterbi_eval.json)")
     ap.add_argument("--dump-spans", default="",
                     help="also write per-window gold/pred spans as JSONL, in "
-                         "book-token coordinates (see rescore_masked.py)")
+                         "book-token coordinates (see eval_tsawa_masked.py)")
     args = ap.parse_args()
 
     ds = (load_from_disk(args.dataset) if Path(args.dataset).exists()

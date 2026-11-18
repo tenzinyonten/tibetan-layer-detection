@@ -125,7 +125,7 @@ At default thinking, 3.8-flash used about 2,810 thinking tokens per call (measur
 | Prompts | `title_author/data/gemini_prompts/` |
 | 3.8-flash answers and scores | `title_author/data/gemini_runs/gepa_v2_gemini-3.8-flash_test_low_thinking/` |
 | 3.5-flash-lite answers and scores | `title_author/data/gemini_runs/gepa_v2_test_0_rows0-99999/` (and `final_test_0_rows0-99999`, `gepa_lite_candidate_test_0_rows0-99999`) |
-| Scripts | `title_author/src/ta_gemini_eval.py` (regular calls), `ta_gemini_batch.py` and `ta_batch_driver.sh` (batch), `ta_compare_runs.py` (comparison) |
+| Scripts | `title_author/src/eval_ta_gemini.py` (regular calls), `run_ta_gemini_batch.py` and `ta_batch_driver.sh` (batch), `compare_ta_runs.py` (comparison) |
 
 ## Update 2026-11-11: final GEPA run, unseen test, repair step
 Short version:
@@ -167,7 +167,7 @@ Either model right: title 0.882, author 0.844 (upper bound for a combiner; no co
 
 The run picked a prompt that was cut off. Candidates 1 and 2 of 3 end in the middle of a sentence and have no Title Extraction Rules and no Author Extraction Rules section; only the starting prompt (candidate 0) was complete. The token penalty (validation score minus 0.004 x tokens/1000) preferred the cut-off candidate because it scored the same 0.662 on 80 works with fewer tokens.
 Everything said earlier in this file or in the skill about a "31% shorter prompt that ties" described the cut-off prompt and is withdrawn. Its re-evaluation scores (new 65.5 / 65.5; old 66.1 / 64.4 / 63.3, flash-lite, failed batches dropped) show only that a prompt WITHOUT the title and author rules scored about like the full one on that model; they say nothing about a complete shorter prompt. Not run on gemini-3.8-flash.
-The cut-off files are kept only on the local machine (`TRUNCATED_*`), not in this repo. Fixes: the skill refuses a prompt that lacks its required sections; `ta_gepa3.py` with `EFFICIENCY=1` rejects candidates that miss a heading of the starting prompt or end inside a code span, and uses the token penalty only as a tie-break between complete prompts.
+The cut-off files are kept only on the local machine (`TRUNCATED_*`), not in this repo. Fixes: the skill refuses a prompt that lacks its required sections; `run_ta_gepa3.py` with `EFFICIENCY=1` rejects candidates that miss a heading of the starting prompt or end inside a code span, and uses the token penalty only as a tie-break between complete prompts.
 
 ## Prices and limits (as measured)
 

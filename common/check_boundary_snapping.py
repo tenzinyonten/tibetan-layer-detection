@@ -12,7 +12,7 @@ or newline, or the document start/end.
 * end is clean if ``text[end-1]`` (last char *inside* the span) is a marker
 
 Diagnostic only — does not rewrite any spans. Helpers match
-``spot_check_tsawa.py`` (audit ``n_spans`` / ``opf_root`` / nested ``.opf``).
+``check_tsawa_spots.py`` (audit ``n_spans`` / ``opf_root`` / nested ``.opf``).
 
 Usage:
     python common/check_boundary_snapping.py \\
