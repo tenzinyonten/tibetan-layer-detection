@@ -28,26 +28,27 @@ Both are private (read from the Hub, 2026-11-18); a 404 means you need access fr
 ## Pipeline
 
 ```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
 flowchart TD
-  subgraph PREP["Prepare data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph PREP["Prepare data"]
     direction TB
-    F1(["Raw Sabche.yml&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]) --> S1["Clean spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>clean_sabche_spans.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    S1 --> F2(["Clean spans CSV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
-    F2 --> S2["Make split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>prepare_sabche_split.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    S2 --> F3(["Frozen split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
-    F3 --> S3["Build dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_sabche_dataset.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    S3 --> S4["Push dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>Hugging Face CLI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    S4 --> F4(["HF dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    F1(["Raw Sabche.yml"]) --> S1["Clean spans<br/><i>clean_sabche_spans.py</i>"]
+    S1 --> F2(["Clean spans CSV"])
+    F2 --> S2["Make split<br/><i>prepare_sabche_split.py</i>"]
+    S2 --> F3(["Frozen split"])
+    F3 --> S3["Build dataset<br/><i>build_sabche_dataset.py</i>"]
+    S3 --> S4["Push dataset<br/><i>Hugging Face CLI</i>"]
+    S4 --> F4(["HF dataset"])
   end
-  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph TRAIN["Train"]
     direction LR
-    S5["Train model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/train_layer.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> S6["Upload model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>Hugging Face CLI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    S6 --> F5(["HF model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    S5["Train model<br/><i>common/train_layer.py</i>"] --> S6["Upload model<br/><i>Hugging Face CLI</i>"]
+    S6 --> F5(["HF model"])
   end
-  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph EVAL["Evaluate"]
     direction LR
-    S7["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/eval_viterbi_iou.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F6(["Scores&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
-    F6 -.-> S8["Dump spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>common/predict_layer_spans.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    S7["Evaluate<br/><i>common/eval_viterbi_iou.py</i>"] --> F6(["Scores"])
+    F6 -.-> S8["Dump spans<br/><i>common/predict_layer_spans.py</i>"]
   end
   PREP --> TRAIN
   TRAIN --> EVAL

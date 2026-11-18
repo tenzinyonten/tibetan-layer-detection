@@ -35,26 +35,27 @@ The fallback tokenizer is used when a model's own `tokenizer_config.json` cannot
 ## Pipeline
 
 ```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
 flowchart TD
-  subgraph IN["Inputs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph IN["Inputs"]
     direction LR
-    F1(["Text or OpenPecha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
-    S0["Run all stages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>detect_layers.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+    F1(["Text or OpenPecha"])
+    S0["Run all stages<br/><i>detect_layers.py</i>"]
   end
-  subgraph PRE["Preprocess&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph PRE["Preprocess"]
     direction LR
-    S1["Extract text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>preprocess.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F2(["Book JSON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    S1["Extract text<br/><i>preprocess.py</i>"] --> F2(["Book JSON"])
   end
-  subgraph INF["Infer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph INF["Infer"]
     direction TB
-    W["Make windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>windows.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> M["Run models&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>infer.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    M --> D["Decode spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>decode.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    D --> F3(["Predictions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
-    T["Title, author&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>title_author.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] -.-> F3
+    W["Make windows<br/><i>windows.py</i>"] --> M["Run models<br/><i>infer.py</i>"]
+    M --> D["Decode spans<br/><i>decode.py</i>"]
+    D --> F3(["Predictions"])
+    T["Title, author<br/><i>title_author.py</i>"] -.-> F3
   end
-  subgraph POST["Postprocess&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+  subgraph POST["Postprocess"]
     direction LR
-    P1["Clean and flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>postprocess.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F4(["JSON, HTML, opf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+    P1["Clean and flag<br/><i>postprocess.py</i>"] --> F4(["JSON, HTML, opf"])
   end
   F1 --> S1
   S0 -.-> S1

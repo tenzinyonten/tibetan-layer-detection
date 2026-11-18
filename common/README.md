@@ -18,23 +18,24 @@ common/
 ## Pipeline
 
 ```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}}}%%
 flowchart TD
-  subgraph FETCH["Fetch&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
-    F0(["ID file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]) --> S1["Fetch books&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>fetch_opf_repos.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
-    S1 --> F1(["Raw .opf books&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+  subgraph FETCH["Fetch"]
+    F0(["ID file"]) --> S1["Fetch books<br/><i>fetch_opf_repos.py</i>"]
+    S1 --> F1(["Raw .opf books"])
   end
-  subgraph BUILD["Build&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
-    S2["Build dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>build_tsawa_dataset.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F2(["Token dataset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+  subgraph BUILD["Build"]
+    S2["Build dataset<br/><i>build_tsawa_dataset.py</i>"] --> F2(["Token dataset"])
   end
-  subgraph TRAIN["Train&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
-    S3["Train model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>train_layer.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F3(["Trained model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+  subgraph TRAIN["Train"]
+    S3["Train model<br/><i>train_layer.py</i>"] --> F3(["Trained model"])
   end
-  subgraph EVAL["Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
-    S4["Score model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>eval_viterbi_iou.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] --> F4(["Scores&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
-    S5["Dump spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>predict_layer_spans.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] -.-> F5(["Predicted spans&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"])
+  subgraph EVAL["Evaluate"]
+    S4["Score model<br/><i>eval_viterbi_iou.py</i>"] --> F4(["Scores"])
+    S5["Dump spans<br/><i>predict_layer_spans.py</i>"] -.-> F5(["Predicted spans"])
   end
-  subgraph BASE["Baselines&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
-    S7["Claude batches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>run_claude_batch.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"] -.-> S6["Zero-shot score&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/><i>run_layer_zeroshot.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>"]
+  subgraph BASE["Baselines"]
+    S7["Claude batches<br/><i>run_claude_batch.py</i>"] -.-> S6["Zero-shot score<br/><i>run_layer_zeroshot.py</i>"]
   end
   F1 --> S2
   F2 --> S3
