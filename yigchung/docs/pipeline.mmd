@@ -16,5 +16,11 @@ flowchart TD
     F4 --> E2["Score<br/><i>score_yigchung_benchmark.py</i>"]
     E2 --> F5(["Benchmark scores"])
   end
+  subgraph BASE["Zero-shot and other LLM runs (optional)"]
+    direction LR
+    B2(["Benchmark<br/>(77 books)"]) -.-> Z1["Gemini, Claude runs<br/><i>zero-shot or other analysis</i>"]
+    Z1 -.-> Z2(["LLM scores"])
+  end
   PREP --> TRAIN
   TRAIN --> EVAL
+  EVAL --> BASE
