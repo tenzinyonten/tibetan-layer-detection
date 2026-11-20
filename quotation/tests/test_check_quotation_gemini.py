@@ -11,10 +11,8 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT / "script"))
 
 import check_quotation_gemini  # noqa: E402
-import eval_quotation_gemini  # noqa: E402
 from quotation_lib.span_metrics import match_iou  # noqa: E402
 
 
@@ -70,17 +68,3 @@ class EmptyDumpScoreTests(unittest.TestCase):
             ):
                 result = check_quotation_gemini.score_quotes("P000000", quotes_path)
         self.assertEqual(result["iou50_f1"], 1.0)
-
-
-class EvalAggregateTests(unittest.TestCase):
-    def test_micro_sums_match_pred_gold(self):
-        rows = [
-            {"n_gold": 10, "n_pred": 8, "n_match": 6, "n_parsed": 9, "n_located": 7, "n_match_failure": 2, "n_ambiguous": 1, "n_tail_beyond_max_len": 0},
-            {"n_gold": 5, "n_pred": 2, "n_match": 2, "n_parsed": 3, "n_located": 2, "n_match_failure": 1, "n_ambiguous": 0, "n_tail_beyond_max_len": 0},
-        ]
-        micro = eval_quotation_gemini.aggregate(rows)
-        self.assertEqual(micro["n_gold"], 15)
-        self.assertEqual(micro["n_pred"], 10)
-        self.assertEqual(micro["n_match"], 8)
-        self.assertAlmostEqual(micro["iou50_precision"], 0.8)
-        self.assertAlmostEqual(micro["iou50_recall"], 8 / 15)

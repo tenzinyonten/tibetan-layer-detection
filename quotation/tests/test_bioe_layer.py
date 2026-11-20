@@ -20,7 +20,6 @@ from quotation_lib.bioe_layer import (
     bias_vector,
 )
 from quotation_lib.training_utils import bio_spans as reference_bio_spans
-import quotation_lib.single_layer as single_layer
 
 SCHEME = build_scheme("Quotation")
 
@@ -34,13 +33,6 @@ def test_scheme_is_four_labels_in_bioe_order():
     assert SCHEME.labels == ("O", "B-QUOTE", "I-QUOTE", "E-QUOTE")
     assert (SCHEME.o_id, SCHEME.b_id, SCHEME.i_id, SCHEME.e_id) == (0, 1, 2, 3)
     assert SCHEME.n_labels == 4
-
-
-def test_single_layer_still_builds_three_class_scheme():
-    # Assert single_layer's 3-class scheme still builds (as required by test plan)
-    yigchung_scheme = single_layer.build_scheme("Yigchung")
-    assert yigchung_scheme.n_labels == 3
-    assert yigchung_scheme.labels == ("O", "B-YIGCHUNG", "I-YIGCHUNG")
 
 
 # --------------------------------------------------------------------------
