@@ -105,19 +105,6 @@ Encoder: test set (19 books), IoU@0.5, Viterbi decode chosen on validation and f
 
 `gemini-3.8-flash` is also a benchmark choice (`run`); the source README says it is not scored yet.
 
-## Known issues
-
-<details><summary>Show 6 known issues</summary>
-
-- The window config [build_quotation_windows.yaml](configs/build_quotation_windows.yaml) sets `step: 4579` and `hf_stride: 3613` (its comments explain: the longest span needs 3613 tokens); the file this came from was named for step 4751. The published config is `windowed_w8192_s4579`.
-- The code and configs still point to `karma689/tibetan-quotation-detection`; the published dataset is `BDRC/Bo-Quotation-Dataset` (the old name redirects). Hub revisions such as `w2.0` and model ids such as `karma689/mmbert-base-layer-detection-v1.3` are external names and keep their version tokens.
-- The tests were run on Python 3.9 only (a 3.10 interpreter was not available): 166 pass and 49 fail, and the same 49 fail in the original repository (for example `zip(strict=...)` needs 3.10). The repository's own requirement is Python 3.10 or newer; rerun on 3.10 to confirm.
-- The copied code was not trained or run on a GPU, and no API call was made; only the offline tests ran.
-- Not copied: the annotation-audit scripts (`build_quotation_tags.py`, `find_quotation_closers.py`, `check_yigchung_in_quotation.py`), `qd_*.py` analysis scripts, book-viewer tools, `build_windowed_dataset.py` (older seven-layer work), and the raw Gemini replies (about 1,070 small files). They stay in the source repository.
-- `quotation_lib/gemini_chunks.py` and `quotation_lib/gemini_locate.py` are copies of the files already in [common/zeroshot/](../common/zeroshot/) (kept unchanged there so Tsawa and Quotation share one locator); the two copies can drift apart.
-
-</details>
-
 ## All files
 
 <details><summary>Show the full file tree</summary>
