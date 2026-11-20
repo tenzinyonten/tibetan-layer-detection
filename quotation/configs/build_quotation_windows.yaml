@@ -1,0 +1,40 @@
+# Derived windowed quotation dataset on karma689/tibetan-quotation-detection.
+#
+# User-facing name uses STEP (s4751), not HuggingFace tokenizer overlap.
+# tokenizer(..., max_length=8192, stride=3441) yields step 4751 (42% overlap).
+# Writing 4751 into HF stride would be 58% overlap — refused by resolve_geometry.
+
+source_repo: karma689/tibetan-quotation-detection
+source_revision: main
+local_source_dir: Data/hf_export
+
+tokenizer_repo: jhu-clsp/mmBERT-base
+
+max_length: 8192
+step: 4579
+hf_stride: 3613
+# overlap_percent = 3613 / 8192 = 44.104%
+# Target step 4751 (42% / hf_stride 3441) assumed a 3399-token longest span.
+# Measured with jhu-clsp/mmBERT-base on IB522F095 [59716,64722]: 3613 tokens.
+# Gate 4 requires hf_stride >= that count → step 4579, config windowed_w8192_s4579.
+
+hub_repo: karma689/tibetan-quotation-detection
+hub_config_name: windowed_w8192_s4579
+hub_tag: w1.0
+
+local_dir: Data/quotation_windows_w8192_s4579
+
+tokenize_num_workers: 1   # fast tokenizer is not thread-safe (Already borrowed)
+
+expected_total_windows: 7680
+window_count_tolerance: 0.05
+
+expected_spans:
+  train: 18753
+  validation: 2005
+  test: 2337
+
+expected_books:
+  train: 210
+  validation: 25
+  test: 19

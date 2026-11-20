@@ -1,0 +1,49 @@
+# Derived windowed dataset published as a named config on karma689/layer_detection.
+#
+# CLI --stride is the STEP (hop), not HuggingFace tokenizer overlap.
+# Internally: hf_stride = window_len - stride. Refuse stride >= window_len.
+#
+# User-facing name uses the step (s4916): overlap 3276 tokens = 39.99%.
+# Do not write 4916 into the HF tokenizer stride argument — that would be 60% overlap.
+
+source_repo: karma689/layer_detection
+source_revision: v1.1
+
+# Tokenizer files shipped with the v1.3 checkpoint (no model weights loaded).
+# Training configs point at jhu-clsp/mmBERT-base; v1.3 also ships tokenizer.json.
+tokenizer_repo: karma689/mmbert-base-layer-detection-v1.3
+upstream_tokenizer: jhu-clsp/mmBERT-base
+
+max_length: 8192
+step: 4916              # CLI --stride default; hop between windows
+hf_stride: 3276         # HF overlap = max_length - step
+# overlap_percent = 3276 / 8192 = 39.990234375%
+
+# Live v1.3 (do not use these for this job): dataset_revision null, HF stride 5120,
+# step 3072, 62.5% overlap, 14338 windows/epoch, 15-class BIO.
+# Target windows ≈ 9060 (not 9103 from the false 1843-step model, not 8906 from
+# naive 14338×3072/4916 which also scales the 266 unshrinkable first windows).
+
+hub_repo: karma689/layer_detection
+hub_config_name: windowed_w8192_s4916
+hub_tag: v2.0
+# Never push without config_name — that overwrites the default book-level config.
+# Never move or overwrite tag v1.1.
+
+local_dir: Data/windowed_w8192_s4916
+
+tokenize_num_workers: 1   # fast tokenizer is not thread-safe (Already borrowed)
+expected_total_windows: 9060
+window_count_tolerance: 0.03
+expected_overlap_tokens: 3276
+expected_max_span_tokens: 3125
+masked_layers: []     # BookTitle stay in labels; v2 zeros them on loss_mask only
+
+damaged_books:
+  - P000218
+  - P000271
+  - P000078
+  - P000126
+
+smoothing: [1.0, 0.3, 0.1]   # center, ±1, ±2
+min_span_chars: 5

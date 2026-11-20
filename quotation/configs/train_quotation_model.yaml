@@ -1,0 +1,84 @@
+# mmbert_quotation — one annotation layer (Quotation), BIOE labels.
+
+experiment_name: mmbert_quotation
+
+# --- the one annotation ---
+target_layer: Quotation
+label_scheme: bioe
+
+# --- data (BIOE windowed dataset) ---
+dataset_repo: karma689/tibetan-quotation-detection
+dataset_config_name: windowed_w8192_s4579_bioe
+dataset_revision: w2.0          # pinned; unpinned loads are refused
+map_num_proc: 4
+
+# --- model ---
+checkpoint: jhu-clsp/mmBERT-base
+fallback_checkpoint: KoichiYasuoka/bert-base-tibetan
+attn_implementation: flash_attention_2
+attn_fallback_implementation: sdpa
+
+# --- window geometry ---
+max_length: 8192
+stride: 3613                    # step 4579 -> 8192 - 4579 = 3613
+
+# --- training ---
+learning_rate: 1.0e-5
+train_batch_size: 2
+eval_batch_size: 2
+gradient_accumulation_steps: 4
+num_train_epochs: 15
+weight_decay: 0.01
+warmup_ratio: 0.2
+warmup_reference_epochs: 10
+max_grad_norm: 1.0
+class_weighting: true
+
+# --- literal class weights ---
+class_weights:
+  O: 0.07
+  B-QUOTE: 5.0
+  I-QUOTE: 1.0
+  E-QUOTE: 5.0
+
+fp16: false
+bf16: true
+gradient_checkpointing: false
+dataloader_num_workers: 4
+dataloader_pin_memory: true
+tf32: true
+seed: 42
+logging_steps: 20
+save_total_limit: 3
+resume_from_checkpoint: null
+
+# --- selection and early stopping ---
+eval_strategy: steps
+save_strategy: steps
+evals_per_epoch: 4
+load_best_model_at_end: true
+metric_for_best_model: iou50_f1     # Viterbi decode + IoU@0.5 span F1
+greater_is_better: true
+early_stopping_patience: 4          # epochs -> 16 evals
+in_loop_break_penalty: 2.0
+
+# --- final evaluation ---
+evaluate_test_at_end: true
+
+# --- artifacts ---
+hub_model_id: karma689/tibetan-quotation-detection
+hub_private: true
+
+report_to:
+  - wandb
+wandb:
+  project: layer-detection
+  mode: online
+
+output_dir: outputs
+
+# --- success criteria ---
+success_criteria:
+  joint_model_baseline_iou50_f1: 0.373
+  joint_model_baseline_token_recall: 0.609
+  joint_model_baseline_qudt_iou50_f1: 0.1806

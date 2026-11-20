@@ -53,3 +53,8 @@ title_author/data/exports/
 
 # Yigchung local inputs and built datasets (annotator files are not public)
 yigchung/data/local/
+
+# Quotation: corpus, checkpoints and window caches (regenerable)
+quotation/Data/
+quotation/outputs/
+quotation/window_cache/
