@@ -48,8 +48,9 @@ Console commands are in `pyproject.toml`: `tibetan-preprocess`, `tibetan-infer`,
 |---|---|---|
 | [preprocess.py](preprocess.py) | Stage 1: finds books, writes one JSON each. | First |
 | [infer.py](infer.py) | Stage 2: runs the models, writes spans. | After Stage 1 |
-| [postprocess.py](postprocess.py) | Stage 3: cleans, flags, writes JSON, HTML, `.opf`. | After Stage 2 |
+| [postprocess/](postprocess/) | Stage 3: cleans, flags, writes JSON, HTML, `.opf`. Split into `filters.py`, `review.py`, `json_out.py`, `html_out.py`, `opf_out.py` and `cli.py`. | After Stage 2 |
 | [detect_layers.py](detect_layers.py) | Runs all three stages under one folder. | Instead of the three |
+| [stage_args.py](stage_args.py) | The argument lists `detect_layers.py` and `detect()` pass to Stages 2 and 3. | Used by both entry points |
 | [decode.py](decode.py) | Viterbi decoding, confidence, window merging, cleanup rules. | Used by Stage 2 |
 | [windows.py](windows.py) | Token windows of 8,190 tokens. | Used by Stage 2 |
 | [title_author.py](title_author.py) | Title and author from the first and last 3,000 characters. | Stage 2, if requested |
@@ -71,9 +72,8 @@ tibetan-detect --dir books/ --layers tsawa sabche --json --out results/
 tibetan-preprocess --input data/raw_opf/ --out preprocessed/
 tibetan-infer --input preprocessed/ --out predictions/ --all --device cuda
 tibetan-postprocess --input predictions/ --source preprocessed/ --out output/ --json --html --opf
-# 4. Title from the model, author from the paid LLM skill (about Rs 0.29 per work)
-tibetan-infer --input preprocessed/ --out predictions/ --layers title author \
-    --title-system model --author-system skill
+# 4. A whole book: take the first author span (the title page), and write title and author to .opf
+tibetan-detect --text book.txt --all --json --opf --title-author-opf --author-span first --out results/
 ```
 
 **The infer checkpoint only checks that `predictions/<id>.json` exists: after adding a layer, use a new `--out`.**
@@ -86,7 +86,7 @@ tibetan-infer --input preprocessed/ --out predictions/ --layers title author \
 
 ## Title and author
 
-Not window layers: one forward pass over the first and last 3,000 characters gives one title (first span) and one author (last span). `--title-author-system model|skill|both` (or `--title-system`, `--author-system`) chooses the system per field; the skill is paid and needs `GEMINI_API_KEY` or `ANTHROPIC_API_KEY`. Test share correct (2,384 works): title model 0.842; author model 0.734, skill 0.756. Details are in the docstrings of [title_author.py](title_author.py) and [layer_config.py](layer_config.py), which also holds the per-layer decoding table.
+Not window layers: one forward pass over the first and last 3,000 characters gives one title (first span) and one author (last span). Both come from the trained models only (`--title-model` and `--author-model` choose other models). `--author-span first|last` picks which author span to keep: `last` (the default) suits a single work, `first` suits a whole book whose authors are on the title page. `--title-author-opf` with `--opf` writes `BookTitle.yml` and `Author.yml`. The paid LLM skill is no longer an option here; it stays under `title_author/` as research. Test share correct (2,384 works): title model 0.842, author model 0.734. Details are in the docstrings of [title_author.py](title_author.py) and [layer_config.py](layer_config.py), which also holds the per-layer decoding table.
 
 ## Known issues
 
@@ -110,11 +110,12 @@ detect/
 ├── __init__.py         # detect(): the three stages in one process
 ├── preprocess.py       # Stage 1: text or .opf to preprocessed/<id>.json
 ├── infer.py            # Stage 2: windows, models, decoding, predictions/<id>.json
-├── postprocess.py      # Stage 3: drop short, quoted and non-Tibetan spans; flags; JSON, HTML, .opf
+├── postprocess/        # Stage 3: filters.py, review.py, json_out.py, html_out.py, opf_out.py, cli.py
+├── stage_args.py       # argument lists passed to Stages 2 and 3 by detect_layers.py and detect()
 ├── detect_layers.py    # tibetan-detect: the three stages under one --out
 ├── decode.py           # BIO and BIOE Viterbi, confidence, window votes, cleanup rules
 ├── windows.py          # sliding windows and window packing (copied from common/)
-├── title_author.py     # title and author: head and tail crop, model or LLM skill
+├── title_author.py     # title and author: head and tail crop, trained models
 ├── layer_config.py     # LAYERS: repo, scheme, break penalty, stride, cleanup, threshold, colour
 └── tests/
     ├── test_drop_quoted_tsawa.py  # tsawa spans covered by quotation are dropped; layers_for_run

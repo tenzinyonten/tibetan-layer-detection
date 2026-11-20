@@ -4,7 +4,7 @@ Finds the **title and the author** of a Tibetan work from the first and last 3,0
 
 - **In:** annotator span JSONs and the BDRC v3 clean texts (the gold data are gitignored under `data/`, several gigabytes).
 - **Out:** two datasets and two models on Hugging Face (below), and the skill in [skills/tibetan-title-author/](skills/tibetan-title-author/SKILL.md).
-- **In the whole system:** `tibetan-detect --title-author-system model|skill|both` in [detect/title_author.py](../detect/title_author.py) chooses between the models and the skill (`--title-system` and `--author-system` per field). Training and the training command use [common/train_layer.py](../common/train_layer.py).
+- **In the whole system:** `tibetan-detect` in [detect/title_author.py](../detect/title_author.py) runs the two models (`--title-model`, `--author-model`, `--author-span first|last`). The skill is no longer part of the pipeline; it stays in this folder as research. Training and the training command use [common/train_layer.py](../common/train_layer.py).
 
 ## Folder layout
 
@@ -116,7 +116,7 @@ Cleaned test set, 2,384 works; share of works with IoU >= 0.5 against the gold s
 | Title-only model for the title, skill for the author | 0.842 | 0.756 | 0.799 |
 | Rule script alone (`data/rule_runs/rule_test_all`) | 0.688 | 0.375 | 0.531 |
 
-Per-model test F1 from the cards (one span per work): Bo-Title-Detection 0.845 (P 0.848, R 0.842); Bo-Author-Detection 0.738 (P 0.742, R 0.734). The mix is the best measured: in `detect/`, `--title-system model --author-system skill`. About 11% of gold authors differ from the author a reader would name (stanza writer, compiler, copyist, requester), so every number has a ceiling. Gemini details and paired ranges: [docs/gemini_results.md](docs/gemini_results.md); run 2 on an earlier 2,389-work test set: [docs/run2_results.md](docs/run2_results.md).
+Per-model test F1 from the cards (one span per work): Bo-Title-Detection 0.845 (P 0.848, R 0.842); Bo-Author-Detection 0.738 (P 0.742, R 0.734). The mix (title from the model, author from the skill) was the best measured; it is no longer an option in `detect/`, which uses the models only. About 11% of gold authors differ from the author a reader would name (stanza writer, compiler, copyist, requester), so every number has a ceiling. Gemini details and paired ranges: [docs/gemini_results.md](docs/gemini_results.md); run 2 on an earlier 2,389-work test set: [docs/run2_results.md](docs/run2_results.md).
 
 Paired 95% ranges: two single models minus joint, mean +0.017 (+0.007 to +0.026); author-only minus joint, author +0.023 (+0.009 to +0.038); title-only minus joint, title +0.010 (−0.002 to +0.021); mix minus the skill, mean +0.028 (+0.020 to +0.036); mix minus the two single models, mean +0.011 (+0.002 to +0.019).
 

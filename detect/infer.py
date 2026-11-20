@@ -70,8 +70,33 @@ def _window_logits(text_input_ids, offsets, w_start, w_end, cls_id, sep_id, pad_
     return logits[1:1 + n_content], content_off
 
 
+def _tokenizer_key(tok) -> str:
+    """A fingerprint of the whole tokenizer (vocabulary, rules and special tokens). Two tokenizers
+    with the same key tokenize every text identically, so one layer's tokens can serve another."""
+    key = _TOKENIZER_KEYS.get(id(tok))
+    if key is None:
+        import hashlib
+        key = hashlib.sha1(tok.backend_tokenizer.to_str().encode("utf-8")).hexdigest()
+        _TOKENIZER_KEYS[id(tok)] = key
+    return key
+
+
+_TOKENIZER_KEYS: dict[int, str] = {}  # id(tokenizer) -> key; tokenizers live as long as the process (_MODEL_CACHE)
+
+
+def encode_text(text: str, tok, cache: dict | None = None):
+    """Tokenize `text` with ids and character offsets. With a `cache` (one per book), a layer whose
+    tokenizer is identical to one already used on this text reuses the result instead of tokenizing again."""
+    if cache is None:
+        return tok(text, add_special_tokens=False, return_offsets_mapping=True)
+    key = _tokenizer_key(tok)
+    if key not in cache:
+        cache[key] = tok(text, add_special_tokens=False, return_offsets_mapping=True)
+    return cache[key]
+
+
 def run_layer(text: str, tok, model, cfg: LayerConfig, device: str,
-             stride: int | None = None, content_max: int = CONTENT_MAX,
+             stride: int | None = None, content_max: int = CONTENT_MAX, enc=None,
              ) -> tuple[list[tuple[int, int, float, int]], int]:
     """Returns (character spans as (start, end, confidence, window_votes)
     4-tuples, number of windows run).
@@ -81,6 +106,7 @@ def run_layer(text: str, tok, model, cfg: LayerConfig, device: str,
         sabche/chapter at 5120, quotation at 3613, yigchung at 4914 -- so
         omitting --stride is unchanged from before this option existed.
     content_max: window content size in tokens (CLS/SEP are added on top).
+    enc: the text already tokenized with this layer's tokenizer (see encode_text); None tokenizes here.
         Defaults to the shared CONTENT_MAX every layer trained at; passed
         smaller by run_layer_dual's half-size pass (--dual-window).
 
@@ -102,7 +128,8 @@ def run_layer(text: str, tok, model, cfg: LayerConfig, device: str,
 
     eff_stride = cfg.stride if stride is None else stride
     max_length = content_max + 2  # + CLS + SEP
-    enc = tok(text, add_special_tokens=False, return_offsets_mapping=True)
+    if enc is None:
+        enc = tok(text, add_special_tokens=False, return_offsets_mapping=True)
     input_ids = enc["input_ids"]
     offsets = [tuple(o) for o in enc["offset_mapping"]]
     cls_id, sep_id, pad_id = special_token_ids(tok)
@@ -182,7 +209,7 @@ def rule_flags(cfg: LayerConfig) -> dict:
 
 
 def run_layer_dual(text: str, tok, model, cfg: LayerConfig, device: str,
-                   stride: int | None = None,
+                   stride: int | None = None, enc=None,
                    ) -> tuple[list[tuple[int, int, float, int, str]], int, int]:
     """--dual-window: runs the layer twice, once at the normal (possibly
     --stride-overridden) window size and once at half window size / half
@@ -191,13 +218,15 @@ def run_layer_dual(text: str, tok, model, cfg: LayerConfig, device: str,
     trailing dual_window_agreement string, total windows run across both
     passes, total short spans removed across both passes)."""
     full_stride = cfg.stride if stride is None else stride
+    if enc is None:
+        enc = tok(text, add_special_tokens=False, return_offsets_mapping=True)  # once for both passes
     full_spans, n_full = run_layer(text, tok, model, cfg, device, stride=full_stride,
-                                   content_max=CONTENT_MAX)
+                                   content_max=CONTENT_MAX, enc=enc)
     full_spans, n_removed_full = apply_linguistic_rules(full_spans, text, **rule_flags(cfg))
 
     half_stride = max(1, full_stride // 2)
     half_spans, n_half = run_layer(text, tok, model, cfg, device, stride=half_stride,
-                                   content_max=CONTENT_MAX // 2)
+                                   content_max=CONTENT_MAX // 2, enc=enc)
     half_spans, n_removed_half = apply_linguistic_rules(half_spans, text, **rule_flags(cfg))
 
     merged = merge_dual_window(full_spans, half_spans)
@@ -277,6 +306,7 @@ def infer_one(book: dict, layer_names: list[str], device: str,
     elapsed_s: dict[str, float] = {}
     short_spans_removed: dict[str, int] = {}
     errors: dict[str, str] = {}
+    enc_cache: dict = {}  # this book's tokens, shared by every layer with an identical tokenizer
     for name in layer_names:
         if LAYERS[name].kind == "head_tail":
             continue  # title/author: handled together below, one forward pass for both fields
@@ -288,14 +318,15 @@ def infer_one(book: dict, layer_names: list[str], device: str,
             print(f"  [warn] {book_id}: layer '{name}' skipped: {e}", file=sys.stderr)
             continue
         try:
+            enc = encode_text(text, tok, enc_cache)
             if dual_window:
                 spans5, n_win, n_removed = run_layer_dual(text, tok, model, LAYERS[name], device,
-                                                           stride=stride)
+                                                           stride=stride, enc=enc)
                 layers[name] = [{"start": s, "end": e, "confidence": c, "window_votes": v,
                                 "dual_window_agreement": agreement}
                                for s, e, c, v, agreement in spans5]
             else:
-                spans, n_win = run_layer(text, tok, model, LAYERS[name], device, stride=stride)
+                spans, n_win = run_layer(text, tok, model, LAYERS[name], device, stride=stride, enc=enc)
                 spans, n_removed = apply_linguistic_rules(spans, text, **rule_flags(LAYERS[name]))
                 layers[name] = [{"start": s, "end": e, "confidence": c, "window_votes": v}
                                for s, e, c, v in spans]
@@ -331,19 +362,10 @@ def parse_args(argv=None) -> argparse.Namespace:
                     help="do not auto-run the quotation model when tsawa is selected. "
                          "Default: tsawa also runs Bo-Quotation-Detection so Stage 3 can "
                          "drop quoted tsawa on unannotated books (no gold layers).")
-    ap.add_argument("--title-author-system", choices=["model", "skill", "both"], default="model",
-                    help="how the title/author layers run: the trained model (default, free, local), "
-                         "the LLM skill (PAID: one LLM call per book; needs GEMINI_API_KEY or "
-                         "ANTHROPIC_API_KEY), or both side by side (title/author from the model, "
-                         "title_skill/author_skill from the skill, no rule choosing between them).")
-    ap.add_argument("--title-system", choices=["model", "skill"], default=None,
-                    help="which system finds the title: the trained model or the LLM skill (PAID). "
-                         "Default: follows --title-author-system, which defaults to model.")
-    ap.add_argument("--author-system", choices=["model", "skill"], default=None,
-                    help="which system finds the author: the trained model or the LLM skill (PAID). "
-                         "Default: follows --title-author-system, which defaults to model. "
-                         "--title-system model --author-system skill scored best on the test split "
-                         "(title 0.842, author 0.756); it is a fixed choice per field, not a rule per work.")
+    ap.add_argument("--author-span", choices=["last", "first"], default="last",
+                    help="which author span to keep when the author model finds several. Default last "
+                         "(the rule for a single work). For whole books the gold author is usually on the "
+                         "title page, and first matched it about twice as often (35%% against 17%%, 511 books).")
     ap.add_argument("--title-model", default=TITLE_MODEL,
                     help="Hugging Face repo (or local folder) of the model that finds the title. "
                          "Default: the title-only model (3 labels, Viterbi penalty 6). The joint "
@@ -352,10 +374,6 @@ def parse_args(argv=None) -> argparse.Namespace:
                     help="Hugging Face repo (or local folder) of the model that finds the author. "
                          "Default: the author-only model. If --title-model and --author-model are the "
                          "same joint model, one forward pass serves both fields.")
-    ap.add_argument("--title-author-skill-model", default=TitleAuthorOptions.skill_model,
-                    help="LLM the skill calls when --title-author-system is skill or both")
-    ap.add_argument("--title-author-skill-dir", default=None,
-                    help="folder holding title_author_skill.py (default: $TA_SKILL_DIR, else the repo's own copy)")
     ap.add_argument("--device", default="cuda" if _has_cuda() else "cpu")
     ap.add_argument("--stride", type=int, default=None,
                     help="override every selected layer's window stride (smaller = more "
@@ -402,16 +420,10 @@ def main(argv=None) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     try:
         ta_options = TitleAuthorOptions(
-            system=args.title_author_system, title_system=args.title_system, author_system=args.author_system,
-            title_model=args.title_model, author_model=args.author_model,
-            skill_model=args.title_author_skill_model, skill_dir=args.title_author_skill_dir)
+            author_span=args.author_span,
+            title_model=args.title_model, author_model=args.author_model)
     except ValueError as e:
         raise SystemExit(str(e))
-    from .title_author import skill_note
-    note = skill_note(ta_options, [n for n in layer_names if LAYERS[n].kind == "head_tail"],
-                      sum(1 for fp in files if not already_done(fp.stem, args.out)))
-    if note:
-        print(f"  [note] {note}", file=sys.stderr)
 
     n_done = n_skipped = 0
     for i, fp in enumerate(files, 1):
