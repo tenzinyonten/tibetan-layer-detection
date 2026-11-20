@@ -104,7 +104,6 @@ Metric: one-to-one span matching at IoU >= 0.5, Viterbi decoding. Genre runs: wi
 | Run | Data | Epochs (best) | Validation F1 | Test F1 |
 |---|---|---|---:|---:|
 | Classified genre v1 | `yigchung-genre-bio-lotsawa` | 10 | 0.665 | not scored |
-| Classified genre v2 | `yigchung-genre-bio-lotsawa` | 20 (13, stopped at 16) | 0.737 | 0.768 |
 | Classified genre v3 (published) | `yigchung-genre-bio-lotsawa-v2` | 20 (17) | 0.737 | 0.786 (P 0.772, R 0.800) |
 
 Same test documents, general model against genre v3 (two documents, `I518A01A8` and `B-UT1ER1399_0001`, were in the general model's training data, so the fair row leaves them out):
@@ -129,9 +128,7 @@ The genre model wins on liturgy (0.79 against 0.62) but scores 0.06 on the "othe
 
 - **Songs cannot be measured.** The validation and test songs books have 4 and 1 gold spans.
 - **The test set is small and uneven.** Two books (`P000030`, `B-UT1ER2253_0001`) hold 86% of the 1,806 test spans. An earlier bootstrap over test books put v2 anywhere from 0.50 to 0.85 (not reproduced by a file here).
-- **Not all test gold is annotator-reviewed.** Four reviewed-OPF test books (`P000030`, `P000228`, `P000249`, `P000268`) still wait for annotator review.
 - **The Lotsawa documents are labelled prayer as an assumption** (about 90% of Lotsawa books are prayers by a rough title check).
-- **Old names in code and result files.** `fetch_yigchung_hub.py` and `paths.py` name the dataset `BDRC/yigchung_detection_v2` (redirects to `BDRC/Bo-Yigchung-Dataset`); `results/benchmark/benchmark_scores.md` carries that name and calls the general model `karma689_v2`.
 - **The genre-label step is manual and the general model has no training code here.** `classify_yigchung_genre.py` writes a jsonl; no script copies the labels into the catalog (`label_source` is `gemini_v4` for 217 books, `claude_checked` for 80). The general model was trained elsewhere.
 
 </details>
