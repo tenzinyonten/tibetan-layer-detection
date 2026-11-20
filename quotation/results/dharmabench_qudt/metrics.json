@@ -1,0 +1,419 @@
+{
+  "model_checkpoint": "experiments/mmbert_quotation_v3/outputs/checkpoint-6562",
+  "label_scheme": "bioe4",
+  "close_edge_spans": false,
+  "eval_time": "2026-09-11 02:38:26",
+  "best_by_iou": {
+    "strategy": "viterbi_penalty_0",
+    "muc": {
+      "strict": {
+        "precision": 0.5886699507389163,
+        "recall": 0.5886699507389163,
+        "f1_score": 0.5886699507389163,
+        "count": 406
+      },
+      "exact": {
+        "precision": 0.5886699507389163,
+        "recall": 0.5886699507389163,
+        "f1_score": 0.5886699507389163,
+        "count": 406
+      },
+      "partial": {
+        "precision": 0.6169950738916257,
+        "recall": 0.6067323481116584,
+        "f1_score": 0.6095238095238096,
+        "count": 406
+      },
+      "type": {
+        "precision": 0.645320197044335,
+        "recall": 0.6247947454844007,
+        "f1_score": 0.6303776683087028,
+        "count": 406
+      }
+    },
+    "iou_0.5": {
+      "precision": 0.7058823529411765,
+      "recall": 0.07164179104477612,
+      "f1_score": 0.13008130081300814,
+      "matches": 24,
+      "gold": 335,
+      "pred": 34
+    }
+  },
+  "argmax": {
+    "muc": {
+      "strict": {
+        "precision": 0.5985221674876847,
+        "recall": 0.5985221674876847,
+        "f1_score": 0.5985221674876847,
+        "count": 406
+      },
+      "exact": {
+        "precision": 0.5985221674876847,
+        "recall": 0.5985221674876847,
+        "f1_score": 0.5985221674876847,
+        "count": 406
+      },
+      "partial": {
+        "precision": 0.6182266009852216,
+        "recall": 0.6101190476190476,
+        "f1_score": 0.6123563218390805,
+        "count": 406
+      },
+      "type": {
+        "precision": 0.6379310344827587,
+        "recall": 0.6217159277504105,
+        "f1_score": 0.6261904761904762,
+        "count": 406
+      }
+    },
+    "iou_0.5": {
+      "precision": 0.8235294117647058,
+      "recall": 0.041791044776119404,
+      "f1_score": 0.07954545454545454,
+      "matches": 14,
+      "gold": 335,
+      "pred": 17
+    }
+  },
+  "best_viterbi": {
+    "strategy": "viterbi_penalty_0",
+    "muc": {
+      "strict": {
+        "precision": 0.5886699507389163,
+        "recall": 0.5886699507389163,
+        "f1_score": 0.5886699507389163,
+        "count": 406
+      },
+      "exact": {
+        "precision": 0.5886699507389163,
+        "recall": 0.5886699507389163,
+        "f1_score": 0.5886699507389163,
+        "count": 406
+      },
+      "partial": {
+        "precision": 0.6169950738916257,
+        "recall": 0.6067323481116584,
+        "f1_score": 0.6095238095238096,
+        "count": 406
+      },
+      "type": {
+        "precision": 0.645320197044335,
+        "recall": 0.6247947454844007,
+        "f1_score": 0.6303776683087028,
+        "count": 406
+      }
+    },
+    "iou_0.5": {
+      "precision": 0.7058823529411765,
+      "recall": 0.07164179104477612,
+      "f1_score": 0.13008130081300814,
+      "matches": 24,
+      "gold": 335,
+      "pred": 34
+    }
+  },
+  "all_sweep_results": [
+    {
+      "strategy": "argmax",
+      "muc": {
+        "strict": {
+          "precision": 0.5985221674876847,
+          "recall": 0.5985221674876847,
+          "f1_score": 0.5985221674876847,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5985221674876847,
+          "recall": 0.5985221674876847,
+          "f1_score": 0.5985221674876847,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6182266009852216,
+          "recall": 0.6101190476190476,
+          "f1_score": 0.6123563218390805,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.6379310344827587,
+          "recall": 0.6217159277504105,
+          "f1_score": 0.6261904761904762,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.8235294117647058,
+        "recall": 0.041791044776119404,
+        "f1_score": 0.07954545454545454,
+        "matches": 14,
+        "gold": 335,
+        "pred": 17
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 243,
+        "gold_spans_touched": 16,
+        "gold_spans": 335
+      }
+    },
+    {
+      "strategy": "viterbi_penalty_0",
+      "muc": {
+        "strict": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6169950738916257,
+          "recall": 0.6067323481116584,
+          "f1_score": 0.6095238095238096,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.645320197044335,
+          "recall": 0.6247947454844007,
+          "f1_score": 0.6303776683087028,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.7058823529411765,
+        "recall": 0.07164179104477612,
+        "f1_score": 0.13008130081300814,
+        "matches": 24,
+        "gold": 335,
+        "pred": 34
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 239,
+        "gold_spans_touched": 28,
+        "gold_spans": 335
+      }
+    },
+    {
+      "strategy": "viterbi_penalty_1",
+      "muc": {
+        "strict": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6169950738916257,
+          "recall": 0.6067323481116584,
+          "f1_score": 0.6095238095238096,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.645320197044335,
+          "recall": 0.6247947454844007,
+          "f1_score": 0.6303776683087028,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.7058823529411765,
+        "recall": 0.07164179104477612,
+        "f1_score": 0.13008130081300814,
+        "matches": 24,
+        "gold": 335,
+        "pred": 34
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 239,
+        "gold_spans_touched": 28,
+        "gold_spans": 335
+      }
+    },
+    {
+      "strategy": "viterbi_penalty_2",
+      "muc": {
+        "strict": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6169950738916257,
+          "recall": 0.6067323481116584,
+          "f1_score": 0.6095238095238096,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.645320197044335,
+          "recall": 0.6247947454844007,
+          "f1_score": 0.6303776683087028,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.7058823529411765,
+        "recall": 0.07164179104477612,
+        "f1_score": 0.13008130081300814,
+        "matches": 24,
+        "gold": 335,
+        "pred": 34
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 239,
+        "gold_spans_touched": 28,
+        "gold_spans": 335
+      }
+    },
+    {
+      "strategy": "viterbi_penalty_4",
+      "muc": {
+        "strict": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6169950738916257,
+          "recall": 0.6067323481116584,
+          "f1_score": 0.6095238095238096,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.645320197044335,
+          "recall": 0.6247947454844007,
+          "f1_score": 0.6303776683087028,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.7058823529411765,
+        "recall": 0.07164179104477612,
+        "f1_score": 0.13008130081300814,
+        "matches": 24,
+        "gold": 335,
+        "pred": 34
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 239,
+        "gold_spans_touched": 28,
+        "gold_spans": 335
+      }
+    },
+    {
+      "strategy": "viterbi_penalty_8",
+      "muc": {
+        "strict": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6169950738916257,
+          "recall": 0.6067323481116584,
+          "f1_score": 0.6095238095238096,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.645320197044335,
+          "recall": 0.6247947454844007,
+          "f1_score": 0.6303776683087028,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.7058823529411765,
+        "recall": 0.07164179104477612,
+        "f1_score": 0.13008130081300814,
+        "matches": 24,
+        "gold": 335,
+        "pred": 34
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 239,
+        "gold_spans_touched": 28,
+        "gold_spans": 335
+      }
+    },
+    {
+      "strategy": "viterbi_penalty_12",
+      "muc": {
+        "strict": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "exact": {
+          "precision": 0.5886699507389163,
+          "recall": 0.5886699507389163,
+          "f1_score": 0.5886699507389163,
+          "count": 406
+        },
+        "partial": {
+          "precision": 0.6169950738916257,
+          "recall": 0.6067323481116584,
+          "f1_score": 0.6095238095238096,
+          "count": 406
+        },
+        "type": {
+          "precision": 0.645320197044335,
+          "recall": 0.6247947454844007,
+          "f1_score": 0.6303776683087028,
+          "count": 406
+        }
+      },
+      "iou_0.5": {
+        "precision": 0.7058823529411765,
+        "recall": 0.07164179104477612,
+        "f1_score": 0.13008130081300814,
+        "matches": 24,
+        "gold": 335,
+        "pred": 34
+      },
+      "documents": {
+        "empty_gold": 244,
+        "empty_gold_left_empty": 239,
+        "gold_spans_touched": 28,
+        "gold_spans": 335
+      }
+    }
+  ]
+}

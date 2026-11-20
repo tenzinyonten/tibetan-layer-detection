@@ -1,0 +1,10 @@
+dataset_repo: karma689/layer_detection
+dataset_revision: v1.1
+models:
+  primary: gemini-3.8-flash
+  fallback: gemini-3.7-flash
+T_38: 2.0
+T_37: 2.0
+W: 2156
+S: 1078
+L: 1078
