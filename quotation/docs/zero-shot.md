@@ -90,14 +90,6 @@ python quotation/src/check_quotation_gemini.py \
 goes in one request. On the free tier a long book can exceed the per-minute
 cap on its own; prefer `--chunked` or the benchmark units below.
 
-A thinner wrapper that walks a Hub split, extracts, locates, and writes
-metrics:
-
-```bash
-python quotation/src/eval_quotation_gemini.py --split test
-python quotation/src/eval_quotation_gemini.py --split test --books P000069
-```
-
 That script still uses the older extract path. For a number you will quote
 against the encoder, use path B.
 

@@ -85,9 +85,8 @@ python quotation/src/upload_quotation_model.py --config quotation/configs/train_
 - **Reviewed gold test set**: turns the human review YAMLs of the 19 test books into a gold test set (tag `w2.1`). `python quotation/src/build_quotation_reviewed_benchmark.py` (add `--push`, with `HF_TOKEN` set, to upload)
 - **Score on reviewed gold**: scores a checkpoint on the original and the reviewed gold in one pass. `python quotation/src/eval_quotation_reviewed.py --config quotation/configs/train_quotation_model.yaml --checkpoint <folder or Hub id>`
 - **DharmaBench QUDT**: scores on the external QUDT task (406 short documents). `python quotation/src/eval_quotation_dharmabench.py --config quotation/configs/train_quotation_model.yaml --checkpoint quotation/outputs/checkpoint-6562`
-- **Window cache**: uploads or downloads the tokenized window cache. `python quotation/src/upload_quotation_window_cache.py upload --config <config.yaml> --repo <owner/name> --private`
 - **Gemini and Claude benchmark**: three-model LLM comparison on the 19 test books, needs `GEMINI_API_KEY` (and `ANTHROPIC_API_KEY` for Claude). `python quotation/src/run_quotation_zeroshot.py {build-units,preflight,freeze,run,claude-batch,locate,score} --split test --source units`. Results go to [results/zeroshot/](results/zeroshot/results.md).
-- **One-book Gemini debugging**: `python quotation/src/extract_quotation_gemini.py --book P000152 --prompt quotation/prompts/quotation_anchor_prompt.md --chunked --out quotes.json`, then `python quotation/src/check_quotation_gemini.py --book P000152 --quotes quotes.json`. `python quotation/src/eval_quotation_gemini.py --split test` is the older whole-split flow.
+- **One-book Gemini debugging**: `python quotation/src/extract_quotation_gemini.py --book P000152 --prompt quotation/prompts/quotation_anchor_prompt.md --chunked --out quotes.json`, then `python quotation/src/check_quotation_gemini.py --book P000152 --quotes quotes.json`. 
 - **Tests**: `cd quotation && python -m pytest tests`
 
 Write-ups with the numbers: [encoder-model.md](docs/encoder-model.md) and [zero-shot.md](docs/zero-shot.md).
@@ -134,11 +133,9 @@ quotation/
 │   ├── eval_quotation_reviewed.py        # score on original and reviewed gold
 │   ├── eval_quotation_dharmabench.py     # external QUDT benchmark
 │   ├── upload_quotation_model.py         # publish checkpoint, metrics, card
-│   ├── upload_quotation_window_cache.py  # upload/download tokenized window cache
 │   ├── run_quotation_zeroshot.py         # Gemini and Claude benchmark, subcommands
 │   ├── extract_quotation_gemini.py       # one book through a Gemini prompt
 │   ├── check_quotation_gemini.py         # locate and score Gemini quotes
-│   ├── eval_quotation_gemini.py          # older whole-split Gemini run
 │   └── quotation_lib/                    # library: windowing, BIOE, metrics, Gemini benchmark, uploads
 ├── docs/                                 # cards, pipeline chart, encoder-model.md, zero-shot.md
 ├── results/                              # QUDT metrics, reviewed-gold scores, zero-shot benchmark
