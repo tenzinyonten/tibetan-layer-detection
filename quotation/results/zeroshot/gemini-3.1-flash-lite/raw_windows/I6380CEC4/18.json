@@ -1,0 +1,19 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "model_version": "gemini-3.1-flash-lite",
+  "prompt_sha1": "e88f021573bb97fd3733282caa8b4c966501bf9f",
+  "window_sha1": "204baead7a59dd7eeb4c147b7a117824ff87dfe0",
+  "temperature": 1.0,
+  "thinking": "low",
+  "finish_reason": "FinishReason.STOP",
+  "usage": {
+    "prompt": 16326,
+    "thoughts": 1791,
+    "candidates": 6,
+    "total": 18123
+  },
+  "raw_text": "{\"spans\": []}",
+  "attempts": 1,
+  "started": 1789468960,
+  "finished": 1789468968
+}

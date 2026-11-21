@@ -12,9 +12,9 @@ Finds **quotation spans** in classical Tibetan commentaries: a passage where one
 quotation/
 ├── src/            scripts, and quotation_lib/ (the library they import)
 ├── configs/        training and window-building configs
-├── prompts/        the two Gemini prompts
+├── prompts/        the Gemini prompts (current, early and plain)
 ├── docs/           model card, dataset card, encoder and zero-shot write-ups
-├── results/        score tables (QUDT, reviewed gold, zero-shot benchmark)
+├── results/        score tables and saved model outputs (QUDT, reviewed gold, zero-shot benchmark)
 └── tests/          pytest suite for the library
 ```
 
@@ -119,6 +119,7 @@ quotation/
 │   └── build_quotation_windows_alt.yaml  # alternative window set (hub tag, masked layers)
 ├── prompts/
 │   ├── quotation_anchor_prompt.md        # current Gemini anchor prompt
+│   ├── quotation_anchor_prompt_early.md  # first anchor prompt, behind the early one-book pilots
 │   └── quotation_plain_prompt.md         # plain prompt, default of extract_quotation_gemini.py
 ├── src/
 │   ├── fetch_quotation_books.py          # download OpenPecha books of the Tsadra list
@@ -138,7 +139,7 @@ quotation/
 │   ├── check_quotation_gemini.py         # locate and score Gemini quotes
 │   └── quotation_lib/                    # library: windowing, BIOE, metrics, Gemini benchmark, uploads
 ├── docs/                                 # cards, pipeline chart, encoder-model.md, zero-shot.md
-├── results/                              # QUDT metrics, reviewed-gold scores, zero-shot benchmark
+├── results/                              # QUDT metrics and predictions, reviewed-gold scores, zero-shot scores and raw LLM replies
 └── tests/                                # pytest suite for quotation_lib
 ```
 

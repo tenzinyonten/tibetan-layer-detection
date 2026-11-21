@@ -1,0 +1,19 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "model_version": "gemini-3.1-flash-lite",
+  "prompt_sha1": "e88f021573bb97fd3733282caa8b4c966501bf9f",
+  "window_sha1": "d94875afd200ebaf1d9c08820e1eb9e67c45475a",
+  "temperature": 1.0,
+  "thinking": "low",
+  "finish_reason": "STOP",
+  "usage": {
+    "prompt": 16099,
+    "thoughts": 3291,
+    "candidates": 279,
+    "total": 19669
+  },
+  "raw_text": "{\"spans\": [{\"label\": \"QUOTE\", \"head\": \"གང་གིས་གླང་ཆེན་མྱོས་\", \"tail\": \"ཡ་མཚན་ཆེན་པོར་འགྱུར།\"}, {\"label\": \"QUOTE\", \"frame\": \"མདོ་ལས།\", \"head\": \"འཇོགས་པར་བྱེད། ཡང་དག་\", \"tail\": \"ཏིང་ངེ་འཛིན་དུ་བྱེད།\"}, {\"label\": \"QUOTE\", \"frame\": \"རྒྱུད་འདི་ལས།\", \"head\": \"རྣམ་པར་དག་པའི་དབྱིངས་\", \"tail\": \"བླ་མེད་ཐེག་པའི་མཆོག །\"}, {\"label\": \"QUOTE\", \"frame\": \"གསང་འདུས་ལས།\", \"head\": \"དངོས་པོ་མེད་ལ་བསྒོམ་\", \"tail\": \"སྒོམ་པ་དམིགས་སུ་མེད་པའོ། །\"}, {\"label\": \"QUOTE\", \"head\": \"རྣལ་འབྱོར་སྔགས་འཆང་\", \"tail\": \"ཐམས་ཅད་ཡེ་ནས་དབྱེར་མེད་པའོ། །\"}]}",
+  "attempts": 3,
+  "started": 1789559473,
+  "finished": 1789559488
+}

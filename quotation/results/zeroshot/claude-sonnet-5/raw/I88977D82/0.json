@@ -1,0 +1,20 @@
+{
+  "model": "claude-sonnet-5",
+  "model_version": "claude-sonnet-5",
+  "prompt_sha1": "e88f021573bb97fd3733282caa8b4c966501bf9f",
+  "window_sha1": "",
+  "temperature": 1.0,
+  "thinking": "adaptive",
+  "finish_reason": "end_turn",
+  "usage": {
+    "prompt": 167994,
+    "thoughts": 0,
+    "candidates": 243,
+    "total": 168237
+  },
+  "raw_text": "{\"spans\": [{\"label\": \"QUOTE\", \"frame\": \"ཨུ་རྒྱན་རིན་པོ་ཆེས།\", \"head\": \"དུག་གི་ལྟོ་ཡོང་བ་རྨ་བྱ་\", \"tail\": \"ཡང་རབ་ཀྱི་སྤྱོད་ཡུལ་ཡིན་\"}, {\"label\": \"QUOTE\", \"frame\": \"གཞུང་ལས།\", \"head\": \"དེ་ནས་འགྱུ་བ་དང་གནས་པ་\", \"tail\": \"གཉིས་འཛིན་གྱི་དྲི་མ་དག་པར་བྱའོ༔\"}]}",
+  "attempts": 1,
+  "batch_id": "msgbatch_01LA8CSGG4TZtaPtb3HFZ6Hp",
+  "started": 0,
+  "finished": 1789981971
+}
