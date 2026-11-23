@@ -236,7 +236,7 @@ and the [benchmark handoff](https://github.com/WeBuddhist/Tibetan-quotation-dete
 
 | Book | Model / prompt | Gold | F1 | Note |
 |---|---|---:|---:|---|
-| P000152 | gemini-3.8-flash, anchors v1, whole book | 91 | 0.422 | 10 locate failures, 9 of them `tail_beyond_max_len` |
+| P000152 | gemini-3.8-flash, anchors (early prompt: [`quotation_anchor_prompt_early.md`](../prompts/quotation_anchor_prompt_early.md)), whole book | 91 | 0.422 | 10 locate failures, 9 of them `tail_beyond_max_len` |
 | P000069 | gemini-2.5-flash-lite, anchors | 629 | 0.576 | 172 of 629 spans (27%) could not be found in the text |
 
 Whole-book requests plus a 2,000-character locator ceiling are why long quotes

@@ -1,0 +1,19 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "model_version": "gemini-3.1-flash-lite",
+  "prompt_sha1": "e88f021573bb97fd3733282caa8b4c966501bf9f",
+  "window_sha1": "80085499ff91f7e9df91fff6c3aa2121416c71f2",
+  "temperature": 1.0,
+  "thinking": "low",
+  "finish_reason": "FinishReason.STOP",
+  "usage": {
+    "prompt": 16217,
+    "thoughts": 5604,
+    "candidates": 144,
+    "total": 21965
+  },
+  "raw_text": "{\"spans\": [{\"label\": \"QUOTE\", \"head\": \"ཧཱུྃ། མ་ཡུམ་ཆེན་ཐུགས་ལས་སྤྲུལ་པའི་ཐུགས་ཀྱི་སྲས། །\", \"tail\": \"\"}, {\"label\": \"QUOTE\", \"head\": \"ཤར་ནས་གོམ་གསུམ་བྱོན་ཙ་ན། །\", \"tail\": \"\"}, {\"label\": \"QUOTE\", \"head\": \"དབུས་ཀྱི་མཐར་འཕེལ་བ་\", \"tail\": \"མཐའ་རུ་ཕྱིན་པར་བྱིན་གྱིས་རློབས།\"}]}",
+  "attempts": 1,
+  "started": 1789468716,
+  "finished": 1789468735
+}
