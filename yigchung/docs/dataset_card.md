@@ -132,7 +132,7 @@ Steps: combine the four sources, remove duplicate books and passages from the Lo
 
 ## Annotation
 
-Spans were annotated through OpenPecha. The `reviewed_opf` books come from the reviewed OpenPecha set; the other sources keep their own annotations. The published spans are the original annotations: the later annotator review of five BDRC books is not applied to this dataset. Bare number spans (such as ༡ or ༢༤) are not included: 364 were removed from 6 books on 2026-11-25 (version tag `v2.1`; `v2.0` keeps them).
+Spans were annotated through OpenPecha. The `reviewed_opf` books come from the reviewed OpenPecha set; the other sources keep their own annotations. The published spans are the original annotations: the later annotator review of five BDRC books is not applied to this dataset. Bare number spans (such as ༡ or ༢༤) are not included: 364 were removed from 6 books on 2026-11-25 (version tag `v2.1`).
 
 
 ## Citation
