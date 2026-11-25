@@ -1,4 +1,5 @@
 ---
+license: mit
 pretty_name: Bo-Chapter-Dataset
 language:
 - bo
@@ -20,16 +21,15 @@ configs:
     path: data/train-*
   - split: validation
     path: data/validation-*
-  - split: test
-    path: data/test-*
 ---
 
 # Bo-Chapter-Dataset
 
 Binary token classification data for the Chapter layer (ལེའུ་, chapter and section headings) of
 Tibetan Buddhist books, in BIO labels over 8,192-token windows. It trains
-[`BDRC/Bo-Chapter-Detection`](https://huggingface.co/BDRC/Bo-Chapter-Detection). It has 378 books and
-11,070 windows.
+[`BDRC/Bo-Chapter-Detection`](https://huggingface.co/BDRC/Bo-Chapter-Detection). It has 342 books and
+10,130 windows. The test books are published separately as
+[`BDRC/Bo-Chapter-Benchmark`](https://huggingface.co/datasets/BDRC/Bo-Chapter-Benchmark).
 
 ## Format
 
@@ -51,13 +51,12 @@ batches). Scoring code in the GitHub repository uses character offsets with an i
 
 ## Splits
 
-Split by book (one book in one split only), 83 / 8.5 / 8.5 by window count.
+Split by book (one book in one split only), 83 / 8.5 / 8.5 by window count. The 36 test books are not in this repo.
 
 | split | books | old / new books | windows | Chapter spans | spans per window | old-batch windows |
 |---|---|---|---|---|---|---|
 | train | 308 | 114 / 194 | 9,165 | 2,509 | 0.274 | 49.3% |
 | validation | 34 | 13 / 21 | 965 | 275 | 0.285 | 49.2% |
-| test | 36 | 16 / 20 | 940 | 258 | 0.274 | 49.3% |
 
 Train tokens: 74,840,009 `O`, 3,688 `B-CHAPTER`, 129,338 `I-CHAPTER` (windows overlap, so a token
 is counted once per window it appears in). Chapter is about 0.18% of tokens. About a third of all
@@ -87,13 +86,6 @@ Chapter spans come from the `Chapter` layer of the OpenPecha books, in the old a
 On top of the raw annotations, only the cleaning in steps 1 and 2 was applied; no span was
 relabelled by hand.
 
-## Known limits
-
-- Most books have very few Chapter spans (216 of 378 kept books have one or two), and some may be under-annotated.
-- The test split has 258 spans in 36 books, so scores are noisy.
-- Text shared between different books is not grouped, so the same passage can appear in more than one split.
-- Chapter spans are sparse (0.18% of tokens), so class weights are needed in training.
-- Data rights: the source texts and annotations come from BDRC and OpenPecha. Reuse of the source texts is subject to BDRC's terms.
 
 ## Citation
 

@@ -1,4 +1,5 @@
 ---
+license: mit
 pretty_name: Bo-Yigchung-Classified-Dataset
 language:
 - bo
@@ -12,7 +13,7 @@ tags:
 
 # Bo-Yigchung-Classified-Dataset
 
-Tokenized windows of Tibetan books of four genres (liturgy, prayer, sadhana, songs), labelled for Yigchung, the small-print interlinear note. Books were classified into genres with Gemini; books of the genre "other" are excluded. It trains [BDRC/Bo-Yigchung-Classified-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Classified-Detection).
+Tokenized windows of Tibetan books of four genres (liturgy, prayer, sadhana, songs), labelled for Yigchung, the small-print interlinear note. Books were classified into genres with Gemini; books of the genre "other" are excluded. It trains [BDRC/Bo-Yigchung-Classified-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Classified-Detection). The test documents are published separately as [BDRC/Bo-Yigchung-Classified-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Classified-Benchmark).
 
 ## Format
 
@@ -28,26 +29,25 @@ Split by document: a document is in one split only.
 |---|---:|---:|---:|---:|---:|---:|
 | train | 49 | 9,306 | 1,388 | 10,411,381 | 14,854 | 933,542 |
 | validation | 8 | 1,290 | 137 | 990,718 | 2,078 | 129,234 |
-| test | 10 | 1,806 | 229 | 1,669,729 | 2,856 | 195,129 |
 
 Token counts are over all windows, so overlapping windows count a token more than once.
 
 Documents by genre:
 
-| Genre | Train | Validation | Test |
-|---|---:|---:|---:|
-| liturgy | 15 | 1 | 4 |
-| prayer | 26 | 5 | 4 |
-| sadhana | 2 | 1 | 1 |
-| songs | 6 | 1 | 1 |
+| Genre | Train | Validation |
+|---|---:|---:|
+| liturgy | 15 | 1 |
+| prayer | 26 | 5 |
+| sadhana | 2 | 1 |
+| songs | 6 | 1 |
 
 ## Data source and preparation
 
-| Source (`source_batch`) | Documents: train / validation / test |
+| Source (`source_batch`) | Documents: train / validation |
 |---|---|
-| `reviewed_opf` (BDRC books annotated in OpenPecha) | 16 / 2 / 5 |
-| `bdrc`, `bdrc_annotator_reviewed` (BDRC volumes) | 13 / 3 / 2 |
-| `lotsawa_combined` (Lotsawa House) | 20 / 3 / 3 |
+| `reviewed_opf` (BDRC books annotated in OpenPecha) | 16 / 2 |
+| `bdrc`, `bdrc_annotator_reviewed` (BDRC volumes) | 13 / 3 |
+| `lotsawa_combined` (Lotsawa House) | 20 / 3 |
 
 The 41 classified books come from the 762-book release [BDRC/yigchung_detection_v2](https://huggingface.co/datasets/BDRC/yigchung_detection_v2) and four further BDRC books that are not in it. The 469 short Lotsawa House books are joined into 26 documents. Steps, in order, with the script for each (all in `yigchung/src/` of the [layer repository](https://github.com/tenzinyonten/tibetan-layer-detection/tree/main/yigchung)):
 
@@ -59,15 +59,8 @@ The 41 classified books come from the 762-book release [BDRC/yigchung_detection_
 
 ## Annotation
 
-Spans were annotated through OpenPecha. For 5 of the 67 documents (about 28% of the spans) the spans come from an annotator review. Beyond that, the cleaning in step 4 was applied on top of the raw annotations.
+Spans were annotated through OpenPecha. For 5 of the 67 documents (including the 10 benchmark documents) (about 28% of the spans) the spans come from an annotator review. Beyond that, the cleaning in step 4 was applied on top of the raw annotations.
 
-## Known limits
-
-- Songs: the validation and test sets have only 4 and 1 gold spans.
-- The Lotsawa House documents are labelled prayer as an assumption (about 90% of those books are prayers by a rough title check).
-- Genres are unevenly sized: sadhana has 4 documents in total.
-- Two test documents hold 86% of the test spans.
-- Data rights: the texts come from BDRC and Lotsawa House. Check each source's terms before reuse; the licence field is a placeholder.
 
 ## Citation
 

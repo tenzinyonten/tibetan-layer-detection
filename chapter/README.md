@@ -22,9 +22,10 @@ chapter/
 | | Repo | Visibility |
 |---|---|---|
 | Model | [BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) ([card](docs/model_card.md)) | private |
-| Dataset | [BDRC/Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) ([card](docs/dataset_card.md)) | private |
+| Dataset (train, validation) | [BDRC/Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) ([card](docs/dataset_card.md)) | private |
+| Benchmark (test) | [BDRC/Bo-Chapter-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Chapter-Benchmark) ([card](docs/benchmark_card.md)) | public |
 
-Both are private (read from the Hub, 2026-11-17); a 404 means you need access from the owner.
+The model is private (read from the Hub, 2026-11-17). Datasets read from the Hub on 2026-11-25 (training data private, benchmark public); a 404 on a private repo means you need access from the owner. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here.
 
 ## Pipeline
 

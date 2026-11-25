@@ -1,4 +1,5 @@
 ---
+license: mit
 pretty_name: Bo-Sabche-Dataset
 language:
 - bo
@@ -19,14 +20,12 @@ configs:
     path: data/train-*
   - split: validation
     path: data/validation-*
-  - split: test
-    path: data/test-*
 ---
 
 # Bo-Sabche-Dataset
 
 Training data for finding **Sabche** (ས་བཅད་, outline heading) spans in Tibetan Buddhist texts.
-It is the training data of [`BDRC/Bo-Sabche-Detection`](https://huggingface.co/BDRC/Bo-Sabche-Detection).
+It is the training data of [`BDRC/Bo-Sabche-Detection`](https://huggingface.co/BDRC/Bo-Sabche-Detection). The test books are published separately as [`BDRC/Bo-Sabche-Benchmark`](https://huggingface.co/datasets/BDRC/Bo-Sabche-Benchmark).
 
 A Sabche span is the heading phrase itself (for example a numbered outline line), stopping just
 before the closing shad, not the section under it.
@@ -54,7 +53,6 @@ book, or belonging to the same source outline group, crosses a split.
 |---|---:|---:|---:|
 | Train | 261 | 8,886 (82.6%) | 35,122 |
 | Validation | 33 | 911 (8.5%) | 3,091 |
-| Test | 29 | 963 (8.9%) | 4,079 |
 
 ## Data source and preparation
 
@@ -94,18 +92,6 @@ batches described above. No independent review pass has been run on top of the o
 annotations (unlike the project's Quotation and Chapter layers); the cleaning steps above correct
 offset and formatting problems in the existing annotations, not their coverage.
 
-## Known limits
-
-- Some books are only partly annotated: titled-heading recall is between 0.2 and 0.5 in 21 of the
-  kept books, so some real headings are labeled `O`. Bare `Nth-པ་ནི` headings with no title are
-  annotated inconsistently (about 29% of the time), project-wide.
-- The 227 spans dropped as unverified after offset re-alignment are labeled `O`, not excluded from
-  the text, so their true headings count as missed, not absent.
-- 14.2% of test spans' raw text also appears in train, but 84% of all gold spans are unique text
-  and most of the overlap is stock heading phrasing (numbered templates). Real document-level
-  leakage is about 6.8%, concentrated in one group of books that share a lamrim outline.
-- Data-rights note: source texts are BDRC-digitized Tibetan Buddhist works; see BDRC's own terms
-  for reuse beyond this benchmark.
 
 ## Citation
 

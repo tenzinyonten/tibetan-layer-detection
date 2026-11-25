@@ -1,4 +1,5 @@
 ---
+license: mit
 pretty_name: Bo-Title-Dataset
 language:
 - bo
@@ -28,31 +29,30 @@ Columns: `input_ids`, `attention_mask`, `labels`, `token_start`, `token_end`, `c
 
 ## Splits
 
-One row per work, so rows and works are the same. Copies of the same work were removed before the split, and duplicate works never sit in different splits (a collection can have works in more than one split). Validation and test contain annotator spans only. The test split is the benchmark for the model.
+One row per work, so rows and works are the same. Copies of the same work were removed before the split, and duplicate works never sit in different splits (a collection can have works in more than one split). Validation contains annotator spans only. The test works are published separately as [`BDRC/Bo-Title-Benchmark`](https://huggingface.co/datasets/BDRC/Bo-Title-Benchmark).
 
 | split | works |
 |---|---|
 | train | 32,074 |
 | validation | 2,494 |
-| test | 2,384 |
 
-Label counts (tokens): `B-TITLE` and `I-TITLE` — train 32,074 and 1,197,216, validation 2,494 and 92,323, test 2,384 and 85,505. The test split has 5 fewer works than the 2,389-work split built before cleaning, because works whose author is a translator were dropped (step 2 below).
+Label counts (tokens): `B-TITLE` and `I-TITLE` — train 32,074 and 1,197,216, validation 2,494 and 92,323.
 
 ## Data source and preparation
 
 **Source.** The text of each work is a segment of a BDRC volume. The `source` column says where the text came from:
 
-| source | train | validation | test | text origin |
-|---|---|---|---|---|
-| tei | 6,105 | 537 | 484 | BDRC e-text (TEI), human-typed |
-| google_books | 3,810 | 377 | 349 | Google Books text |
-| google_vision | 2,994 | 304 | 225 | Google Vision OCR |
-| paddleocr_v2 | 5,075 | 637 | 640 | PaddleOCR |
-| ocr_qwen_v1 | 3,206 | 308 | 341 | OCR (`ocr_qwen_v1` pipeline) |
-| ocrv1-ws-ldv1 | 2,012 | 207 | 226 | OCR (`ocrv1-ws-ldv1` pipeline) |
-| paddleocr_v1 | 1,061 | 124 | 119 | PaddleOCR (first version) |
-| v3_auto | 7,811 | 0 | 0 | PaddleOCR text from the BDRC char-level outlines release v3; spans found automatically |
-| **all** | **32,074** | **2,494** | **2,384** | |
+| source | train | validation | text origin |
+|---|---|---|---|
+| tei | 6,105 | 537 | BDRC e-text (TEI), human-typed |
+| google_books | 3,810 | 377 | Google Books text |
+| google_vision | 2,994 | 304 | Google Vision OCR |
+| paddleocr_v2 | 5,075 | 637 | PaddleOCR |
+| ocr_qwen_v1 | 3,206 | 308 | OCR (`ocr_qwen_v1` pipeline) |
+| ocrv1-ws-ldv1 | 2,012 | 207 | OCR (`ocrv1-ws-ldv1` pipeline) |
+| paddleocr_v1 | 1,061 | 124 | PaddleOCR (first version) |
+| v3_auto | 7,811 | 0 | PaddleOCR text from the BDRC char-level outlines release v3; spans found automatically |
+| **all** | **32,074** | **2,494** | |
 
 **Preparation**, in order (scripts in `title_author/src/` of [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection)):
 
@@ -67,15 +67,9 @@ Label counts (tokens): `B-TITLE` and `I-TITLE` — train 32,074 and 1,197,216, v
 ## Annotation
 
 Two kinds of spans:
-- **Annotator spans** (all of validation and test, and 24,263 of the train works): one title and one author span per work, marked by human annotators on the text above. The code does not edit them. Overlapping title/author spans: the title wins.
+- **Annotator spans** (all of validation, and 24,263 of the train works): one title and one author span per work, marked by human annotators on the text above. The code does not edit them. Overlapping title/author spans: the title wins.
 - **Automatic spans** (7,811 train works, `source = v3_auto`): found by string matching against the BDRC char-level outlines release v3, about 91-94% right. They are never in validation or test.
 
-## Known limits
-
-- One title and one author per work; other mentions and second authors are not marked.
-- Span edges vary between annotators (for example whether the closing shad or `བཞུགས་སོ` is included).
-- Duplicate detection looks at the first 1,500 characters only, so some copies can slip through and some different works can be wrongly merged.
-- The text comes from BDRC volumes. Data-rights questions are still open, so check the terms before sharing any text derived from this dataset.
 
 ## Citation
 

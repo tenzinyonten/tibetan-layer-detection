@@ -15,18 +15,18 @@ Each layer folder builds its dataset; `common/` trains and scores one model per 
 
 ## Layers
 
-Hugging Face visibility was read from the Hub on 2026-11-18. A private repo opens only for BDRC members who are logged in.
+Model visibility was read from the Hub on 2026-11-18, dataset visibility on 2026-11-25. Each layer has a private training repo (train and validation) and a public benchmark repo (test only). A private repo opens only for BDRC members who are logged in.
 
-| Layer | Folder README | Model | Dataset |
+| Layer | Folder README | Model | Training data, benchmark |
 |---|---|---|---|
-| Tsawa (root text) | [tsawa/](tsawa/README.md) | [Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) (public) | [Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) (private) |
-| Sabche (outline headings) | [sabche/](sabche/README.md) | [Bo-Sabche-Detection](https://huggingface.co/BDRC/Bo-Sabche-Detection) (private) | [Bo-Sabche-Dataset](https://huggingface.co/datasets/BDRC/Bo-Sabche-Dataset) (private) |
-| Chapter (chapter breaks) | [chapter/](chapter/README.md) | [Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) (private) | [Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) (private) |
-| Quotation (quotations in commentaries) | [quotation/](quotation/README.md) | [Bo-Quotation-Detection](https://huggingface.co/BDRC/Bo-Quotation-Detection) (private) | [Bo-Quotation-Dataset](https://huggingface.co/datasets/BDRC/Bo-Quotation-Dataset) (public) |
-| Yigchung, general (small-print notes) | [yigchung/](yigchung/README.md) | [Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) (public) | [Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (public) |
-| Yigchung, classified (four genres) | [yigchung/](yigchung/README.md) | [Bo-Yigchung-Classified-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Classified-Detection) (private) | [Bo-Yigchung-Classified-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Classified-Dataset) (private) |
-| Title | [title_author/](title_author/README.md) | [Bo-Title-Detection](https://huggingface.co/BDRC/Bo-Title-Detection) (private) | [Bo-Title-Dataset](https://huggingface.co/datasets/BDRC/Bo-Title-Dataset) (private) |
-| Author | [title_author/](title_author/README.md) | [Bo-Author-Detection](https://huggingface.co/BDRC/Bo-Author-Detection) (private) | [Bo-Author-Dataset](https://huggingface.co/datasets/BDRC/Bo-Author-Dataset) (private) |
+| Tsawa (root text) | [tsawa/](tsawa/README.md) | [Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) (public) | [Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) (private), [Bo-Tsawa-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Benchmark) (public) |
+| Sabche (outline headings) | [sabche/](sabche/README.md) | [Bo-Sabche-Detection](https://huggingface.co/BDRC/Bo-Sabche-Detection) (private) | [Bo-Sabche-Dataset](https://huggingface.co/datasets/BDRC/Bo-Sabche-Dataset) (private), [Bo-Sabche-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Sabche-Benchmark) (public) |
+| Chapter (chapter breaks) | [chapter/](chapter/README.md) | [Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) (private) | [Bo-Chapter-Dataset](https://huggingface.co/datasets/BDRC/Bo-Chapter-Dataset) (private), [Bo-Chapter-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Chapter-Benchmark) (public) |
+| Quotation (quotations in commentaries) | [quotation/](quotation/README.md) | [Bo-Quotation-Detection](https://huggingface.co/BDRC/Bo-Quotation-Detection) (private) | [Bo-Quotation-Dataset](https://huggingface.co/datasets/BDRC/Bo-Quotation-Dataset) (private), [Bo-Quotation-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Quotation-Benchmark) (public) |
+| Yigchung, general (small-print notes) | [yigchung/](yigchung/README.md) | [Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) (public) | [Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (private), [Bo-Yigchung-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Benchmark) (public) |
+| Yigchung, classified (four genres) | [yigchung/](yigchung/README.md) | [Bo-Yigchung-Classified-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Classified-Detection) (private) | [Bo-Yigchung-Classified-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Classified-Dataset) (private), [Bo-Yigchung-Classified-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Classified-Benchmark) (public) |
+| Title | [title_author/](title_author/README.md) | [Bo-Title-Detection](https://huggingface.co/BDRC/Bo-Title-Detection) (private) | [Bo-Title-Dataset](https://huggingface.co/datasets/BDRC/Bo-Title-Dataset) (private), [Bo-Title-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Title-Benchmark) (public) |
+| Author | [title_author/](title_author/README.md) | [Bo-Author-Detection](https://huggingface.co/BDRC/Bo-Author-Detection) (private) | [Bo-Author-Dataset](https://huggingface.co/datasets/BDRC/Bo-Author-Dataset) (private), [Bo-Author-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Author-Benchmark) (public) |
 
 Shared folders: [detect/](detect/README.md) (the inference package and its four console commands) and [common/](common/README.md) (fetch, train, evaluate, zero-shot, annotation audit). Spelling correction lives in a separate repository, [tenzinyonten/TiSpell](https://github.com/tenzinyonten/TiSpell).
 

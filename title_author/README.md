@@ -25,8 +25,10 @@ title_author/
 | [BDRC/Bo-Author-Detection](https://huggingface.co/BDRC/Bo-Author-Detection) ([card](docs/hf_cards/Bo-Author-Detection.md)) | private |
 | [BDRC/Bo-Title-Dataset](https://huggingface.co/datasets/BDRC/Bo-Title-Dataset) ([card](docs/hf_cards/Bo-Title-Dataset.md)) | private |
 | [BDRC/Bo-Author-Dataset](https://huggingface.co/datasets/BDRC/Bo-Author-Dataset) ([card](docs/hf_cards/Bo-Author-Dataset.md)) | private |
+| [BDRC/Bo-Title-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Title-Benchmark) ([card](docs/hf_cards/Bo-Title-Benchmark.md)) | public |
+| [BDRC/Bo-Author-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Author-Benchmark) ([card](docs/hf_cards/Bo-Author-Benchmark.md)) | public |
 
-All four are private (read from the Hub, 2026-11-18); a 404 means you need access from the owner. They were moved from `Yontenn/mmbert-title-only`, `mmbert-author-only`, `title-only-training` and `author-only-training` on 2026-11-17 (old names redirect). Each title or author model was trained on the dataset of the same name; the weights are in `best/` and the tokenizer files (copied from `jhu-clsp/mmBERT-base`) are at the repo root. Both datasets are relabelled copies of the public joint data [Yontenn/title-author-training](https://huggingface.co/datasets/Yontenn/title-author-training) ([card](docs/dataset_card.md)); the joint run 2 model is the private `Yontenn/mmbert-title-author-run2` ([card](docs/model_cards/mmbert-title-author-run2.md)).
+The models and the two training datasets (train and validation) are private; the two benchmarks (test) are public. Models read from the Hub on 2026-11-18, datasets on 2026-11-25; a 404 means you need access from the owner. They were moved from `Yontenn/mmbert-title-only`, `mmbert-author-only`, `title-only-training` and `author-only-training` on 2026-11-17 (old names redirect). Each title or author model was trained on the dataset of the same name; the weights are in `best/` and the tokenizer files (copied from `jhu-clsp/mmBERT-base`) are at the repo root. Both datasets are relabelled copies of the public joint data [Yontenn/title-author-training](https://huggingface.co/datasets/Yontenn/title-author-training) ([card](docs/dataset_card.md)); the joint run 2 model is the private `Yontenn/mmbert-title-author-run2` ([card](docs/model_cards/mmbert-title-author-run2.md)).
 
 ## Pipeline
 
@@ -67,8 +69,9 @@ python title_author/src/push_ta_dataset.py --repo-id BDRC/Bo-Title-Dataset --car
 python common/train_layer.py --label-name TITLE --scheme bio --dataset BDRC/Bo-Title-Dataset \
     --weight-scheme sqrt_inv --evals-per-epoch 2 --epochs 8 --skip-test
 # 8. Upload best/ and the card (docs/hf_cards/*.md as README.md) with the Hugging Face CLI
-# 9. Predict, then flatten the logits into data/mmbert_preds/ (the flatten step is not in this repo)
+# 9. Predict validation (training repo) and test (benchmark repo) into the same OUT_DIR, then flatten the logits into data/mmbert_preds/ (the flatten step is not in this repo)
 python3 title_author/src/predict_ta.py MODEL_DIR OUT_DIR BDRC/Bo-Title-Dataset
+python3 title_author/src/predict_ta.py MODEL_DIR OUT_DIR BDRC/Bo-Title-Benchmark
 # 10. Tune the break penalty on validation, then score test once
 python3 title_author/src/score_ta_mmbert_single.py title validation 3,6,12,20
 ALLOW_TEST=1 python3 title_author/src/score_ta_mmbert_single.py title test 6 write 6 first_last

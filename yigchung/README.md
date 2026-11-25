@@ -5,7 +5,7 @@ Finds **Yigchung**, the small-print interlinear note written under or beside the
 - **General system** (in production): `BDRC/Bo-Yigchung-Detection` (v2, from `karma689/mmbert-yigchung-v2`), trained on all genres **elsewhere**. Only its benchmark lives here: the corrected 77-book test set and the scoring script.
 - **Classified (genre) system** (private, experimental): `BDRC/Bo-Yigchung-Classified-Detection`, for four genres only (liturgy, prayer, sadhana, songs). The data build, the genre labelling and the error analysis live here; training uses `common/train_layer.py`. It is **not a replacement** for the general model (see Results).
 
-- **In:** the public dataset [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (762 books, 601 / 84 / 77), read at pinned revision `778c059b`; hand tables in `data/processed/`; annotator files in `data/local/` (not public).
+- **In:** the private training set [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) (685 books, 601 / 84) and the public test set [BDRC/Bo-Yigchung-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Benchmark) (77 books), read at pinned revision `778c059b` before the split; hand tables in `data/processed/`; annotator files in `data/local/` (not public).
 - **Out:** the classified dataset and model on Hugging Face, and the benchmark scores in `results/`.
 - **In the whole system:** `detect/` runs the general model ([layer_config.py](../detect/layer_config.py)).
 
@@ -22,14 +22,16 @@ yigchung/
 
 ## Hugging Face
 
-Visibility read from the Hub with the local login on 2026-11-18; a 404 without a login means the repo is private.
+Datasets read from the Hub on 2026-11-25, models on 2026-11-18; a 404 without a login means the repo is private. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here.
 
 | System | Repo | Visibility |
 |---|---|---|
 | General model | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) ([card](docs/model_card.md)) | public |
-| General dataset | [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) ([card](docs/dataset_card.md)) | public |
+| General dataset (train, validation) | [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) ([card](docs/dataset_card.md)) | private |
+| General benchmark (test) | [BDRC/Bo-Yigchung-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Benchmark) ([card](docs/benchmark_card.md)) | public |
 | Classified model | BDRC/Bo-Yigchung-Classified-Detection ([card](docs/classified_model_card.md)) | private |
-| Classified dataset | BDRC/Bo-Yigchung-Classified-Dataset ([card](docs/classified_dataset_card.md)) | private |
+| Classified dataset (train, validation) | BDRC/Bo-Yigchung-Classified-Dataset ([card](docs/classified_dataset_card.md)) | private |
+| Classified benchmark (test) | [BDRC/Bo-Yigchung-Classified-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Classified-Benchmark) ([card](docs/classified_benchmark_card.md)) | public |
 
 The general model replaced the earlier one on 2026-11-17 (kept under tag `v1`). Old names (`BDRC/yigchung_detection_v2`, `Yontenn/mmbert-yigchung-genre-v3`) redirect.
 
@@ -68,7 +70,7 @@ python yigchung/src/fetch_yigchung_hub.py
 python yigchung/src/build_yigchung_benchmark_after.py
 # 3. General: predict the test books (break penalty 8), then score
 python common/predict_layer_spans.py --label-name YIGCHUNG --model BDRC/Bo-Yigchung-Detection \
-    --dataset BDRC/Bo-Yigchung-Dataset --splits test --break-penalty 8 --out predictions_general.json
+    --dataset BDRC/Bo-Yigchung-Benchmark --splits test --break-penalty 8 --out predictions_general.json
 python yigchung/src/score_yigchung_benchmark.py general=predictions_general.json
 # 4. Classified: combine Lotsawa, build the genre sets, build the BIO windows
 python yigchung/src/merge_yigchung_lotsawa.py
@@ -81,9 +83,13 @@ python common/train_layer.py --label-name YIGCHUNG --scheme bio \
     --run-name yigchung-genre-lotsawa-v3-swap --output-dir /workspace/runs/yigchung_genre_v3
 # 6. Classified: predict validation and test, then analyze
 python common/predict_layer_spans.py --label-name YIGCHUNG --model /workspace/runs/yigchung_genre_v3/best \
-    --dataset BDRC/Bo-Yigchung-Classified-Dataset --splits validation,test --break-penalty 5 \
-    --out predictions_validation_test.json
-python yigchung/src/analyze_yigchung_predictions.py predictions_validation_test.json with_lotsawa
+    --dataset BDRC/Bo-Yigchung-Classified-Dataset --splits validation --break-penalty 5 \
+    --out predictions_validation.json
+python common/predict_layer_spans.py --label-name YIGCHUNG --model /workspace/runs/yigchung_genre_v3/best \
+    --dataset BDRC/Bo-Yigchung-Classified-Benchmark --splits test --break-penalty 5 \
+    --out predictions_test.json
+python yigchung/src/analyze_yigchung_predictions.py predictions_validation.json with_lotsawa
+python yigchung/src/analyze_yigchung_predictions.py predictions_test.json with_lotsawa
 ```
 
 **The 77 benchmark books are windowed from the general dataset: predict them before `score_yigchung_benchmark.py`.**

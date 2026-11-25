@@ -22,9 +22,10 @@ tsawa/
 | | Repo | Visibility |
 |---|---|---|
 | Model | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) ([card](docs/model_card.md)) | public |
-| Dataset | [BDRC/Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) ([card](docs/dataset_card.md)) | private |
+| Dataset (train, validation) | [BDRC/Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) ([card](docs/dataset_card.md)) | private |
+| Benchmark (test) | [BDRC/Bo-Tsawa-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Benchmark) ([card](docs/benchmark_card.md)) | public |
 
-Visibility read from the Hub on 2026-11-18; a 404 on the dataset means you need access from BDRC. Each card equals the README on the Hub. The `push_*` scripts still default to the old `Yontenn/formatting-tsawa-v10` and `-v11` names (the dataset in the training command of the model card); pass `--repo-id` to publish elsewhere. Do not write to `BDRC/*` without the owner's go-ahead.
+The model is public (read from the Hub, 2026-11-18). Datasets read from the Hub on 2026-11-25 (training data private, benchmark public); a 404 on a private repo means you need access from the owner. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here. The `push_*` scripts still default to the old `Yontenn/formatting-tsawa-v10` and `-v11` names (the dataset in the training command of the model card); pass `--repo-id` to publish elsewhere. Do not write to `BDRC/*` without the owner's go-ahead.
 
 ## Pipeline
 
@@ -79,8 +80,8 @@ python tsawa/src/push_tsawa_dataset.py --repo-id <repo>
 # 7. Train on a GPU machine (command from the model card)
 python common/train_layer.py --label-name TSAWA --dataset Yontenn/formatting-tsawa-v10 --scheme bio --weight-scheme inv --break-penalty 5.0 --epochs 15 --patience 3 --evals-per-epoch 4 --lr 1e-5 --batch-size 8 --seed 42
 # 8. Upload the model and docs/model_card.md (as README.md) with the Hugging Face CLI
-# 9. Score the 22-book test split once
-python common/eval_viterbi_iou.py --model BDRC/Bo-Tsawa-Detection --dataset <dataset> --split test --break-penalty 4.0 --dump-spans test_spans.jsonl
+# 9. Score the benchmark once (28 books)
+python common/eval_viterbi_iou.py --model BDRC/Bo-Tsawa-Detection --dataset BDRC/Bo-Tsawa-Benchmark --split test --break-penalty 4.0 --dump-spans test_spans.jsonl
 ```
 
 ## Optional tools
