@@ -20,11 +20,11 @@ Models it loads (repo ids from [layer_config.py](layer_config.py), visibility re
 
 | Use | Repo | Visibility |
 |---|---|---|
-| tsawa | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) | public |
+| tsawa | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) | private |
 | sabche | [BDRC/Bo-Sabche-Detection](https://huggingface.co/BDRC/Bo-Sabche-Detection) | private |
 | chapter | [BDRC/Bo-Chapter-Detection](https://huggingface.co/BDRC/Bo-Chapter-Detection) | private |
 | quotation | [BDRC/Bo-Quotation-Detection](https://huggingface.co/BDRC/Bo-Quotation-Detection) | private |
-| yigchung | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) | public |
+| yigchung | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) | private |
 | title | [BDRC/Bo-Title-Detection](https://huggingface.co/BDRC/Bo-Title-Detection) | private |
 | author | [BDRC/Bo-Author-Detection](https://huggingface.co/BDRC/Bo-Author-Detection) | private |
 | title and author, one joint model (optional) | [Yontenn/mmbert-title-author-run2](https://huggingface.co/Yontenn/mmbert-title-author-run2) | private |
@@ -96,7 +96,7 @@ Not window layers: one forward pass over the first and last 3,000 characters giv
 - The infer checkpoint checks only that the predictions file exists, not which layers it holds.
 - Yigchung is weak: test F1 0.471 on the published 77-book text (its card); treat its output as candidates for review. `infer.py` prints this caveat when the model loads.
 - The sabche shad rule (drop a span under 8 characters unless a shad follows) is marked in `layer_config.py` as "shipped pending validation": it was tuned on the test split, so its gain (F1 0.9652 to 0.9665) is in-sample.
-- A code comment in `layer_config.py` says all models are private; tsawa and yigchung are public (see the table above). Title and author review thresholds (0.7) are an untuned placeholder.
+- Title and author review thresholds (0.7) are an untuned placeholder.
 
 </details>
 
