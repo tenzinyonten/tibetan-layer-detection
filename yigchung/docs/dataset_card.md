@@ -1,4 +1,5 @@
 ---
+license: mit
 pretty_name: Bo-Yigchung-Dataset
 language:
 - bo
@@ -34,11 +35,7 @@ dataset_info:
   - name: validation
     num_bytes: 22042668
     num_examples: 84
-  - name: test
-    num_bytes: 25020273
-    num_examples: 77
-  download_size: 66321772
-  dataset_size: 226952854
+  dataset_size: 201932581
 - config_name: windowed_w8192_s4914
   features:
   - name: book_id
@@ -76,11 +73,7 @@ dataset_info:
   - name: validation
     num_bytes: 73683141
     num_examples: 1041
-  - name: test
-    num_bytes: 84595990
-    num_examples: 1189
-  download_size: 60796150
-  dataset_size: 766741755
+  dataset_size: 682145765
 configs:
 - config_name: default
   data_files:
@@ -88,21 +81,17 @@ configs:
     path: data/train-*
   - split: validation
     path: data/validation-*
-  - split: test
-    path: data/test-*
 - config_name: windowed_w8192_s4914
   data_files:
   - split: train
     path: windowed_w8192_s4914/train-*
   - split: validation
     path: windowed_w8192_s4914/validation-*
-  - split: test
-    path: windowed_w8192_s4914/test-*
 ---
 
 # Bo-Yigchung-Dataset
 
-762 Classical Tibetan books with character-offset spans marking Yigchung, the small-print interlinear note written under or beside the main line. It is the data of [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection); see that card for how the model was trained on it.
+685 Classical Tibetan books with character-offset spans marking Yigchung, the small-print interlinear note written under or beside the main line. It is the data of [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection); see that card for how the model was trained on it. The 77 test books are published separately as [BDRC/Bo-Yigchung-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Benchmark).
 
 ## Format
 
@@ -119,41 +108,32 @@ Book-level: a book is in one split only.
 |---|---:|---:|---:|---:|
 | train | 601 | 22,388 | 8,574 | 60,977,652 |
 | validation | 84 | 2,637 | 1,041 | 7,456,195 |
-| test | 77 | 4,059 | 1,189 | 8,470,389 |
-| total | 762 | 29,084 | 10,804 | 76,904,236 |
+| total | 685 | 25,025 | 9,615 | 68,433,847 |
 
 Books by source:
 
-| Source | Train | Validation | Test | Total |
-|---|---:|---:|---:|---:|
-| reviewed_opf | 180 | 24 | 24 | 228 |
-| lotsawa | 374 | 48 | 47 | 469 |
-| bdrc | 35 | 4 | 5 | 44 |
-| nalanda | 12 | 8 | 1 | 21 |
-
-Test spans by source: nalanda 1,580, bdrc 1,570, reviewed_opf 848, lotsawa 61.
+| Source | Train | Validation | Total |
+|---|---:|---:|---:|
+| reviewed_opf | 180 | 24 | 204 |
+| lotsawa | 374 | 48 | 422 |
+| bdrc | 35 | 4 | 39 |
+| nalanda | 12 | 8 | 20 |
 
 ## Data source and preparation
 
 | Source | Books | What it is |
 |---|---:|---|
-| reviewed_opf | 228 | Reviewed OpenPecha books |
-| lotsawa | 469 | Short texts from Lotsawa House |
-| nalanda | 21 | Nalanda Vinaya volumes |
-| bdrc | 44 | BDRC volumes |
+| reviewed_opf | 204 | Reviewed OpenPecha books |
+| lotsawa | 422 | Short texts from Lotsawa House |
+| nalanda | 20 | Nalanda Vinaya volumes |
+| bdrc | 39 | BDRC volumes |
 
 Steps: combine the four sources, remove duplicate books and passages from the Lotsawa, BDRC and reviewed_opf train sets only, split by book, tokenize with `jhu-clsp/mmBERT-base` and cut windows. The scripts that did this are not in the [tibetan-layer-detection](https://github.com/tenzinyonten/tibetan-layer-detection) repository.
 
 ## Annotation
 
-Spans were annotated through OpenPecha. The `reviewed_opf` books come from the reviewed OpenPecha set; the other sources keep their own annotations. The published spans are the original annotations: the later annotator review of the five BDRC test books (see Known limits) is not applied to this dataset.
+Spans were annotated through OpenPecha. The `reviewed_opf` books come from the reviewed OpenPecha set; the other sources keep their own annotations. The published spans are the original annotations: the later annotator review of five BDRC books is not applied to this dataset.
 
-## Known limits
-
-- The test split is dominated by two sources: nalanda (1 book, 1,580 spans) and bdrc (5 books, 1,570 spans) hold 78% of the test spans.
-- Lotsawa books are short and carry few spans (61 test spans in 47 books).
-- Some gold spans have boundary or head-mark inconsistencies; an annotator review of the 5 BDRC test books changed 1,570 spans to 1,297.
-- Data rights: texts come from BDRC, Lotsawa House and Nalanda. Check each source's terms before reuse; the licence field is a placeholder.
 
 ## Citation
 

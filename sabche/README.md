@@ -21,9 +21,10 @@ sabche/
 | | Repo | Visibility |
 |---|---|---|
 | Model | [BDRC/Bo-Sabche-Detection](https://huggingface.co/BDRC/Bo-Sabche-Detection) ([card](docs/model_card.md)) | private |
-| Dataset | [BDRC/Bo-Sabche-Dataset](https://huggingface.co/datasets/BDRC/Bo-Sabche-Dataset) ([card](docs/dataset_card.md)) | private |
+| Dataset (train, validation) | [BDRC/Bo-Sabche-Dataset](https://huggingface.co/datasets/BDRC/Bo-Sabche-Dataset) ([card](docs/dataset_card.md)) | private |
+| Benchmark (test) | [BDRC/Bo-Sabche-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Sabche-Benchmark) ([card](docs/benchmark_card.md)) | public |
 
-Both are private (read from the Hub, 2026-11-18); a 404 means you need access from the owner. The cards are equal to the Hub READMEs (compared 2026-11-18).
+The model is private (read from the Hub, 2026-11-18). Datasets read from the Hub on 2026-11-25 (training data private, benchmark public); a 404 on a private repo means you need access from the owner. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here.
 
 ## Pipeline
 

@@ -1,4 +1,5 @@
 ---
+license: mit
 pretty_name: Bo-Quotation-Dataset
 tags:
 - tibetan
@@ -20,39 +21,25 @@ configs:
     path: train.jsonl
   - split: validation
     path: validation.jsonl
-  - split: test
-    path: test.jsonl
 - config_name: windowed_w8192_s4579
   data_files:
   - split: train
     path: windowed_w8192_s4579/train/*.parquet
   - split: validation
     path: windowed_w8192_s4579/validation/*.parquet
-  - split: test
-    path: windowed_w8192_s4579/test/*.parquet
 - config_name: windowed_w8192_s4579_bioe
   data_files:
   - split: train
     path: windowed_w8192_s4579_bioe/train/*.parquet
   - split: validation
     path: windowed_w8192_s4579_bioe/validation/*.parquet
-  - split: test
-    path: windowed_w8192_s4579_bioe/test/*.parquet
-- config_name: reviewed_test
-  data_files:
-  - split: test
-    path: reviewed/test.jsonl
-- config_name: windowed_w8192_s4579_bioe_reviewed
-  data_files:
-  - split: test
-    path: windowed_w8192_s4579_bioe_reviewed/test/*.parquet
 ---
 
 # Bo-Quotation-Dataset
 
 Benchmark and training data for finding **quotation spans** in classical Tibetan commentaries. It is the training data of [`BDRC/Bo-Quotation-Detection`](https://huggingface.co/BDRC/Bo-Quotation-Detection).
 
-**254 classical Tibetan books** with **23,095 human-reviewed quotation spans**, split by book into train / validation / test.
+**235 classical Tibetan books** with **20,758 human-reviewed quotation spans**, split by book into train and validation. The 19 test books are published separately as [`BDRC/Bo-Quotation-Benchmark`](https://huggingface.co/datasets/BDRC/Bo-Quotation-Benchmark).
 
 Character offsets are **inclusive on both ends**: the span is `text[start:end+1]`.
 
@@ -60,7 +47,7 @@ Character offsets are **inclusive on both ends**: the span is `text[start:end+1]
 
 The data comes in two forms: one row per book, and windows of tokens for training mmBERT.
 
-**Book-level rows** (`train.jsonl`, `validation.jsonl`, `test.jsonl`):
+**Book-level rows** (`train.jsonl`, `validation.jsonl`):
 
 | Column | Meaning |
 |---|---|
@@ -87,7 +74,6 @@ Books are **stratified by quote type** (`TEXT` / `PERSON` / `MISC`), so each spl
 |---|---:|---:|---:|---:|---:|---:|---:|
 | train | 210 | 18,753 | 57.0% | 15.8% | 18.9% | 7.40% | 40.0% |
 | validation | 25 | 2,005 | 57.0% | 15.7% | 18.7% | 7.37% | 39.3% |
-| test | 19 | 2,337 | 57.1% | 15.4% | 18.8% | 7.50% | 38.9% |
 
 ## Data source and preparation
 
@@ -105,7 +91,7 @@ Classical Buddhist commentaries digitized with support from the Tsadra Foundatio
 
 Quotation spans were marked by human annotators on classical Tibetan commentaries, in two batches: an older batch (the OpenPecha `Quotation` layer) and a newer one (the `Citation` layer). Both layers mark the same thing, so they are merged into one label.
 
-Every book was then reviewed by humans: books with bad boundaries were rejected whole, and boundaries were repaired in accepted books (see the cleaning steps above). The test set was reviewed again, span by span (see "Reviewed test set"). The quote type of each span is not hand-labelled: it is set by rule from the words that introduce the span.
+Every book was then reviewed by humans: books with bad boundaries were rejected whole, and boundaries were repaired in accepted books (see the cleaning steps above).  The quote type of each span is not hand-labelled: it is set by rule from the words that introduce the span.
 
 ## Quote types
 
@@ -151,7 +137,7 @@ from datasets import load_dataset
 cfg = "windowed_w8192_s4579"   # or windowed_w8192_s4579_bioe
 base = f"hf://datasets/BDRC/Bo-Quotation-Dataset/{cfg}"
 ds = load_dataset("parquet", data_files={
-    s: f"{base}/{s}/*.parquet" for s in ["train", "validation", "test"]
+    s: f"{base}/{s}/*.parquet" for s in ["train", "validation"]
 })
 ```
 
@@ -167,17 +153,11 @@ The BIO config is also pinned at tag `w1.0`.
 |---|---:|---:|
 | train | 6,195 | 18,753 |
 | validation | 645 | 2,005 |
-| test | 657 | 2,337 |
 
 - 513 spans cross a window seam.
 - Token balance (owned tokens): `O` 92.37%, `I` 7.50%, `B` 0.07%, `E` 0.07% (in BIO, `I` is 7.57%).
 - Tokenizer sha256 (combined): `9818cf906b79a54b964992d2f76db685ae8b9b3824e28a8f4e4f16425d026f9d`
 
-## Known limits
-
-- Some small boundary errors remain in accepted books.
-- Some real quotations are still unlabeled, mostly in books with 1–3% density.
-- Density (7.4%) reflects well-annotated books, not typical Tibetan text.
 
 ## Citation
 
@@ -194,43 +174,3 @@ The BIO config is also pinned at tag `w1.0`.
 
 Source texts were digitized and made available by the [Buddhist Digital Resource Center (BDRC)](https://www.bdrc.io/). We gratefully acknowledge BDRC. Annotations were prepared through [OpenPecha](https://openpecha.org/) with support from the [Tsadra Foundation](https://www.tsadra.org/).
 
-<!-- reviewed-test:start -->
-## Reviewed test set (`w2.1`)
-
-All 19 test books were checked by human reviewers, span by span. Each
-original span was accepted as is, had its edges corrected, or was removed, and
-reviewers added quotations the first annotators missed. Train and validation are
-unchanged.
-
-| | count |
-|---|---|
-| spans accepted unchanged | 2281 |
-| spans with corrected edges | 106 |
-| spans added | 82 |
-| spans removed | 27 |
-| quotations before review (merged) | 2337 |
-| quotations after review (merged) | 2398 |
-| identical before and after | 2211 |
-
-Same conventions as the original set: `end` is **inclusive**, pieces of one long
-quotation are re-joined, `seen_in_train` uses the same rule. Each span also has
-`review` (`accepted` / `edited` / `added`) and `cls_source` (where its marker class
-came from — added spans have no original class).
-
-Two new configs, both test-only:
-
-* `reviewed_test` — book-level rows, `reviewed/test.jsonl`
-* `windowed_w8192_s4579_bioe_reviewed` — the `windowed_w8192_s4579_bioe` test windows with reviewed labels.
-  Input ids, offsets and the ownership mask are identical to `windowed_w8192_s4579_bioe`
-  test at `w2.0`; only `labels` differ, so a score on the two tells you
-  exactly how much the gold change moved it.
-
-```python
-from datasets import load_dataset
-test = load_dataset("BDRC/Bo-Quotation-Dataset",
-                    data_files={"test": "windowed_w8192_s4579_bioe_reviewed/test/*.parquet"},
-                    revision="w2.1")["test"]
-```
-
-Per-book changes: `reviewed/review_report.md`; raw numbers: `reviewed/stats.json`.
-<!-- reviewed-test:end -->

@@ -21,9 +21,10 @@ dataset = sys.argv[3] if len(sys.argv) > 3 else "Yontenn/title-author-training"
 ds = load_from_disk(dataset) if Path(dataset).exists() else load_dataset(dataset)
 dev = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 model = AutoModelForTokenClassification.from_pretrained(model_dir, torch_dtype=torch.bfloat16 if dev == "cuda" else torch.float32).to(dev).eval()
-META = [c for c in ("work_id", "cid", "source", "region", "region_start", "n_tokens_region") if c in ds["validation"].column_names]
+META = [c for c in ("work_id", "cid", "source", "region", "region_start", "n_tokens_region") if c in ds["validation" if "validation" in ds else "test"].column_names]
 
 for split in ("validation", "test"):
+    if split not in ds: continue   # the split repos hold validation (training repo) or test (benchmark repo)
     d = ds[split]; n = len(d); t0 = time.time()
     order = sorted(range(n), key=lambda i: sum(d[i]["attention_mask"]))   # short first -> little padding
     logits, ids, labels = [None] * n, [None] * n, [None] * n
