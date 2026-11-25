@@ -26,7 +26,7 @@ quotation/
 | Dataset (train, validation) | [BDRC/Bo-Quotation-Dataset](https://huggingface.co/datasets/BDRC/Bo-Quotation-Dataset) ([card](docs/dataset_card.md)) | private |
 | Benchmark (test, 19 books) | [BDRC/Bo-Quotation-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Quotation-Benchmark) ([card](docs/benchmark_card.md)) | public |
 
-Model read from the Hub on 2026-11-18, datasets on 2026-11-25. A 404 on a private repo means you need access from the owner. The old dataset name `karma689/tibetan-quotation-detection` redirects, and the training config still uses it at the pinned revision `w2.0`, which still holds the test files; the current main branch of the training repo has train and validation only.
+Visibility read from the Hub on 2026-11-25 (model and training data private, benchmark public). A 404 on a private repo means you need access from the owner. The old dataset name `karma689/tibetan-quotation-detection` redirects, and the training config still uses it at the pinned revision `w2.0`, which still holds the test files; the current main branch of the training repo has train and validation only.
 
 ## Pipeline
 

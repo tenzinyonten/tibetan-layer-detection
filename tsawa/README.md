@@ -21,11 +21,11 @@ tsawa/
 
 | | Repo | Visibility |
 |---|---|---|
-| Model | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) ([card](docs/model_card.md)) | public |
+| Model | [BDRC/Bo-Tsawa-Detection](https://huggingface.co/BDRC/Bo-Tsawa-Detection) ([card](docs/model_card.md)) | private |
 | Dataset (train, validation) | [BDRC/Bo-Tsawa-Dataset](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Dataset) ([card](docs/dataset_card.md)) | private |
 | Benchmark (test) | [BDRC/Bo-Tsawa-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Tsawa-Benchmark) ([card](docs/benchmark_card.md)) | public |
 
-The model is public (read from the Hub, 2026-11-18). Datasets read from the Hub on 2026-11-25 (training data private, benchmark public); a 404 on a private repo means you need access from the owner. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here. The `push_*` scripts still default to the old `Yontenn/formatting-tsawa-v10` and `-v11` names (the dataset in the training command of the model card); pass `--repo-id` to publish elsewhere. Do not write to `BDRC/*` without the owner's go-ahead.
+Visibility read from the Hub on 2026-11-25 (model and training data private, benchmark public); a 404 on a private repo means you need access from the owner. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here. The `push_*` scripts still default to the old `Yontenn/formatting-tsawa-v10` and `-v11` names (the dataset in the training command of the model card); pass `--repo-id` to publish elsewhere. Do not write to `BDRC/*` without the owner's go-ahead.
 
 ## Pipeline
 

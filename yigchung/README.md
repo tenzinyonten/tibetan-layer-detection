@@ -22,11 +22,11 @@ yigchung/
 
 ## Hugging Face
 
-Datasets read from the Hub on 2026-11-25, models on 2026-11-18; a 404 without a login means the repo is private. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here.
+Visibility read from the Hub on 2026-11-25; a 404 without a login means the repo is private. The dataset and benchmark cards match the Hub READMEs apart from script names, which are current here.
 
 | System | Repo | Visibility |
 |---|---|---|
-| General model | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) ([card](docs/model_card.md)) | public |
+| General model | [BDRC/Bo-Yigchung-Detection](https://huggingface.co/BDRC/Bo-Yigchung-Detection) ([card](docs/model_card.md)) | private |
 | General dataset (train, validation) | [BDRC/Bo-Yigchung-Dataset](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Dataset) ([card](docs/dataset_card.md)) | private |
 | General benchmark (test) | [BDRC/Bo-Yigchung-Benchmark](https://huggingface.co/datasets/BDRC/Bo-Yigchung-Benchmark) ([card](docs/benchmark_card.md)) | public |
 | Classified model | BDRC/Bo-Yigchung-Classified-Detection ([card](docs/classified_model_card.md)) | private |
