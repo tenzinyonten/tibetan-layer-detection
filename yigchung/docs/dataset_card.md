@@ -106,9 +106,9 @@ Book-level: a book is in one split only.
 
 | Split | Books | Spans | Windows | Text characters |
 |---|---:|---:|---:|---:|
-| train | 601 | 22,388 | 8,574 | 60,977,652 |
-| validation | 84 | 2,637 | 1,041 | 7,456,195 |
-| total | 685 | 25,025 | 9,615 | 68,433,847 |
+| train | 601 | 22,025 | 8,574 | 60,977,652 |
+| validation | 84 | 2,636 | 1,041 | 7,456,195 |
+| total | 685 | 24,661 | 9,615 | 68,433,847 |
 
 Books by source:
 
@@ -132,7 +132,7 @@ Steps: combine the four sources, remove duplicate books and passages from the Lo
 
 ## Annotation
 
-Spans were annotated through OpenPecha. The `reviewed_opf` books come from the reviewed OpenPecha set; the other sources keep their own annotations. The published spans are the original annotations: the later annotator review of five BDRC books is not applied to this dataset.
+Spans were annotated through OpenPecha. The `reviewed_opf` books come from the reviewed OpenPecha set; the other sources keep their own annotations. The published spans are the original annotations: the later annotator review of five BDRC books is not applied to this dataset. Bare number spans (such as ༡ or ༢༤) are not included: 364 were removed from 6 books on 2026-11-25 (version tag `v2.1`; `v2.0` keeps them).
 
 
 ## Citation
